@@ -112,3 +112,5 @@ public
 .tern-port
 
 # Node ignoreables end here
+
+config.json

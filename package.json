@@ -1,4 +1,6 @@
 {
+  "name": "FutabaBot",
+  "main": "FutabaBot.js",
   "dependencies": {
     "discord.js": "^11.5.1",
     "eslint": "^6.5.1"
