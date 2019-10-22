@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
+const glob = require('glob');
 
 //TODO: make prefix a var and salt token
 const { prefix, token } = require("./config.json"); // see: object destructuring
@@ -8,10 +9,10 @@ const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = glob.sync('commands/**/*.js');
 
-for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+for (const path of commandFiles) {
+	const command = require(`./${path}`);
 	// set a new item in the Collection
 	// with the key as the command name and the value as the exported module
 	client.commands.set(command.name, command);
@@ -30,14 +31,14 @@ client.on('message', message => {
 
     // const botPerms = ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'MANAGE_ROLES', 'MANAGE_CHANNELS'];
 
-    // if (!message.guild.me.permissions.has(botPerms)) {
+    // if (!message.guild.me.permissions.has(botPerms)) { //if bot does not have appropriate permissions
 	// 	return message.reply(`I need the permissions ${botPerms.join(', ')} for this demonstration to work properly`); // if bot does not have proper permissions
 	// }
 
-	const args = message.content.slice(prefix.length).split(/ +/);
+	const args = message.content.slice(prefix.length).split(/ +/); // grab command arguments if any
     const commandName = args.shift().toLowerCase();
 
-    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName)); // get equivalent command from the list
 
     if (!command) return;
 
@@ -51,6 +52,8 @@ client.on('message', message => {
         if(command.usage) {
             reply += `The proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
         }
+
+        return message.channel.send(reply);
     }
 
     if (!cooldowns.has(command.name)) { // check if command has cooldown
