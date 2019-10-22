@@ -1,7 +1,8 @@
 module.exports = {
-	name: 'args-info',
+	name: 'command-name',
 	description: 'Information about the arguments provided.',
 	args: true, // this is not required, if not used, it's safe to delete (will default to false)
+	guildOnly: true, // this is not required, if not used, it's safe to delete (will default to false)
 	execute(message, args) {
 		if (args[0] === 'foo') {
 			return message.channel.send('bar');
