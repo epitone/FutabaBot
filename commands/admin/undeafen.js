@@ -1,21 +1,21 @@
 module.exports = {
-	name: 'deafen',
+	name: 'undeafen',
     cooldown: 5,
-    description: 'Deafens mentioned user or users.',
+    description: 'Undeafens mentioned user or users.',
     args: true,
 	execute(message) {
-        let response = ``;
         const taggedMembers = message.mentions.members;
+        let response = ``;
         taggedMembers.forEach(member => {
-            if(!member.deaf) {
-                member.setDeaf(true)
+            if(member.deaf) {
+                member.setDeaf(false)
                 .then(() => {
-                    response = `Deafened ${member.displayName}`;
+                    response = `Undeafened ${member.displayName}`;
                     console.log(response);
                 })
                 .catch(console.error);
             } else {
-                response = `Attempted to deafen ${member.displayName} but they are already defeaned.`;
+                response = `Attempted to undeafen ${member.displayName} but they are not defeaned.`;
                 console.log(response);
             }
         });
