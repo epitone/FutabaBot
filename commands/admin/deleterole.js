@@ -1,6 +1,6 @@
 module.exports = {
 	name: 'deleterole',
-    description: 'Creates a role with a given name.',
+    description: 'Deletes a role with a given name.',
     args: true,
     guildOnly: true,
 	execute(message, args) {
