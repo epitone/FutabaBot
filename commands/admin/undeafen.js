@@ -5,20 +5,19 @@ module.exports = {
     args: true,
 	execute(message) {
         const taggedMembers = message.mentions.members;
-        let response = ``;
         taggedMembers.forEach(member => {
             if(member.deaf) {
                 member.setDeaf(false)
                 .then(() => {
-                    response = `Undeafened ${member.displayName}`;
-                    console.log(response);
+                    message.channel.send(`Undeafened ${member.displayName}`);
                 })
-                .catch(console.error);
+                .catch(() => {
+                    messaage.channel.send('Oops! Something went wrong!');
+                    console.error(error)
+                });
             } else {
-                response = `Attempted to undeafen ${member.displayName} but they are not defeaned.`;
-                console.log(response);
+                message.channel.send(`Attempted to undeafen ${member.displayName} but they are not defeaned.`);
             }
         });
-        message.channel.send(response);
 	},
 };

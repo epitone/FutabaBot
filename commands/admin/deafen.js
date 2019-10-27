@@ -4,21 +4,21 @@ module.exports = {
     description: 'Deafens mentioned user or users.',
     args: true,
 	execute(message) {
-        let response = ``;
         const taggedMembers = message.mentions.members;
         taggedMembers.forEach(member => {
             if(!member.deaf) {
                 member.setDeaf(true)
                 .then(() => {
-                    response = `Deafened ${member.displayName}`;
-                    console.log(response);
+                    message.channel.send(`Deafened ${member.displayName}`);
                 })
-                .catch(console.error);
-            } else {
-                response = `Attempted to deafen ${member.displayName} but they are already defeaned.`;
-                console.log(response);
+                .catch(() => {
+                    messaage.channel.send('Oops! Something went wrong!');
+                    console.log(error);
+                });
+            }
+            else {
+                message.channel.send(`Attempted to deafen ${member.displayName} but they are already defeaned.`);
             }
         });
-        message.channel.send(response);
 	},
 };
