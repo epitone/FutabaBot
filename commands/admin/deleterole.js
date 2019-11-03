@@ -5,12 +5,6 @@ module.exports = {
     guildOnly: true,
 	execute(message, args) {
         const server = message.guild;
-        
-        if(!server.available) {
-            console.log(`${server.name} is not available.`);
-            return;
-        }
-
         const role = server.roles.find(role => role.name === args.join(' '));
 
         if(role) {

@@ -4,10 +4,6 @@ module.exports = {
     args: true,
     guildOnly: true,
     execute(message, args) {
-        if (!message.guild.available) { // TODO: should this be a while loop? should we use mutex locking?
-            console.log(`Server is unavailable.`);
-            return;
-        }
         const server = message.guild;
         const role = args.join(' ');
 

@@ -6,10 +6,6 @@ module.exports = {
     execute(message, args) {
         const server = message.guild;
         const channel = args.join(' ');
-        if (!server.available) {
-            console.log(`Server is not available`);
-            return;
-        }
         server.createChannel(channel, { type : 'text'})
         .then(() => {
             message.channel.send(`Successfully created “#${channel}” channel.`);

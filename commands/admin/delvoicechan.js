@@ -6,10 +6,6 @@ module.exports = {
 	execute(message, args) {
         const server = message.guild;
         const channel = server.channels.find(result => result.name === args.join(' '));
-        if(!server.available) {
-            console.log(`Server is not available.`);
-            return;
-        }
 		if (channel && channel.type === 'voice' && channel.deletable) {
             channel.delete()
                 .then(deletedChannel => {

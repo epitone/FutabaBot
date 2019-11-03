@@ -42,6 +42,11 @@ client.on('message', message => {
 
     if (!command) return;
 
+    if(!message.guild.available) {
+        console.log(`Server is not available`);
+        return;
+    }
+
     if (command.guildOnly && message.channel.type !== 'text') {
         return message.reply('I can\'t execute that command inside DMs!');
     }
