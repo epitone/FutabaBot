@@ -1,18 +1,41 @@
-module.exports = {
-    name: 'createvoicechan',
-    description: 'Creates a voice channel with a given name.',
-    args: true,
-    guildOnly: true,
-    execute(message, args) {
+const { Command } = require('discord.js-commando');
+const { RichEmbed } = require('discord.js');
+
+module.exports = class TemplateCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: 'createvoicechan',
+			aliases: ['cvch'],
+			group: 'admin', //the command group the command is a part of.
+			memberName: 'createvoicechan', //the name of the command within the group (this can be different from the name).
+			description: 'Creates a voice channel with a given name.',
+			args: [
+				{
+					key: 'voice_channel',
+					prompt: 'What is the name of the voice channel you\'d like to create?',
+					type: 'string'
+				}
+			]
+		});
+	}
+
+	run(message, { voice_channel }) {
         const server = message.guild;
-        const channel = args.join('-');
-        server.createChannel(channel, { type : 'voice'})
-        .then(() => {
-            message.channel.send(`Successfully created #${channel} channel.`);
+        server.createChannel(voice_channel, { type : 'voice'})
+        .then((newVoiceChannel) => {
+            let response = `Created “#${newVoiceChannel.name}”`;
+            console.log(response);
+            const embed = new RichEmbed()
+                .setColor(0xd29846)
+                .setDescription(response);
+            message.embed(embed);
         })
-        .catch(() => {
-            message.channel.send("Oops! Something went wrong!");
-            console.log(error);
+        .catch(error => {
+            console.log(error)
+            const embed = new RichEmbed()
+                .setColor(0xd29846)
+                .setDescription(`Oops! Something went wrong!`);
+            message.embed(embed);
         });
-    }
+	}
 }

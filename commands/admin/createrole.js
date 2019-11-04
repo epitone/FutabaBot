@@ -1,21 +1,41 @@
-module.exports = {
-    name: 'createrole',
-    description: 'Creates a role with a given name.',
-    args: true,
-    guildOnly: true,
-    execute(message, args) {
-        const server = message.guild;
-        const role = args.join(' ');
+const { Command } = require('discord.js-commando');
+const { RichEmbed } = require('discord.js');
 
+module.exports = class TemplateCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: 'createrole',
+			aliases: ['cr'],
+			group: 'admin', //the command group the command is a part of.
+			memberName: 'createrole', //the name of the command within the group (this can be different from the name).
+			description: 'Creates a role with a given name.',
+			guildOnly: true,
+			args: [
+				{
+					key: 'role',
+					prompt: 'What is the name of the role you\'d like to create?',
+					type: 'string'
+				}
+			]
+		});
+	}
+
+	run(message, { role }) {
+        /// do stuff here
+        const server = message.guild;
         server.createRole({ name: role })
-            .then((role) => {
-                let response = `Created new role with name “${role.name}”`
-                message.channel.send(response);
-                console.log(response);
-            })
-            .catch(() => {
-                message.channel.send('Oops! Something went wrong!');
-                console.error;
-            });
-    }
-};
+        .then((role) => {
+			const embed = new RichEmbed()
+				.setColor(0xd29846)
+				.setDescription(`Created new role with name “${role.name}”`);
+            message.embed(embed);
+        })
+        .catch((error) => {
+			console.log(error)
+			const embed = new RichEmbed()
+				.setColor(0xd29846)
+				.setDescription(`Oops! Something went wrong!`);
+            message.embed(embed);
+        });
+	}
+}
