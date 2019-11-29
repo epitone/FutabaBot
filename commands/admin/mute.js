@@ -3,7 +3,7 @@ const { RichEmbed } = require('discord.js');
 const moment = require('moment');
 const timeUtils = require('../../utils/time-utils');
 
-const validTimeFormats =
+// TODO: check edge cases for this command
 
 module.exports = class MuteCommand extends Command {
     constructor(client) {
@@ -14,21 +14,21 @@ module.exports = class MuteCommand extends Command {
             description: 'Mutes a mentioned user from both speaking and chatting. you can also specify how long the user is muted for.',
             args: [
                 {
+                    key: 'user',
+                    prompt: 'What user would you like to mute?',
+                    type: 'member', 
+                },
+                {
                     key: 'timeout',
                     prompt: 'How long would you like to time them out for? (Format examples: 1h30m, 90m, 2h, 24h, 30s)',
                     type: 'string',
                     default: '',
-                },
-                {
-                    key: 'user',
-                    prompt: 'What user would you like to mute?',
-                    type: 'member', 
                 }
             ]
         });
     }
 
-    async run(message, { timeout, user}) {
+    async run(message, { user, timeout }) {
         //check if timeout value was given
         const muteRole = message.guild.roles.find('name', 'muted');
         if(timeout && !timeUtils.validTime(timeout)) {
@@ -42,7 +42,7 @@ module.exports = class MuteCommand extends Command {
         if(!timeout) {
             user.addRole(muteRole)
                 .then((muted) => {
-                    let response = `Successfully muted “${muted.name}”`;
+                    let response = `Successfully muted “${muted.displayName}”`;
                     console.log(response);
                     const embed = new RichEmbed()
                         .setColor(0xd29846)
@@ -63,10 +63,11 @@ module.exports = class MuteCommand extends Command {
                 let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
                 console.log("time", timeout);
                 console.log("duration in milliseconds", duration);
+                console.log("user", muted)
 
                 setTimeout(() => {
                     muted.removeRole(muteRole);
-                    console.log(`successfully unmuted “${user.name}”`);
+                    console.log(`successfully unmuted “${user.displayName}”`);
                 }, duration)                
             })
             .catch(error => {
