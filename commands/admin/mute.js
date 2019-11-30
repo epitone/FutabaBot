@@ -19,6 +19,7 @@ module.exports = class MuteCommand extends Command {
                     type: 'member', 
                 },
                 {
+                    // TODO: add a validator to make sure the value is appropriate
                     key: 'timeout',
                     prompt: 'How long would you like to time them out for? (Format examples: 1h30m, 90m, 2h, 24h, 30s)',
                     type: 'string',
