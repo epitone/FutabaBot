@@ -51,13 +51,6 @@ module.exports = class MuteCommand extends Command {
                         .setDescription(response);
                     message.embed(embed);
                 })
-                .catch(error => {
-                    console.log(error)
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(`Oops! Something went wrong!`);
-                    message.embed(embed);
-                })
             })
             .catch(error => {
                 console.log(error)
@@ -74,6 +67,13 @@ module.exports = class MuteCommand extends Command {
                 const embed = new RichEmbed()
                     .setColor(0xd29846)
                     .setDescription(response);
+                message.embed(embed);
+            })
+            .catch(error => {
+                console.log(error)
+                const embed = new RichEmbed()
+                    .setColor(0xd29846)
+                    .setDescription(`Oops! Something went wrong!`);
                 message.embed(embed);
             })
         }

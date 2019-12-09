@@ -30,8 +30,6 @@ module.exports = class MuteCommand extends Command {
     }
 
     async run(message, { user, timeout }) {
-        //check if timeout value was given
-        const muteRole = message.guild.roles.find('name', 'muted');
         if(timeout && !timeUtils.validTime(timeout)) {
             console.log("invalid duration");
             const embed = new RichEmbed()
@@ -40,36 +38,68 @@ module.exports = class MuteCommand extends Command {
             message.embed(embed);
             return;
         }
-        if(!timeout) {
-            user.addRole(muteRole)
-                .then((muted) => {
+
+        const muteRole = message.guild.roles.find('name', 'muted');
+        if(!muteRole) {
+            const mutedPermissions = new Permissions(67175424); // only allows read message history, change nickname and view channels
+            message.guild.createRole({
+                name: 'muted',
+                permissions: mutedPermissions
+            })
+            .then((newRole) => {
+                for(let [,channel] of message.guild.channels) {
+                    if(channel.type === 'text') {
+                        channel.overwritePermissions(newRole, {
+                            SEND_MESSAGES: false,
+                            SPEAK: false,
+                            CONNECT: false
+                        })
+                        .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`))
+                    }
+                }
+                console.log(`created role with name ${newRole.name}`)
+                user.addRole(newRole)
+                .then(muted => {
                     let response = `Successfully muted “${muted.displayName}”`;
                     console.log(response);
                     const embed = new RichEmbed()
                         .setColor(0xd29846)
                         .setDescription(response);
                     message.embed(embed);
+                    if(timeout) {
+                        setTimeout(() => {
+                            timeout = timeout.replace(/\s+/g, '');
+                            let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
+                            muted.removeRole(role);
+                            console.log(`successfully unmuted “${user.displayName}”`)
+                        }, duration)
+                    }
                 })
-                .catch(error => {
-                    console.log(error)
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(`Oops! Something went wrong!`);
-                    message.embed(embed);
-                });
+            })
+            .catch(error => {
+                console.log(error)
+                const embed = new RichEmbed()
+                    .setColor(0xd29846)
+                    .setDescription(`Oops! Something went wrong!`);
+                message.embed(embed);
+            });
         } else {
             user.addRole(muteRole)
             .then((muted) => {
-                timeout = timeout.replace(/\s+/g, '');
-                let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
-                console.log("time", timeout);
-                console.log("duration in milliseconds", duration);
-                console.log("user", muted)
-
-                setTimeout(() => {
-                    muted.removeRole(muteRole);
-                    console.log(`successfully unmuted “${user.displayName}”`);
-                }, duration)                
+                let response = `Successfully muted “${muted.displayName}”`;
+                console.log(response);
+                const embed = new RichEmbed()
+                    .setColor(0xd29846)
+                    .setDescription(response);
+                message.embed(embed);
+                if(timeout) {
+                    setTimeout(() => {
+                        timeout = timeout.replace(/\s+/g, '');
+                        let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
+                        muted.removeRole(role);
+                        console.log(`successfully unmuted “${user.displayName}”`)
+                    }, duration)
+                }
             })
             .catch(error => {
                 console.log(error)
