@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const { RichEmbed, Permissions } = require('discord.js');
 const moment = require('moment');
 const timeUtils = require('../../utils/time-utils');
 
@@ -46,16 +46,14 @@ module.exports = class MuteCommand extends Command {
                 name: 'muted',
                 permissions: mutedPermissions
             })
-            .then((newRole) => {
+            .then(newRole => {
                 for(let [,channel] of message.guild.channels) {
-                    if(channel.type === 'text') {
                         channel.overwritePermissions(newRole, {
                             SEND_MESSAGES: false,
                             SPEAK: false,
                             CONNECT: false
                         })
-                        .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`))
-                    }
+                        .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`));
                 }
                 console.log(`created role with name ${newRole.name}`)
                 user.addRole(newRole)
@@ -67,14 +65,14 @@ module.exports = class MuteCommand extends Command {
                         .setDescription(response);
                     message.embed(embed);
                     if(timeout) {
+                        timeout = timeout.replace(/\s+/g, '');
+                        let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
                         setTimeout(() => {
-                            timeout = timeout.replace(/\s+/g, '');
-                            let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
                             muted.removeRole(role);
                             console.log(`successfully unmuted “${user.displayName}”`)
                         }, duration)
                     }
-                })
+                });
             })
             .catch(error => {
                 console.log(error)
@@ -93,10 +91,10 @@ module.exports = class MuteCommand extends Command {
                     .setDescription(response);
                 message.embed(embed);
                 if(timeout) {
+                    timeout = timeout.replace(/\s+/g, '');
+                    let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
                     setTimeout(() => {
-                        timeout = timeout.replace(/\s+/g, '');
-                        let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
-                        muted.removeRole(role);
+                        muted.removeRole(muteRole);
                         console.log(`successfully unmuted “${user.displayName}”`)
                     }, duration)
                 }

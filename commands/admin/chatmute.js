@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
-const { Permissions } = require('discord.js');
+const { RichEmbed, Permissions } = require('discord.js');
 const moment = require('moment');
 const timeUtils = require('../../utils/time-utils');
 
@@ -62,7 +61,7 @@ module.exports = class MuteCommand extends Command {
         } else {
             user.addRole(muteRole)
             .then(updated => {
-                let response = `Successfully muted “${muted.displayName}”`;
+                let response = `Successfully muted “${updated.displayName}”`;
                 console.log(response);
                 const embed = new RichEmbed()
                     .setColor(0xd29846)

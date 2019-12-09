@@ -4,9 +4,9 @@ const { RichEmbed } = require('discord.js');
 module.exports = class UnmuteCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'unmute',
+            name: 'chatunmute',
             group: 'admin',
-            memberName: 'unmute',
+            memberName: 'chatunmute',
             description: 'Unmutes a mentioned user previously muted with the .mute command.',
             args: [
                 {
@@ -19,7 +19,7 @@ module.exports = class UnmuteCommand extends Command {
     }
 
     async run(message, { user }) {
-        const muteRole = message.guild.roles.find('name', 'muted');
+        const muteRole = message.guild.roles.find('name', 'chat muted');
         if(!muteRole) {
             let response = `Looks like the mute role hasn't been created yet! Have you muted anyone?`;
             console.log(response);
