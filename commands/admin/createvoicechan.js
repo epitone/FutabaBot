@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
 
-module.exports = class TemplateCommand extends Command {
+module.exports = class CreateVoiceChan extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'createvoicechan',

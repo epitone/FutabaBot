@@ -1,13 +1,17 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const { RichEmbed, Permissions } = require('discord.js');
+const moment = require('moment');
+const timeUtils = require('../../utils/time-utils');
 
-module.exports = class ChatUnmuteCommand extends Command {
+// TODO: check edge cases for this command
+
+module.exports = class VoiceUnmute extends Command {
     constructor(client) {
         super(client, {
-            name: 'chatunmute',
+            name: 'voiceunmute',
             group: 'admin',
-            memberName: 'chatunmute',
-            description: 'Unmutes a mentioned user previously muted with the .mute command.',
+            memberName: 'voiceunmute',
+            description: 'Unmutes a mentioned user previously muted with the .voicemute command.',
             args: [
                 {
                     key: 'user',
@@ -19,9 +23,10 @@ module.exports = class ChatUnmuteCommand extends Command {
     }
 
     async run(message, { user }) {
-        const muteRole = message.guild.roles.find('name', 'chat muted');
+        // TODO: if a user is in a voice channel, should we kick them?
+        const muteRole = message.guild.roles.find('name', 'voice muted');
         if(!muteRole) {
-            let response = `Looks like the chat mute role hasn't been created yet! Have you muted anyone?`;
+            let response = `Looks like the voice mute role hasn't been created yet! Have you muted anyone?`;
             console.log(response);
             const embed = new RichEmbed()
                 .setColor(0xd29846)
@@ -48,4 +53,4 @@ module.exports = class ChatUnmuteCommand extends Command {
             }
         }
     }
-}
+}  

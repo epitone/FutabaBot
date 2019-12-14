@@ -5,13 +5,13 @@ const timeUtils = require('../../utils/time-utils');
 
 // TODO: check edge cases for this command
 
-module.exports = class ChatMute extends Command {
+module.exports = class VoiceMute extends Command {
     constructor(client) {
         super(client, {
-            name: 'chatmute',
+            name: 'voicemute',
             group: 'admin',
-            memberName: 'chatmute',
-            description: 'Prevents a mentioned user from chatting in text channels.',
+            memberName: 'voicemute',
+            description: 'Prevents a mentioned user from speaking in voice channels.',
             args: [
                 {
                     key: 'user',
@@ -23,18 +23,20 @@ module.exports = class ChatMute extends Command {
     }
 
     async run(message, { user }) {
-        const muteRole = message.guild.roles.find('name', 'chat muted');
+        // TODO: if a user is in a voice channel, should we kick them?
+        const muteRole = message.guild.roles.find('name', 'voice muted');
         if(!muteRole) {
-            const chatMutedPermissions = new Permissions(70321152); // only allows read message history, change nickname and view channels and connection to voice chat
+            const voiceMutedPermissions = new Permissions(67492928); // see https://discordapi.com/permissions.html#67492928
             message.guild.createRole({
-                name: 'chat muted',
-                permissions: chatMutedPermissions
+                name: 'voice muted',
+                permissions: voiceMutedPermissions
             })
             .then((role) => {
                 for(let [,channel] of message.guild.channels) {
-                    if(channel.type === 'text') {
+                    if(channel.type === 'voice') {
                         channel.overwritePermissions(role, {
-                            SEND_MESSAGES: false
+                            CONNECT: false,
+                            SPEAK: false
                         })
                         .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(role))}`))
                         .catch(console.error);
