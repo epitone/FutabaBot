@@ -23,7 +23,6 @@ module.exports = class VoiceMute extends Command {
     }
 
     async run(message, { user }) {
-        // TODO: if a user is in a voice channel, should we kick them?
         let muteRole = message.guild.roles.find('name', 'voice muted');
         if(!muteRole) {
             const voiceMutedPermissions = new Permissions(67492928); // see https://discordapi.com/permissions.html#67492928

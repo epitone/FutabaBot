@@ -19,7 +19,6 @@ module.exports = class MuteCommand extends Command {
                     type: 'member', 
                 },
                 {
-                    // TODO: add a validator to make sure the value is appropriate
                     key: 'timeout',
                     prompt: 'How long would you like to time them out for? (Format examples: 1h30m, 90m, 2h, 24h, 30s)',
                     type: 'string',
@@ -31,16 +30,7 @@ module.exports = class MuteCommand extends Command {
     }
 
     async run(message, { user, timeout }) {
-        // if(timeout) {
-        //     console.log("invalid duration");
-        //     const embed = new RichEmbed()
-        //         .setColor(0xd29846)
-        //         .setDescription(`You provided an invalid duration, please try again.`);
-        //     message.embed(embed);
-        //     return;
-        // }
-
-        const muteRole = message.guild.roles.find('name', 'muted');
+        let muteRole = message.guild.roles.find('name', 'muted');
         if(!muteRole) {
             const mutedPermissions = new Permissions(67175424); // only allows read message history, change nickname and view channels
             message.guild.createRole({
@@ -56,24 +46,8 @@ module.exports = class MuteCommand extends Command {
                         })
                         .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`));
                 }
-                console.log(`created role with name ${newRole.name}`)
-                user.addRole(newRole)
-                .then(muted => {
-                    let response = `Successfully muted “${muted.displayName}”`;
-                    console.log(response);
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(response);
-                    message.embed(embed);
-                    if(timeout) {
-                        timeout = timeout.replace(/\s+/g, '');
-                        let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
-                        setTimeout(() => {
-                            muted.removeRole(role);
-                            console.log(`successfully unmuted “${user.displayName}”`)
-                        }, duration)
-                    }
-                });
+                console.log(`created role with name ${newRole.name}`);
+                muteRole = newRole;
             })
             .catch(error => {
                 console.log(error)
@@ -82,8 +56,8 @@ module.exports = class MuteCommand extends Command {
                     .setDescription(`Oops! Something went wrong!`);
                 message.embed(embed);
             });
-        } else {
-            user.addRole(muteRole)
+        }
+        user.addRole(muteRole)
             .then((muted) => {
                 let response = `Successfully muted “${muted.displayName}”`;
                 console.log(response);
@@ -91,7 +65,7 @@ module.exports = class MuteCommand extends Command {
                     .setColor(0xd29846)
                     .setDescription(response);
                 message.embed(embed);
-                if(timeout) {
+                if (timeout) {
                     timeout = timeout.replace(/\s+/g, '');
                     let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
                     setTimeout(() => {
@@ -107,6 +81,5 @@ module.exports = class MuteCommand extends Command {
                     .setDescription(`Oops! Something went wrong!`);
                 message.embed(embed);
             });
-        }
     }
 }  

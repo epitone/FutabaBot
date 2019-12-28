@@ -23,7 +23,6 @@ module.exports = class VoiceUnmute extends Command {
     }
 
     async run(message, { user }) {
-        // TODO: if a user is in a voice channel, should we kick them?
         const muteRole = message.guild.roles.find('name', 'voice muted');
         if(!muteRole) {
             let response = `Looks like the voice mute role hasn't been created yet! Have you muted anyone?`;

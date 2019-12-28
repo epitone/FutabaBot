@@ -13,7 +13,7 @@ module.exports = class Deafen extends Command {
 			args: [
 				{
 					key: 'users',
-					prompt: 'What ',
+					prompt: 'Which member(s) would you like to deafen?',
 					type: 'member',
                     infinite: true,
 				}
@@ -28,8 +28,16 @@ module.exports = class Deafen extends Command {
             if(!member.deaf) {
                 member.setDeaf(true)
                 .then(deafenedUser => {
-                    deafenedStatus.splice(index, 0, true);
+                    console.log(`Successfully deafened ${deafenedUser.displayName}`)
+                    deafenedStatus.push(deafenedUser);
                     index++;
+                    if(index == users.length || deafenedStatus.length == users.length) {
+                        let response = `Successfully deafened ${deafenedStatus.length} out of ${users.length} members`;
+                        const embed = new RichEmbed()
+                            .setColor(0xd29846)
+                            .setDescription(response);
+                        message.embed(embed);
+                    }
                 })
                 .catch(error => {
                     console.log(error)
@@ -38,35 +46,8 @@ module.exports = class Deafen extends Command {
                         .setDescription(`Oops! Something went wrong!`);
                     message.embed(embed);
                 })
-            } else {
-                deafenedStatus.splice(index, 0, false);
-                index++;
             }
         }
-        let response = '';
-
         // TODO: check which members were successfully deafened and then respond accordingly, if a member could not be defeaned, then return that user's name in the response
 	}
 }
-
-// module.exports = {
-// 	name: 'deafen',
-//     cooldown: 5,
-//     description: 'Deafens mentioned user or users.',
-//     args: true,
-// 	execute(message) {
-//         const taggedMembers = message.mentions.members;
-//         for (let [, member] of taggedMembers) {
-//             if(!member.deaf) {
-//                 member.setDeaf(true)
-//                 .then(member => {
-//                     let response = 
-//                     console.log(`Deafened ${member.displayName}`)
-//                 })
-//                 .catch(console.error);
-//             } else {
-//                 message.channel.send(`Attempted to deafen ${member.displayName} but they are already defeaned.`);
-//             }
-//         }
-// 	},
-// };
