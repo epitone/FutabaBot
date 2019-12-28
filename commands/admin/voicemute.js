@@ -24,7 +24,7 @@ module.exports = class VoiceMute extends Command {
 
     async run(message, { user }) {
         // TODO: if a user is in a voice channel, should we kick them?
-        const muteRole = message.guild.roles.find('name', 'voice muted');
+        let muteRole = message.guild.roles.find('name', 'voice muted');
         if(!muteRole) {
             const voiceMutedPermissions = new Permissions(67492928); // see https://discordapi.com/permissions.html#67492928
             message.guild.createRole({
@@ -43,24 +43,12 @@ module.exports = class VoiceMute extends Command {
                     }
                 }
                 console.log(`created role with name ${role.name}`)
-                user.addRole(role)
-                .then((muted) => {
-                    let response = `Successfully muted “${muted.displayName}”`;
-                    console.log(response);
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(response);
-                    message.embed(embed);
-                })
+                muteRole = role;
             })
-            .catch(error => {
-                console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
-            })
-        } else {
+        }
+        user.setVoiceChannel(null) // remove user from any voice channels first
+        .then(removedUser => {
+            console.log(`Successfully removed ${removedUser.displayName} from all voice channels`);
             user.addRole(muteRole)
             .then(updated => {
                 let response = `Successfully muted “${updated.displayName}”`;
@@ -70,13 +58,13 @@ module.exports = class VoiceMute extends Command {
                     .setDescription(response);
                 message.embed(embed);
             })
-            .catch(error => {
-                console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
-            })
-        }
+        })
+        .catch(error => {
+            console.log(error)
+            const embed = new RichEmbed()
+                .setColor(0xd29846)
+                .setDescription(`Oops! Something went wrong!`);
+            message.embed(embed);
+        })
     }
 }  

@@ -24,20 +24,21 @@ module.exports = class MuteCommand extends Command {
                     prompt: 'How long would you like to time them out for? (Format examples: 1h30m, 90m, 2h, 24h, 30s)',
                     type: 'string',
                     default: '',
+                    validate: timeout => timeUtils.validTime(timeout)
                 }
             ]
         });
     }
 
     async run(message, { user, timeout }) {
-        if(timeout && !timeUtils.validTime(timeout)) {
-            console.log("invalid duration");
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(`You provided an invalid duration, please try again.`);
-            message.embed(embed);
-            return;
-        }
+        // if(timeout) {
+        //     console.log("invalid duration");
+        //     const embed = new RichEmbed()
+        //         .setColor(0xd29846)
+        //         .setDescription(`You provided an invalid duration, please try again.`);
+        //     message.embed(embed);
+        //     return;
+        // }
 
         const muteRole = message.guild.roles.find('name', 'muted');
         if(!muteRole) {

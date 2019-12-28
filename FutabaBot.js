@@ -1,12 +1,17 @@
 //TODO: make prefix a var and salt token
-const { CommandoClient } = require('discord.js-commando');
+const Commando = require('discord.js-commando');
 const path = require('path');
 const config = require('./config.json');
+const sqlite = require('sqlite');
 
-const client = new CommandoClient({
+const client = new Commando.Client({
 	commandPrefix: '!',
 	owner: '94705001439436800'
 });
+
+client.setProvider(
+    sqlite.open(path.join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
+).catch(console.error);
 
 client.registry
     .registerDefaultTypes()
