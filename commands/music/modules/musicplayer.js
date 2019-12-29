@@ -1,7 +1,7 @@
 const ytdl = require('ytdl-core-discord');
 const MusicQueue = require('./musicqueue');
 
-module.exports = class MusicPlayer {
+class MusicPlayer {
     constructor() {
         this.repeatSongs = false;
         this.queue = new MusicQueue(); // this is the persistent queue for the server
@@ -17,4 +17,17 @@ module.exports = class MusicPlayer {
         })        
         this.queue.removeAt(0);
     }
+
+    skip() {
+        if(this.dispatcher) this.dispatcher.end();
+    }
+
+    pause() {
+        if(this.dispatcher) this.dispatcher.pause();
+    }
+    
+    resume() {
+        if(this.dispatcher && this.dispatcher.paused) this.dispatcher.resume();
+    }
 }
+module.exports = new MusicPlayer()

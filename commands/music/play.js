@@ -1,14 +1,11 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
 const YouTube = require("discord-youtube-api");
 const config = require('../../config.json');
 const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
-const MusicPlayer = require(`./modules/musicplayer`);
-
-let musicplayer = new MusicPlayer();
+let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class PlayCommand extends Command {
 	constructor(client) {
@@ -25,7 +22,7 @@ module.exports = class PlayCommand extends Command {
                     default: '', // if no argument is given, this is the default
                 }
 			]
-		});
+        });
 	}
 
 	async run(message, { play_argument }) {
@@ -42,12 +39,22 @@ module.exports = class PlayCommand extends Command {
         }
         else if(!isNaN(play_argument)) { // if play_argument is a number
             let songIndex = parseInt(play_argument);
-            while(songIndex != 0) {
+            while(songIndex != 0) { // TODO: skip songs until we reach the song we want
 
             }
-        } else { // we have a url or a search query
+        } else { // we have a url, id, or search query
             let youtube = new YouTube(config.yt_api);
-            let streamObject = stringUtils.validUrl(play_argument) ? await youtube.getVideo(play_argument) : await youtube.searchVideos(play_argument);
+            let streamObject = null;
+            switch(play_argument) {
+                case stringUtils.validUrl(play_argument):
+                    streamObject = await youtube.getVideo(play_argument);
+                    break;
+                case stringUtils.validYTID(play_argument):
+                    streamObject = await youtube.getVideoByID(play_argument);
+                    break;
+                default:
+                    streamObject = await youtube.searchVideos(play_argument);
+            }
             if(streamObject) {
                 let songInfo = new SongInfo(streamObject, message);
                 

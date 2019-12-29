@@ -56,3 +56,8 @@ exports.validUrl = (urlString) => {
     );
     return re_weburl.test(urlString);
 }
+
+exports.validYTID = (idString) => {
+  const regex = /[a-zA-Z0-9_-]{11}/g;
+  return idString.match(regex);
+}
