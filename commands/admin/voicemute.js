@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { RichEmbed, Permissions } = require('discord.js');
 const moment = require('moment');
-const timeUtils = require('../../utils/time-utils');
+const stringUtils = require('../../utils/string-utils');
 
 // TODO: check edge cases for this command
 

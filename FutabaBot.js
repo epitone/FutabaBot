@@ -17,15 +17,18 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['admin', 'Administrative commands'],
+        ['music', 'Music-reelated commands']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands()
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
 client.once('ready', () => {
-	console.log(`Logged in as ${client.user.tag}! (${client.user.id})`);
-	client.user.setActivity('with Commando');
+    console.log(`Logged in as ${client.user.tag}! (${client.user.id})`);
+    client.user.setActivity('with Commando');
 });
 client.on('error', console.error);
 
 client.login(config.token);
+
+process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
