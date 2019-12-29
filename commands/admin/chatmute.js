@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { RichEmbed, Permissions } = require('discord.js');
-const moment = require('moment');
-const timeUtils = require('../../utils/string-utils');
+const discordUtils = require(`../../utils/discord-utils`);
 
 // TODO: check edge cases for this command
 
@@ -45,35 +44,23 @@ module.exports = class ChatMute extends Command {
                 .then((muted) => {
                     let response = `Successfully muted “${muted.displayName}”`;
                     console.log(response);
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(response);
-                    message.embed(embed);
+                    discordUtils.embedResponse(message, response, false);
                 })
             })
             .catch(error => {
                 console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
+                discordUtils.embedResponse(message, `Oops! Something went wrong`, true);
             })
         } else {
             user.addRole(muteRole)
             .then(updated => {
                 let response = `Successfully muted “${updated.displayName}”`;
                 console.log(response);
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(response);
-                message.embed(embed);
+                discordUtils.embedResponse(message, response, false);
             })
             .catch(error => {
                 console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
+                discordUtils.embedResponse(message, `Oops! Something went wrong`, true);
             })
         }
     }

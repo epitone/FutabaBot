@@ -10,7 +10,17 @@ module.exports = class MusicQueue {
         this.head = null;
         this.tail = null;
         this.length = 0;
-        this.currentIndex = 0;
+        this.current_index = 0;
+    }
+
+    // returns the song info of the currently now playing song
+    current() {
+        let walkNode = this.head;
+        let walk;
+        for(walk = 0; walk < this.currentIndex; walk++) {
+            walkNode = walkNode.next;
+        }
+        return walkNode.data;
     }
 
     add(songInfo) {
@@ -27,9 +37,11 @@ module.exports = class MusicQueue {
     }
 
     isLast() {
-        return this.length == 0;
+        return this.current_index == this.length;
     }
 
+    // Removes the node at the specified index
+    // Should we return it?
     removeAt(index) { // removes node at a specified index
         if(index < 0 || index > this.length) {
             throw new RangeError(`${index} is out of bounds`);
@@ -49,5 +61,9 @@ module.exports = class MusicQueue {
             }
             this.length--;
         }
+    }
+
+    next(skip_count = 1) {
+        this.current_index += skip_count; // move to the specified item in the queue
     }
 }

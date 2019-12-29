@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const discordUtils = require('../../utils/discord-utils')
 
 module.exports = class CreateRole extends Command {
 	constructor(client) {
@@ -21,21 +21,17 @@ module.exports = class CreateRole extends Command {
 	}
 
 	run(message, { role }) {
-        /// do stuff here
+        // TODO: check if role doesn't already exist?
         const server = message.guild;
         server.createRole({ name: role })
         .then((role) => {
-			const embed = new RichEmbed()
-				.setColor(0xd29846)
-				.setDescription(`Created new role with name “${role.name}”`);
-            message.embed(embed);
+			let response = `Created new role with name “${role.name}”`
+			console.log(response)
+			discordUtils.embedResponse(message, response, false);
         })
         .catch((error) => {
 			console.log(error)
-			const embed = new RichEmbed()
-				.setColor(0xd29846)
-				.setDescription(`Oops! Something went wrong!`);
-            message.embed(embed);
+			discordUtils.embedResponse(message, `Oops! Something went wrong`, true);
         });
 	}
 }

@@ -1,13 +1,13 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const discordUtils = require(`../../utils/discord-utils`)
 
 module.exports = class CreateVoiceChan extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'createvoicechan',
 			aliases: ['cvch'],
-			group: 'admin', //the command group the command is a part of.
-			memberName: 'createvoicechan', //the name of the command within the group (this can be different from the name).
+			group: 'admin', 
+			memberName: 'createvoicechan', 
 			description: 'Creates a voice channel with a given name.',
 			args: [
 				{
@@ -24,18 +24,12 @@ module.exports = class CreateVoiceChan extends Command {
         server.createChannel(voice_channel, { type : 'voice'})
         .then((newVoiceChannel) => {
             let response = `Created “#${newVoiceChannel.name}”`;
-            console.log(response);
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(response);
-            message.embed(embed);
+			console.log(response);
+			discordUtils.embedResponse(messagee, response, false)
         })
         .catch(error => {
-            console.log(error)
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(`Oops! Something went wrong!`);
-            message.embed(embed);
+			console.log(error)
+			discordUtils.embedResponse(messagee, `Oops! Something went wrong`, true)
         });
 	}
 }

@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
+const discordUtils = require(`../../utils/discord-utils`)
 
 module.exports = class Deafen extends Command {
 	constructor(client) {
@@ -41,10 +42,7 @@ module.exports = class Deafen extends Command {
                 })
                 .catch(error => {
                     console.log(error)
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(`Oops! Something went wrong!`);
-                    message.embed(embed);
+                    discordUtils.embedResponse(messagee, `Oops! Something went wrong`, true)
                 })
             }
         }
