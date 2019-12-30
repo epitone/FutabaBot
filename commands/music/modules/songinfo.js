@@ -1,3 +1,5 @@
+const string_utils = require(`../../../utils/string-utils`)
+
 module.exports = class SongInfo {
     constructor (streamObject, message) {
         this.provider = "";
@@ -5,6 +7,7 @@ module.exports = class SongInfo {
         this.title = streamObject.title;
         this.url = streamObject.url;
         this.thumbnail = streamObject.thumbnail;
-        this.totalTime = new Date(streamObject.durationSeconds * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0];
+        this.total_time = streamObject.length
+        this.requester = message.author.tag
     }
 }

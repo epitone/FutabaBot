@@ -1,18 +1,18 @@
 // Utility functions for stripping datetime from strings
 
-exports.validTime = (timeString) => {
+exports.validTime = (time_string) => {
     const regex = /((\d{1,2}h\s?)?(\d{1,2}m\s?)?(\d{1,2}s\s?)?)/g;
-    let isNumeric = /^\d*$/.test(timeString)
+    let isNumeric = /^\d*$/.test(time_string)
     
     if(!isNumeric) { // if string contains non-numeric characters
-        return timeString.match(regex);
+        return time_string.match(regex);
     }
     return false;
 };
 
 
 // Shoutout to https://gist.github.com/dperini/729294
-exports.validUrl = (urlString) => {
+exports.validUrl = (url_string) => {
     var re_weburl = new RegExp(
         "^" +
           // protocol identifier (optional)
@@ -54,10 +54,28 @@ exports.validUrl = (urlString) => {
           "(?:[/?#]\\S*)?" +
         "$", "i"
     );
-    return re_weburl.test(urlString);
+    return re_weburl.test(url_string);
 }
 
-exports.validYTID = (idString) => {
+exports.validYTID = (id_string) => {
   const regex = /[a-zA-Z0-9_-]{11}/g;
-  return idString.match(regex);
+  return id_string.match(regex);
+}
+
+exports.fancy_time = (time_seconds) => {
+    // Hours, minutes and seconds
+    var hrs = ~~(time_seconds / 3600); // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators for ~~ meaning (it's double bitwise NOT)
+    var mins = ~~((time_seconds % 3600) / 60);
+    var secs = ~~time_seconds % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    var ret = "";
+
+    if (hrs > 0) {
+        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    }
+
+    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    ret += "" + secs;
+    return ret;
 }

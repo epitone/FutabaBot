@@ -17,14 +17,17 @@ class MusicPlayer {
         let song = this.queue.current();
         let stream = ytdl(song.url, { filter: `audioonly`});
 
-        this.dispatcher = connection.playStream(stream);
+        this.dispatcher = connection.playStream(stream, {
+            volume: this.volume,
+        });
         this.is_stopped = false;
         console.log(`now playing: “${song.title}”`);
         discordUtils.embedResponse(message, {
             'author' : `Playing song #${this.queue.current_index + 1}`,
             'title' : song.title,
             'url' : song.url,
-            'color' : 'ORANGE'
+            'color' : 'ORANGE',
+            'footer' : `${song.total_time} | ${song.requester}`
         })
 
         if(this.auto_delete) {
@@ -54,6 +57,13 @@ class MusicPlayer {
     
     resume() {
         if(this.dispatcher && this.dispatcher.paused) this.dispatcher.resume();
+    }
+
+    setVolume(volume_level) {
+        this.volume = volume_level / 100;
+        if(this.dispatcher) {
+            this.dispatcher.setVolume(this.volume);
+        }
     }
 }
 module.exports = new MusicPlayer()
