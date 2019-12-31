@@ -28,14 +28,13 @@ module.exports = class QueueCommand extends Command {
 	async run(message, { query_string }) {
         const { voiceChannel } = message.member;
         if(!voiceChannel) {
-            let response = `You need to be in a voice channel to run this command.`
-            console.log(response);
+            let response = `You need to be in a voice channel on this server to run this command.`
+            console.log(`${message.author.tag} attempted to queue up a song without being in a voice channel.`);
 
-            let options = new Map()
-            options.set('color', 'RED');
-            options.set('description', response);
-
-            discordUtils.embedResponse(message, options);
+            discordUtils.embedResponse(message, {
+                'color': `RED`,
+                'description': response
+            });
             return;
         }
         let youtube = new YouTube(config.yt_api);
@@ -61,11 +60,17 @@ module.exports = class QueueCommand extends Command {
                 color : 'ORANGE'
             })
             console.log(`added “${songInfo.title}” to queue position ${musicplayer.queue.length}`);
-            
-            if(!message.guild.voiceConnection) {
-                voiceChannel.join().then(connection => {
-                    musicplayer.play(connection, message) // start playing
-                });
+            if(musicplayer.is_stopped) {
+                discordUtils.embedResponse(message, {
+                    color : 'RED',
+                    description: `A song has been queued but the player is stopped. To start playback use the \`.play\` command.`
+                })  
+            } else {
+                if(!message.guild.voiceConnection) {
+                    voiceChannel.join().then(connection => {
+                        musicplayer.play(connection, message) // start playing
+                    });
+                }
             }
         } else {
             discordUtils.embedResponse(message, `I couldn't find that song!`, true);

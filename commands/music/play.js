@@ -37,8 +37,16 @@ module.exports = class PlayCommand extends Command {
             return;
         }
 
-        if(!play_argument) {  // if there is no play argument, advance the queue
+        if(!play_argument) {  // if there is no play argument, advance the queue and start playback
             musicplayer.skip(1);
+            let connection = message.guild.voiceChannel
+            if(connection) { // if we're in the voice chat, start playback
+                musicplayer.play(connection, message)
+            } else { // join voice chat and start playback
+                voiceChannel.join().then(connection => {
+                    musicplayer.play(connection, message)
+                });
+            }
         }
         else if(!isNaN(play_argument)) { // if play_argument is a number
             let songIndex = parseInt(play_argument);
