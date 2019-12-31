@@ -9,7 +9,6 @@ class MusicPlayer {
         this.dispatcher = null;
         this.connection = null; // store the voice channel connection so we can access it later
         this.volume = 1;
-        this.auto_delete = false; // we do not autodelete songs unless told to
         this.is_stopped = true;
     }
 
@@ -30,16 +29,13 @@ class MusicPlayer {
             'footer' : `${song.total_time} | ${song.requester}`
         })
 
-        if(this.auto_delete) {
-            this.queue.removeAt(this.queue.current_index);
-        }
-        this.queue.next()
-
-        this.dispatcher.on('end', () => {
-            if(!this.queue.isLast()) this.play(connection);
-            else {
+        this.dispatcher.on('end', () => { // on song finish (or skip)
+            if(this.queue.isLast()) {
                 this.is_stopped = true;
-                this.connection.disconnect();
+                this.connection.disconnect;
+            } else {
+                this.queue.next();
+                this.play(connection, message);
             }
         })
     }

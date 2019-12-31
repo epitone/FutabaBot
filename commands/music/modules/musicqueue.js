@@ -13,13 +13,19 @@ module.exports = class MusicQueue {
         this.current_index = 0;
     }
 
-    // returns the song info of the currently now playing song
+    // returns the song info of the currently playing song
     current() {
         let walkNode = this.head;
         let walk;
-        for(walk = 0; walk < this.currentIndex; walk++) {
-            walkNode = walkNode.next;
+        for(walk = 0; walk < this.current_index - 1; walk++) {
+            
         }
+        while(walk < this.current_index - 1) {
+            console.log(`walk count: ${walk}`)
+            walkNode = walkNode.next;
+            walk++;
+        }
+        console.log(`returning ${walkNode.data}`);
         return walkNode.data;
     }
 
@@ -37,7 +43,7 @@ module.exports = class MusicQueue {
     }
 
     isLast() {
-        return this.current_index == this.length;
+        return this.current_index == this.length - 1;
     }
 
     // Removes the node at the specified index

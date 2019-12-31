@@ -29,19 +29,20 @@ module.exports = class PlayCommand extends Command {
         const { voiceChannel } = message.member;
         if(!voiceChannel) {
             let response = `You need to be in a voice channel on this server to run this command.`;
-            console.log(response);
-            discordUtils.embedResponse(message, response, true);
+            console.log(`${message.author.tag} attempted to play music without being in a voice channel.`);
+            discordUtils.embedResponse(message, {
+                'color': `RED`,
+                'description': response
+            });
             return;
         }
 
         if(!play_argument) {  // if there is no play argument, advance the queue
-            // TODO: music  player skip
+            musicplayer.skip(1);
         }
         else if(!isNaN(play_argument)) { // if play_argument is a number
             let songIndex = parseInt(play_argument);
-            while(songIndex != 0) { // TODO: skip songs until we reach the song we want
-
-            }
+            musicplayer.skip(songIndex);
         } else { // we have a url, id, or search query
             let youtube = new YouTube(config.yt_api);
             let streamObject = null;
@@ -59,15 +60,26 @@ module.exports = class PlayCommand extends Command {
                 let songInfo = new SongInfo(streamObject, message);
                 
                 musicplayer.queue.add(songInfo); // add song to the player queue
-                console.log(`added “${songInfo.title}” to queue position ${musicplayer.queue.length}`);
+                console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queue.current_index + 1}`);
+
+                discordUtils.embedResponse(message, {
+                    'author' : `Queued song #${musicplayer.queue.current_index + 1}`,
+                    'title' : songInfo.title,
+                    'url' : songInfo.url,
+                    'color' : 'ORANGE',
+                    'footer' : `${songInfo.total_time} | ${songInfo.requester}`
+                })
                 
                 if(!message.guild.voiceConnection) { // if we're not in a voice channel, join one
                     voiceChannel.join().then(connection => {
-                        musicplayer.play(connection, message) // start playing
+                        musicplayer.play(connection, message)
                     });
                 }
             } else {
-                discordUtils.embedResponse(message, `I couldn't find that song!`, true);
+                discordUtils.embedResponse(message, {
+                    'color': `RED`,
+                    'description': 'I couldn\'t find that song!'
+                });
             }
         }
     }
