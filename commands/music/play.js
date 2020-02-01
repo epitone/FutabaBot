@@ -40,7 +40,7 @@ module.exports = class PlayCommand extends Command {
         if(!play_argument) {
             musicplayer.skip(1);
             let connection = message.guild.voiceChannel
-            if(connection) { // if we're in the voice chat, start playback
+            if(connection) {
                 musicplayer.play(connection, message)
             } else { // join voice chat and start playback
                 voiceChannel.join().then(connection => {
@@ -48,7 +48,7 @@ module.exports = class PlayCommand extends Command {
                 });
             }
         }
-        else if(!isNaN(play_argument)) { // if play_argument is a number
+        else if(!isNaN(play_argument)) {
             let songIndex = parseInt(play_argument);
             musicplayer.skip(songIndex);
         } else { // we have a url, id, or search query
@@ -67,18 +67,18 @@ module.exports = class PlayCommand extends Command {
             if(streamObject) {
                 let songInfo = new SongInfo(streamObject, message);
                 
-                musicplayer.queue.add(songInfo); // add song to the player queue
-                console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queue.current_index + 1}`);
+                musicplayer.queue.add(songInfo);
+                console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queue.length}`);
 
                 discordUtils.embedResponse(message, {
-                    'author' : `Queued song #${musicplayer.queue.current_index + 1}`,
+                    'author' : `Queued song #${musicplayer.queue.length}`,
                     'title' : songInfo.title,
                     'url' : songInfo.url,
                     'color' : 'ORANGE',
                     'footer' : `${songInfo.total_time} | ${songInfo.requester}`
                 })
                 
-                if(!message.guild.voiceConnection) { // if we're not in a voice channel, join one
+                if(!message.guild.voiceConnection) {
                     voiceChannel.join().then(connection => {
                         musicplayer.play(connection, message)
                     });

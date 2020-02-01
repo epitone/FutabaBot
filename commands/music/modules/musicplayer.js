@@ -7,7 +7,6 @@ class MusicPlayer {
         this.repeat_songs = false;
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
-        this.connection = null; // store the voice channel connection so we can access it later
         this.volume = 1;
         this.is_stopped;
     }
@@ -29,9 +28,9 @@ class MusicPlayer {
             'footer' : `${song.total_time} | ${song.requester}`
         })
 
-        this.dispatcher.on('end', () => { // on song finish (or skip)
+        this.dispatcher.on('end', () => {
             if(this.queue.isLast()) {
-                this.connection.disconnect;
+                connection.disconnect;
             } else {
                 this.queue.next();
                 this.play(connection, message);
@@ -39,16 +38,15 @@ class MusicPlayer {
         })
     }
 
-    skip(skip_count) {
+    skip(skip_count = 1) {
         if(this.dispatcher) {
-            this.queue.next(skip_count);
+            this.queue.next(skip_count - 1);
             this.dispatcher.end();
         }
     }
 
     stop() {
         this.is_stopped = true;
-
     }
 
     pause() {

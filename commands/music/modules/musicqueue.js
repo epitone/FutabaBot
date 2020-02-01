@@ -15,16 +15,17 @@ module.exports = class MusicQueue {
 
     current() {
         let walkNode = this.head;
-        let walk;
-        while(walk < this.current_index - 1) { // TODO: if we reach the end of the list, loop around to the beginning and continue
-            if(walkNode.next == null) { // start over from the head
+        let walk = 0;
+        while(walk < this.current_index) {
+            if(walkNode.next == null) {
+                this.current_index = 0;
                 walkNode = this.head;
             } else {
                 walkNode = walkNode.next;
             }
             walk++;
         }
-        console.log(`returning ${walkNode.data}`);
+        console.log('returning data: ', walkNode.data);
         return walkNode.data;
     }
 
@@ -45,7 +46,7 @@ module.exports = class MusicQueue {
     }
 
     // Should we return this node?
-    removeAt(index) { // removes node at a specified index
+    removeAt(index) {
         if(index < 0 || index > this.length) {
             throw new RangeError(`${index} is out of bounds`);
         } else {
