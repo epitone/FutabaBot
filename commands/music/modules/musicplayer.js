@@ -9,6 +9,7 @@ class MusicPlayer {
         this.dispatcher = null;
         this.volume = 1;
         this.is_stopped;
+        this.repeat_current_song = false;
     }
 
     async play(connection, message) {
