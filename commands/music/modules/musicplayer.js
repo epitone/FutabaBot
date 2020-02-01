@@ -9,7 +9,7 @@ class MusicPlayer {
         this.dispatcher = null;
         this.connection = null; // store the voice channel connection so we can access it later
         this.volume = 1;
-        this.is_stopped = true;
+        this.is_stopped;
     }
 
     async play(connection, message) {
@@ -31,7 +31,6 @@ class MusicPlayer {
 
         this.dispatcher.on('end', () => { // on song finish (or skip)
             if(this.queue.isLast()) {
-                this.is_stopped = true;
                 this.connection.disconnect;
             } else {
                 this.queue.next();
@@ -45,6 +44,11 @@ class MusicPlayer {
             this.queue.next(skip_count);
             this.dispatcher.end();
         }
+    }
+
+    stop() {
+        this.is_stopped = true;
+
     }
 
     pause() {

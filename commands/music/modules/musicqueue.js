@@ -13,16 +13,15 @@ module.exports = class MusicQueue {
         this.current_index = 0;
     }
 
-    // returns the song info of the currently playing song
     current() {
         let walkNode = this.head;
         let walk;
-        for(walk = 0; walk < this.current_index - 1; walk++) {
-            
-        }
-        while(walk < this.current_index - 1) {
-            console.log(`walk count: ${walk}`)
-            walkNode = walkNode.next;
+        while(walk < this.current_index - 1) { // TODO: if we reach the end of the list, loop around to the beginning and continue
+            if(walkNode.next == null) { // start over from the head
+                walkNode = this.head;
+            } else {
+                walkNode = walkNode.next;
+            }
             walk++;
         }
         console.log(`returning ${walkNode.data}`);
@@ -32,7 +31,6 @@ module.exports = class MusicQueue {
     add(songInfo) {
         let node = new Node(songInfo);
         if(!this.head) {
-            // this is our first node so we point head and tail to the same object
             this.head = node;
             this.tail = node;
         } else {
@@ -46,8 +44,7 @@ module.exports = class MusicQueue {
         return this.current_index == this.length - 1;
     }
 
-    // Removes the node at the specified index
-    // Should we return it?
+    // Should we return this node?
     removeAt(index) { // removes node at a specified index
         if(index < 0 || index > this.length) {
             throw new RangeError(`${index} is out of bounds`);
@@ -70,6 +67,6 @@ module.exports = class MusicQueue {
     }
 
     next(skip_count = 1) {
-        this.current_index += skip_count; // move to the specified item in the queue
+        this.current_index += skip_count;
     }
 }
