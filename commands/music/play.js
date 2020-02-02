@@ -51,7 +51,7 @@ module.exports = class PlayCommand extends Command {
         else if(!isNaN(play_argument)) {
             let songIndex = parseInt(play_argument);
             musicplayer.skip(songIndex);
-        } else { // we have a url, id, or search query
+        } else {
             let youtube = new YouTube(config.yt_api);
             let streamObject = null;
             switch(play_argument) {

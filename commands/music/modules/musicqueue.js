@@ -10,15 +10,20 @@ module.exports = class MusicQueue {
         this.head = null;
         this.tail = null;
         this.length = 0;
-        this.current_index = 0;
+        this._current_index = 0;
     }
 
+    get current_index() { return this._current_index; }
+
+    set current_index(value) {
+        if(this.length == 0) this._current_index = 0
+        else { this._current_index = value %= this.length }
+    }
     current() {
         let walkNode = this.head;
         let walk = 0;
         while(walk < this.current_index) {
             if(walkNode.next == null) {
-                this.current_index = 0;
                 walkNode = this.head;
             } else {
                 walkNode = walkNode.next;
@@ -69,5 +74,6 @@ module.exports = class MusicQueue {
 
     next(skip_count = 1) {
         this.current_index += skip_count;
+        console.log("Current Index (After Skip): " + this.current_index);
     }
 }
