@@ -74,6 +74,9 @@ module.exports = class MusicQueue {
 
     next(skip_count = 1) {
         this.current_index += skip_count;
-        console.log("Current Index (After Skip): " + this.current_index);
+    }
+    
+    count() {
+        return this.length
     }
 }

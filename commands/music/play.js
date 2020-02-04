@@ -38,14 +38,21 @@ module.exports = class PlayCommand extends Command {
         }
 
         if(!play_argument) {
-            musicplayer.skip(1);
-            let connection = message.guild.voiceChannel
-            if(connection) {
-                musicplayer.play(connection, message)
-            } else { // join voice chat and start playback
-                voiceChannel.join().then(connection => {
+            if(musicplayer.queue.count() == 0) {
+                discordUtils.embedResponse(message, {
+                    'author' : `It doesn't look like there are any songs in the queue.`,
+                    'color' : 'RED',
+                })
+            } else {
+                musicplayer.skip(1);
+                let connection = message.guild.voiceChannel
+                if(connection) {
                     musicplayer.play(connection, message)
-                });
+                } else { // join voice chat and start playback
+                    voiceChannel.join().then(connection => {
+                        musicplayer.play(connection, message)
+                    });
+                }
             }
         }
         else if(!isNaN(play_argument)) {

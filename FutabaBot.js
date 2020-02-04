@@ -28,6 +28,7 @@ client.once('ready', () => {
     client.user.setActivity('with Commando');
 });
 client.on('error', console.error);
+client.on('debug', console.log)
 
 client.login(config.token);
 

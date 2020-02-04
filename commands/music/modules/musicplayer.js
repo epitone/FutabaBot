@@ -2,14 +2,21 @@ const ytdl = require('ytdl-core');
 const MusicQueue = require('./musicqueue');
 const discordUtils = require ('../../../utils/discord-utils');
 
+var StreamState = {
+    Queued: 1,
+    Playing: 2,
+    Completed: 3,
+}
+
 class MusicPlayer {
     constructor() {
-        this.repeat_songs = false;
+        this.repeat_playlist = false;
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
         this.volume = 1;
         this.is_stopped;
         this.repeat_current_song = false;
+        this.autoplay = false;
     }
 
     async play(connection, message) {
@@ -30,11 +37,16 @@ class MusicPlayer {
         })
 
         this.dispatcher.on('end', () => {
-            if(this.queue.isLast()) {
-                connection.disconnect;
-            } else {
-                this.queue.next();
-                this.play(connection, message);
+            if(!this.is_stopped) {
+                if(this.repeat_current_song) {
+                    this.play(connection, message);
+                }
+                else if(this.queue.isLast() && !this.repeat_playlist && !this.autoplay) {
+                    connection.disconnect;
+                } else {
+                    this.queue.next();
+                    this.play(connection, message);
+                }
             }
         })
     }
@@ -48,6 +60,9 @@ class MusicPlayer {
 
     stop() {
         this.is_stopped = true;
+        this.autoplay = false;
+
+        this.dispatcher.end()
     }
 
     pause() {
@@ -63,6 +78,14 @@ class MusicPlayer {
         if(this.dispatcher) {
             this.dispatcher.setVolume(this.volume);
         }
+    }
+
+    toggleAutoplay() {
+        return this.autoplay = !this.autoplay;
+    }
+    
+    toggleRepeatSong() {
+        return this.repeat_current_song = !this.repeat_current_song;
     }
 }
 module.exports = new MusicPlayer()
