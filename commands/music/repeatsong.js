@@ -27,7 +27,7 @@ module.exports = class RepeatSongCommand extends Command {
                 'description': response
             });
             return;
-        } else {
+        } else if(musicplayer.queue.current() != null) {
             if(musicplayer.toggleRepeatSong()) {
                 let current_song = musicplayer.queue.current();
                 discordUtils.embedResponse(message, {
@@ -35,7 +35,7 @@ module.exports = class RepeatSongCommand extends Command {
                     'title' : current_song.title,
                     'url' : current_song.url,
                     'color' : 'ORANGE',
-                    'footer' : `${songInfo.total_time} | ${songInfo.provider} | ${songInfo.requester}`
+                    'footer' : `${current_song.total_time} | ${current_song.provider} | ${current_song.requester}`
                 })
             } else {
                 discordUtils.embedResponse(message, {
@@ -43,10 +43,10 @@ module.exports = class RepeatSongCommand extends Command {
                     'color' : 'ORANGE'
                 })
             }
-            let response = `Playback stopped.`;
-            console.log(`${message.author.tag} stopped music playback.`);
+        } else {
+            let response = `There is currently no song playing.`;
             discordUtils.embedResponse(message, {
-                'color': `ORANGE`,
+                'color': `RED`,
                 'description': response
             });
         }

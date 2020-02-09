@@ -30,8 +30,8 @@ module.exports = class MusicQueue {
             }
             walk++;
         }
-        console.log('returning data: ', walkNode.data);
-        return walkNode.data;
+        console.log('returning data: ', walkNode ? walkNode.data : null);
+        return walkNode? walkNode.data : null;
     }
 
     add(songInfo) {
