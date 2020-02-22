@@ -2,12 +2,6 @@ const ytdl = require('ytdl-core');
 const MusicQueue = require('./musicqueue');
 const discordUtils = require ('../../../utils/discord-utils');
 
-var StreamState = {
-    Queued: 1,
-    Playing: 2,
-    Completed: 3,
-}
-
 class MusicPlayer {
     constructor() {
         this.repeat_playlist = false;
@@ -17,23 +11,24 @@ class MusicPlayer {
         this.is_stopped;
         this.repeat_current_song = false;
         this.autoplay = false;
+        this.current_song = null;
     }
 
     async play(connection, message) {
-        let song = this.queue.current();
-        let stream = ytdl(song.url, { filter: `audioonly`});
+        this.current_song = this.queue.current();
+        let stream = ytdl(this.current_song.url, { filter: `audioonly`});
 
         this.dispatcher = connection.playStream(stream, {
             volume: this.volume,
         });
         this.is_stopped = false;
-        console.log(`now playing: “${song.title}”`);
+        console.log(`now playing: “${this.current_song.title}”`);
         discordUtils.embedResponse(message, {
             'author' : `Playing song #${this.queue.current_index + 1}`,
-            'title' : song.title,
-            'url' : song.url,
+            'title' : this.current_song.title,
+            'url' : this.current_song.url,
             'color' : 'ORANGE',
-            'footer' : `${song.total_time} | ${song.requester}`
+            'footer' : `${this.current_song.total_time} | ${this.current_song.requester}`
         })
 
         this.dispatcher.on('end', () => {
@@ -62,7 +57,8 @@ class MusicPlayer {
         this.is_stopped = true;
         this.autoplay = false;
 
-        this.dispatcher.end()
+        if(this.dispatcher) this.dispatcher.end()
+        else return;
     }
 
     pause() {
@@ -79,7 +75,9 @@ class MusicPlayer {
             this.dispatcher.setVolume(this.volume);
         }
     }
-
+    current() {
+        return this.current_song;
+    }
     toggleAutoplay() {
         return this.autoplay = !this.autoplay;
     }

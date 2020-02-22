@@ -58,7 +58,7 @@ module.exports = class QueueCommand extends Command {
                 title : songInfo.title,
                 url : songInfo.url,
                 color : 'ORANGE'
-            })
+            });
             console.log(`added “${songInfo.title}” to queue position ${musicplayer.queue.length}`);
             if(musicplayer.is_stopped) {
                 discordUtils.embedResponse(message, {

@@ -1,10 +1,6 @@
 const { Command } = require('discord.js-commando');
-const YouTube = require("discord-youtube-api");
-const config = require('../../config.json');
-const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
 let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class StopCommand extends Command {
@@ -28,7 +24,7 @@ module.exports = class StopCommand extends Command {
             });
             return;
         } else {
-            musicplayer.stop()
+            musicplayer.stop();
             let response = `Playback stopped.`;
             console.log(`${message.author.tag} stopped music playback.`);
             discordUtils.embedResponse(message, {
