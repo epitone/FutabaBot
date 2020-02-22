@@ -30,8 +30,18 @@ module.exports = class MusicQueue {
             }
             walk++;
         }
-        console.log('returning data: ', walkNode ? walkNode.data : null);
-        return walkNode? walkNode.data : null;
+        // console.log('returning data: ', walkNode ? walkNode.data : null);
+        if(walkNode) {
+            return {
+                index: walk,
+                song: walkNode.data,
+            };
+        } else {
+            return {
+                index: -1,
+                song: null,
+            };
+        }
     }
 
     add(songInfo) {
@@ -69,6 +79,31 @@ module.exports = class MusicQueue {
                 previous = current.next;
             }
             this.length--;
+        }
+    }
+
+    removeSong(song) {
+        if(this.head == null) return false;
+        
+        let walk_node = this.head;
+        if(walk_node.data == song) {
+            if(this.head == this.tail) {
+                this.head, this.tail = null;
+                this.length--;
+            } else {
+                this.head = this.head.next;
+                this.length--;
+            }
+            return;
+        }
+        while(walk_node != null && walk_node.next.data != song)
+            walk_node = walk_node.next
+        if(walk_node.next != null) {
+            if(walk_node.next == this.tail)
+                this.tail = walk_node;
+            walk_node.next = walk_node.next.next;
+            this.length--;
+            return;
         }
     }
 

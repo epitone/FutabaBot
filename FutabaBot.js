@@ -17,7 +17,7 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['admin', 'Administrative commands'],
-        ['music', 'Music-reelated commands']
+        ['music', 'Music-related commands']
     ])
     .registerDefaultGroups()
     .registerDefaultCommands()

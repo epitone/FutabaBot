@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
-const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
 let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class NowPlayingCommand extends Command {
