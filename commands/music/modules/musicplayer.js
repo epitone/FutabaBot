@@ -38,7 +38,7 @@ class MusicPlayer {
                 current_index: this.queue.current_index,
             }
             if(!playerState.stopped) {
-                if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
+                if(this.auto_delete && !this.repeat_urrent_song && !this.repeat_playlist && this.data != null) {
                     this.queue.removeSong(this.data.song);
                 }
                 if(this.repeat_current_song) {

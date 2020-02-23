@@ -1,4 +1,5 @@
 # FutabaBot
+![david dependency tracker](https://david-dm.org/epitone/FutabaBot.svg)
 
 a personal discord bot
 

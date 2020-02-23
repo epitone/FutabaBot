@@ -1,13 +1,28 @@
 //TODO: salt token
 const Commando = require('discord.js-commando');
 const path = require('path');
-const config = require('./config.json');
+const token = require('./config.json').token;
 const sqlite = require('sqlite');
 
 const client = new Commando.Client({
-	commandPrefix: '!',
+	commandPrefix: '.',
 	owner: '94705001439436800'
 });
+
+client
+    .on('error', console.error)
+    .on('warn', console.warn)
+    .on('debug', console.log)
+    .on('ready', () => {
+        console.log(`Client ready; logged in as ${client.user.tag}! (${client.user.id})`);
+        client.user.setActivity('with Commando');
+    })
+    .on('disconnect', () => { console.warn('Disconnected!'); })
+    .on('reconnecting', () => { console.warn('Reconnecting...'); })
+    .on('commandError', (cmd, err) => {
+        if(err instanceof Commando.FriendlyError) return;
+        console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
+    })
 
 client.setProvider(
     sqlite.open(path.join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
@@ -23,13 +38,6 @@ client.registry
     .registerDefaultCommands()
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
-client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}! (${client.user.id})`);
-    client.user.setActivity('with Commando');
-});
-client.on('error', console.error);
-client.on('debug', console.log)
-
-client.login(config.token);
+client.login(token);
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));

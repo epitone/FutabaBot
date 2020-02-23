@@ -102,7 +102,7 @@ module.exports = class MusicQueue {
             if(walk_node.next == this.tail)
                 this.tail = walk_node;
             walk_node.next = walk_node.next.next;
-            this.length--;
+            his.length--;
             return;
         }
     }
