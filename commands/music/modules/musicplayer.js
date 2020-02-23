@@ -8,10 +8,10 @@ class MusicPlayer {
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
         this.volume = 1;
-        this.is_stopped;
+        this.stopped = false;
         this.repeat_current_song = false;
-        this.autoplay = false;
         this.auto_delete = false;
+        this.manual_index = false;
     }
 
     async play(connection, message) {
@@ -21,7 +21,7 @@ class MusicPlayer {
         this.dispatcher = connection.playStream(stream, {
             volume: this.volume,
         });
-        this.is_stopped = false;
+        this.stopped = false;
         console.log(`now playing: “${this.data.song.title}”`);
         discordUtils.embedResponse(message, {
             'author' : `Playing song #${this.queue.current_index + 1}`,
@@ -34,18 +34,18 @@ class MusicPlayer {
         this.dispatcher.on('end', () => {
             let playerState = {
                 queue_length: this.queue.length,
-                stopped: this.is_stopped,
+                stopped: this.stopped,
                 current_index: this.queue.current_index,
             }
             if(!playerState.stopped) {
-                if(this.auto_delete && !this.repeat_urrent_song && !this.repeat_playlist && this.data != null) {
+                if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
                     this.queue.removeSong(this.data.song);
                 }
                 if(this.repeat_current_song) {
                     this.play(connection, message);
                 }
-                else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist && !this.autoplay) {
-                    console.log("stopping playback because autoplay and repeat playlist are disabled.");
+                else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist) {
+                    console.log("stopping playback because repeat playlist is disabled.");
                     this.stop();
                 } else {
                     this.queue.next();
@@ -55,21 +55,49 @@ class MusicPlayer {
         });
     }
 
+    enqueue(song) {
+        if(song != null) {
+            this.queue.add(song);
+            return this.queue.length - 1;
+        }
+        else return -1;
+
+    }
+
+    enqueueNext(song) {
+        if(song != null) {
+            let return_index = this.queue.addNext(song);
+            if(this.stopped) {
+                this.setIndex(return_index);
+            }
+            return return_index;
+        } else {
+            return -1;
+        }
+    }
+
+    setIndex(index) {
+        if(index < 0) throw new RangeError(`${index} is out of bounds`);
+        if(this.auto_delete && index >= this.queue.current_index && index > 0) index--;
+        this.queue.current_index = index;
+        this.manual_index = true;
+        this.stopped = false;
+    }
+
     skip(skip_count = 1) {
-        if(!this.is_stopped) {
-            if(!this.repeat_playlist && !this.autoplay && this.queue.isLast()) {
+        if(!this.stopped) {
+            if(!this.repeat_playlist && this.queue.isLast()) {
                 this.stop();
                 return;
             } else this.queue.next(skip_count - 1);
         } else this.queue.current_index = 0;
         
-        this.is_stopped = false;
+        this.stopped = false;
         this.dispatcher.end();
     }
 
     stop() {
-        this.is_stopped = true;
-        this.autoplay = false;
+        this.stopped = true;
 
         if(this.dispatcher) this.dispatcher.connection.disconnect
         else return;
@@ -92,18 +120,11 @@ class MusicPlayer {
     current() {
         return this.data;
     }
-    toggleAutoplay() {
-        this.autoplay = !this.autoplay;
-        return this.autoplay;
-    }
-    
     toggleRepeatSong() {
-        this.repeat_current_song = !this.repeat_current_song;
-        return this.repeat_current_song;
+        return this.repeat_current_song = !this.repeat_current_song;
     }
     toggleSongAutodelete() {
-        this.auto_delete = !this.auto_delete;
-        return this.auto_delete;
+        return this.auto_delete = !this.auto_delete;
     }
 }
 module.exports = new MusicPlayer()

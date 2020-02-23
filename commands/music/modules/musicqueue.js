@@ -56,6 +56,24 @@ module.exports = class MusicQueue {
         this.length++;
     }
 
+    addNext(songInfo) {
+        let current_song = this.current().song;
+        if(!current_song) {
+            this.add(songInfo);
+            return this.length;
+        }
+        let index = 0;
+        let walk_node = this.head;
+        while(index < this.current_index) {
+            walk_node = walk_node.next;
+            index++;
+        }
+        let new_node = new Node(songInfo);
+        new_node.next = walk_node.next;
+        walk_node.next = new_node;
+        this.length++;
+        return this.current_index + 1; // return the index to play next
+    }
     isLast() {
         return this.current_index == this.length - 1;
     }

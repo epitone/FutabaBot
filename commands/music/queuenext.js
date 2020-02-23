@@ -7,18 +7,18 @@ const discordUtils = require ('../../utils/discord-utils');
 const SongInfo = require(`./modules/songinfo`);
 let musicplayer = require(`./modules/musicplayer`);
 
-module.exports = class QueueCommand extends Command {
+module.exports = class QueueNextCommand extends Command {
 	constructor(client) {
 		super(client, {
-            name: 'queue',
-            aliases: ['q'],
+            name: 'queuenext',
+            aliases: ['qn'],
 			group: 'music', //the command group the command is a part of.
-			memberName: 'queue', //the name of the command within the group (this can be different from the name).
-			description: 'Queue a song using keywords or a link. Bot will join your voice channel. You must be in a voice channel.',
+			memberName: 'queuenext', //the name of the command within the group (this can be different from the name).
+			description: 'Works the same as .queue command, except it enqueues the new song after the current one. You must be in a voice channel.',
 			args: [
 				{
 					key: 'query_string',
-					prompt: 'What song would you like to add?',
+					prompt: 'What song would you like to add? (Will play after the currently playing song)',
 					type: 'string',
                 }
 			]
@@ -29,7 +29,7 @@ module.exports = class QueueCommand extends Command {
         const { voiceChannel } = message.member;
         if(!voiceChannel) {
             let response = `You need to be in a voice channel on this server to run this command.`
-            console.log(`${message.author.tag} attempted to queue up a song without being in a voice channel.`);
+            console.warn(`${message.author.tag} attempted to queue up a song without being in a voice channel.`);
 
             discordUtils.embedResponse(message, {
                 'color': `RED`,
@@ -52,7 +52,7 @@ module.exports = class QueueCommand extends Command {
         if(streamObject) {
             let songInfo = new SongInfo(streamObject, message);
             
-            let song_index = musicplayer.enqueue(songInfo); // add song to the player queue
+            let song_index = musicplayer.enqueueNext(songInfo);
             if(song_index != -1) {
                 discordUtils.embedResponse(message, {
                     author : `Queued Song #${song_index + 1}`,
@@ -60,7 +60,7 @@ module.exports = class QueueCommand extends Command {
                     url : songInfo.url,
                     color : 'ORANGE'
                 });
-                console.log(`added “${songInfo.title}” to queue position ${song_index}`);
+                console.log(`added “${songInfo.title}” to queue position ${song_index + 1}`);
                 if(musicplayer.stopped) {
                     discordUtils.embedResponse(message, {
                         color : 'RED',

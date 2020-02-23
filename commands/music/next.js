@@ -6,6 +6,7 @@ module.exports = class NextCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'next',
+			aliases: ['n'],
 			group: 'music', //the command group the command is a part of.
 			memberName: 'next', //the name of the command within the group (this can be different from the name).
 			description: 'Goes to the next song in the queue, you have to be in the same voice channel as the bot for this to work. You can skip multiple songs but that song will not play if repeatplaylist or repeatsong is enabled.',
