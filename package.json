@@ -2,6 +2,7 @@
   "name": "FutabaBot",
   "main": "FutabaBot.js",
   "dependencies": {
+    "@discordjs/opus": "^0.2.1",
     "discord-youtube-api": "^0.1.0",
     "discord.js": "^12.2.0",
     "discord.js-commando": "^0.10.0",
@@ -9,7 +10,6 @@
     "ffmpeg": "^0.0.4",
     "glob": "^7.1.5",
     "moment": "^2.24.0",
-    "node-opus": "^0.3.3",
     "parse-time": "^0.1.4",
     "sequelize": "^5.21.7",
     "sqlite": "^4.0.7",
