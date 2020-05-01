@@ -14,8 +14,8 @@ module.exports = class StopCommand extends Command {
 	}
 
 	async run(message) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
+        const { voice: voiceState } = message.member;
+        if(!voiceState) {
             let response = `You need to be in a voice channel on this server to run this command.`;
             console.log(`${message.author.tag} attempted to stop music without being in a voice channel.`);
             discordUtils.embedResponse(message, {
