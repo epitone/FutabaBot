@@ -100,7 +100,7 @@ class MusicPlayer {
     stop() {
         this.stopped = true;
 
-        if(this.dispatcher) this.dispatcher.connection.disconnect
+        if(this.dispatcher) this.dispatcher.destroy();
         else return;
     }
 

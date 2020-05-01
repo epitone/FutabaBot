@@ -65,7 +65,7 @@ module.exports = class PlayCommand extends Command {
             let youtube = new YouTube(config.yt_api);
             let streamObject = null;
             switch(play_argument) {
-                case stringUtils.validUrl(play_argument):
+                case stringUtils.validYTUrl(play_argument):
                     streamObject = await youtube.getVideo(play_argument);
                     break;
                 case stringUtils.validYTID(play_argument):
