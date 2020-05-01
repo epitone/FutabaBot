@@ -1,7 +1,7 @@
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.embedResponse = (message, embed_options) => {
-    const embed = new RichEmbed()
+    const embed = new MessageEmbed()
     if(embed_options.color) embed.setColor(embed_options.color);
     if(embed_options.title) embed.setTitle(embed_options.title);
     if(embed_options.description) embed.setDescription(embed_options.description);

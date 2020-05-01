@@ -1,4 +1,4 @@
-const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 const MusicQueue = require('./musicqueue');
 const discordUtils = require ('../../../utils/discord-utils');
 
@@ -16,10 +16,11 @@ class MusicPlayer {
 
     async play(connection, message) {
         this.data = this.queue.current();
-        let stream = ytdl(this.data.song.url, { filter: `audioonly`});
+        let stream = await ytdl(this.data.song.url, { filter: `audioonly`});
 
-        this.dispatcher = connection.playStream(stream, {
+        this.dispatcher = connection.play(stream, {
             volume: this.volume,
+            type: 'opus'
         });
         this.stopped = false;
         console.log(`now playing: “${this.data.song.title}”`);

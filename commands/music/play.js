@@ -26,8 +26,9 @@ module.exports = class PlayCommand extends Command {
 	}
 
 	async run(message, { play_argument }) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
+        const { voice: voiceState } = message.member;
+
+        if(!voiceState) {
             let response = `You need to be in a voice channel on this server to run this command.`;
             console.log(`${message.author.tag} attempted to play music without being in a voice channel.`);
             discordUtils.embedResponse(message, {
@@ -36,6 +37,8 @@ module.exports = class PlayCommand extends Command {
             });
             return;
         }
+
+        let voiceChannel = voiceState.channel;
 
         if(!play_argument) {
             if(musicplayer.queue.count() == 0) {
