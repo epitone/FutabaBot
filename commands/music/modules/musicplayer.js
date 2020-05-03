@@ -34,7 +34,7 @@ class MusicPlayer {
             'footer' : `${this.data.song.total_time} | ${this.data.song.requester}`
         });
 
-        this.dispatcher.on('end', () => {
+        this.dispatcher.on('finish', () => {
             let playerState = {
                 queue_length: this.queue.length,
                 stopped: this.stopped,
@@ -106,20 +106,6 @@ class MusicPlayer {
         else return;
     }
 
-    pause() {
-        if(this.dispatcher && !this.dispatcher.paused) {
-            this.paused = true;
-            this.dispatcher.pause(true);
-        }
-    }
-    
-    resume() {
-        if(this.dispatcher && this.dispatcher.paused) {
-            this.paused = false;
-            this.dispatcher.resume();
-        }
-    }
-
     setVolume(volume_level) {
         this.volume = volume_level / 100;
         if(this.dispatcher) {
@@ -128,6 +114,19 @@ class MusicPlayer {
     }
     current() {
         return this.data;
+    }
+
+    togglePause() {
+        if(this.dispatcher) {
+            if(!this.dispatcher.paused) {
+                this.paused = true;
+                this.dispatcher.pause(true);
+            } else {
+                this.paused = false;
+                this.dispatcher.resume();
+            }
+            return;
+        }
     }
     toggleRepeatSong() {
         return this.repeat_current_song = !this.repeat_current_song;

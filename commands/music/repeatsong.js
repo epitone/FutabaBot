@@ -18,30 +18,27 @@ module.exports = class RepeatSongCommand extends Command {
 	}
 
 	async run(message) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
-            let response = `You need to be in a voice channel on this server to run this command.`;
+        const { voice: voiceState } = message.member;
+        if(!discordUtils.inVoiceChannel(voiceState, message)) {
             console.log(`${message.author.tag} attempted to run a music command without being in a voice channel.`);
-            discordUtils.embedResponse(message, {
-                'color': `RED`,
-                'description': response
-            });
             return;
-        } else if(musicplayer.queue.current() != null) {
+        }
+        
+        if(musicplayer.queue.current() != null) {
             if(musicplayer.toggleRepeatSong()) {
-                let current_song = musicplayer.queue.current();
+                let current_song = musicplayer.queue.current().song;
                 discordUtils.embedResponse(message, {
                     'author' : `🔂 Repeating track`,
                     'title' : current_song.title,
                     'url' : current_song.url,
                     'color' : 'ORANGE',
                     'footer' : `${current_song.total_time} | ${current_song.provider} | ${current_song.requester}`
-                })
+                });
             } else {
                 discordUtils.embedResponse(message, {
                     'author' : `🔂 Current track repeat stopped`,
                     'color' : 'ORANGE'
-                })
+                });
             }
         } else {
             let response = `There is currently no song playing.`;

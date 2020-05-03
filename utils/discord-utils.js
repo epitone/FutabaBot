@@ -11,14 +11,13 @@ exports.embedResponse = (message, embed_options) => {
     message.embed(embed);
 }
 
-exports.inVoiceChannel = (voiceState, message) => {
+exports.inVoiceChannel = (voiceState, message, response = null) => {
     if(!voiceState.channel) {
-        let response = `You need to be in a voice channel on this server to run this command.`;
-        console.log(`${message.author.tag} attempted to play music without being in a voice channel.`);
         this.embedResponse(message, {
             'color': `RED`,
-            'description': response
+            'description': response === null ? `You need to be in a voice channel to use this command.` : response
         });
+        console.log(`${message.author.tag} attempted to run a music command without being in a voice channel.`);
         return false;
     }
     return true;

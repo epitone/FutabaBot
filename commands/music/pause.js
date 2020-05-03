@@ -1,7 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
 let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class PauseCommannd extends Command {
@@ -15,24 +14,23 @@ module.exports = class PauseCommannd extends Command {
         });
 	}
 
-	async run(message, { play_argument }) {
+	async run(message) {
         const { voice: voiceState } = message.member;
         if(!discordUtils.inVoiceChannel(voiceState, message)) {
             console.log(`${message.author.tag} attempted to pause music without being in a voice channel.`);
             return;
         }
 
-        let voiceChannel = voiceState.channel;
-
+        // TODO: we're repeating code here, probably should simplify this
         if(musicplayer.paused) {
-            musicplayer.resume();
+            musicplayer.togglePause();
             console.log(`${message.author.tag} resumed playback.`);
             discordUtils.embedResponse(message, {
                 'color': `ORANGE`,
                 'description': `Playback resumed.`
             });
         } else {
-            musicplayer.pause();
+            musicplayer.togglePause();
             console.log(`${message.author.tag} paused playback.`);
             discordUtils.embedResponse(message, {
                 'color': `ORANGE`,

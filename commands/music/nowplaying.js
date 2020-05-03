@@ -14,6 +14,7 @@ module.exports = class NowPlayingCommand extends Command {
         });
 	}
 
+    // TODO: if player is paused, still list the song but put [PAUSED] next to it
 	async run(message) {
         if(musicplayer == null) {
             discordUtils.embedResponse(message, {
@@ -21,15 +22,16 @@ module.exports = class NowPlayingCommand extends Command {
                 description: `The music player is not active.`
             });
         } else {
-            let song = musicplayer.current();
-            if(song == null) {
+            let song = musicplayer.current().song;
+            if(song == null || musicplayer.stopped) {
                 discordUtils.embedResponse(message, {
                     color : 'RED',
                     description: `Nothing is currently playing.`
                 });
             } else {
+                // TODO: add footer data
                 discordUtils.embedResponse(message, {
-                    author : `Now Playing`,
+                    author : musicplayer.paused ? `⏸ Now Playing` : `▶ Now Playing`,
                     title : song.title,
                     url : song.url,
                     color : 'ORANGE'
