@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
 const discordUtils = require(`../../utils/discord-utils`)
 
 module.exports = class Deafen extends Command {
@@ -34,14 +33,14 @@ module.exports = class Deafen extends Command {
                     index++;
                     if(index == users.length || deafenedStatus.length == users.length) {
                         let response = `Successfully deafened ${deafenedStatus.length} out of ${users.length} members`;
-                        const embed = new RichEmbed()
-                            .setColor(0xd29846)
-                            .setDescription(response);
-                        message.embed(embed);
+                        discordUtils.embedResponse(message, {
+                            'color': 'ORANGE',
+                            'description': response
+                        });
                     }
                 })
                 .catch(error => {
-                    console.log(error)
+                    console.error(error)
                     discordUtils.embedResponse(messagee, `Oops! Something went wrong`, true)
                 })
             }

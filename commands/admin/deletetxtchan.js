@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
 
 module.exports = class DeleteTxtChan extends Command {
 	constructor(client) {
@@ -28,25 +27,25 @@ module.exports = class DeleteTxtChan extends Command {
                 .then(deletedChannel => {
                     let response = `Successfully deleted “#${deletedChannel.name}”`;
                     console.log(response);
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(response);
-                    message.embed(embed);
+                    discordUtils.embedResponse(message, {
+                        'color': 'ORANGE',
+                        'description': response
+                    });
                 })
                 .catch((error) => {
-                    console.log(error)
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(`Oops! Something went wrong!`);
-                    message.embed(embed);
+                    console.error(error)
+                    discordUtils.embedResponse(message, {
+                        'color': 'RED',
+                        'description': `Oops! Something went wrong!`
+                    });
                 });
         } else {
             let response = `Sorry I couldn't find that channel, or the channel cannot be deleted!`;
             console.log(response);
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(response);
-            message.embed(embed);
+            discordUtils.embedResponse(message, {
+                'color': 'ORANGE',
+                'description': response
+            });
         }
     }
 }

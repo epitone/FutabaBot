@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
 
 module.exports = class DeleteRole extends Command {
 	constructor(client) {
@@ -30,24 +29,24 @@ module.exports = class DeleteRole extends Command {
             .then((deleted) => {
                 let response = `Deleted “${deleted.name}” role`;
                 console.log(response);
-                const embed = new RichEmbed()
-				    .setColor(0xd29846)
-				    .setDescription(response);
-                message.embed(embed);
+                discordUtils.embedResponse(message, {
+                    'color': 'ORANGE',
+                    'description': response
+                });
             })
             .catch((error) => {
-                console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
+                console.error(error);
+                discordUtils.embedResponse(message, {
+                    'color': 'RED',
+                    'description': `Oops! Something went wrong!`
+                });
             });
         } else {
-            const response = `Huh, I couldn't find a role with that name.`;
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(response);
-            message.embed(embed);
+            const response = `I couldn't find a role with that name.`;
+            discordUtils.embedResponse(message, {
+                'color': 'ORANGE',
+                'description': response
+            });
         }
     }
 };

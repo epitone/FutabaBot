@@ -76,7 +76,7 @@
 //                 }
 //             })
 //             .catch(error => {
-//                 console.log(error)
+//                 console.error(error)
 //                 const embed = new RichEmbed()
 //                     .setColor(0xd29846)
 //                     .setDescription(`Oops! Something went wrong!`);
