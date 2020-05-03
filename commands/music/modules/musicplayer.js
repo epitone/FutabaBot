@@ -9,6 +9,7 @@ class MusicPlayer {
         this.dispatcher = null;
         this.volume = 1;
         this.stopped = false;
+        this.paused = false;
         this.repeat_current_song = false;
         this.auto_delete = false;
         this.manual_index = false;
@@ -23,6 +24,7 @@ class MusicPlayer {
             type: 'opus'
         });
         this.stopped = false;
+        this.paused = false;
         console.log(`now playing: “${this.data.song.title}”`);
         discordUtils.embedResponse(message, {
             'author' : `Playing song #${this.queue.current_index + 1}`,
@@ -105,11 +107,17 @@ class MusicPlayer {
     }
 
     pause() {
-        if(this.dispatcher) this.dispatcher.pause();
+        if(this.dispatcher && !this.dispatcher.paused) {
+            this.paused = true;
+            this.dispatcher.pause(true);
+        }
     }
     
     resume() {
-        if(this.dispatcher && this.dispatcher.paused) this.dispatcher.resume();
+        if(this.dispatcher && this.dispatcher.paused) {
+            this.paused = false;
+            this.dispatcher.resume();
+        }
     }
 
     setVolume(volume_level) {
