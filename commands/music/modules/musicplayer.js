@@ -95,6 +95,15 @@ class MusicPlayer {
         this.stopped = false;
     }
 
+    removeAt(index) {
+        return this.queue.removeAt(index);
+    }
+
+    reset() {
+        this.stopped = true;
+        this.queue.reset();
+    }
+
     skip(skip_count = 1) {
         if(!this.stopped) {
             if(!this.repeat_playlist && this.queue.isLast()) {
@@ -104,7 +113,7 @@ class MusicPlayer {
         } else this.queue.current_index = 0;
         
         this.stopped = false;
-        this.dispatcher.end();
+        if(this.dispatcher) this.dispatcher.end();
     }
 
     stop() {
