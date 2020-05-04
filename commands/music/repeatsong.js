@@ -40,20 +40,14 @@ module.exports = class RepeatSongCommand extends Command {
                     });
                 }
             } else {
-                if(musicplayer.toggleRepeatSong()) {
-                    discordUtils.embedResponse(message, {
-                        'author' : `🔂 Current track repeat enabled`,
-                        'color' : 'ORANGE'
-                    });
-                } else {
-                    discordUtils.embedResponse(message, {
-                        'author' : `🔂 Current track repeat disabled`,
-                        'color' : 'ORANGE'
-                    });
-                }
+                let repeatSongEnabled = musicplayer.toggleRepeatSong();
+                discordUtils.embedResponse(message, {
+                    'author' : `🔂 Current track repeat ${(repeatSongEnabled ? `enabled` : `disabled`)}`,
+                    'color' : 'ORANGE'
+                });
             }
         } else {
-            let response = `There is currently no song playing.`;
+            let response = `The music player is not currently active.`;
             discordUtils.embedResponse(message, {
                 'color': `RED`,
                 'description': response

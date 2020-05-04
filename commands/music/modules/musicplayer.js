@@ -34,8 +34,12 @@ class MusicPlayer {
             'footer' : `${this.data.song.total_time} | ${this.data.song.requester}`
         });
 
-        /* Order of Precedence (From Most to Least
-            1. 
+        /* Order of Precedence (From Most to Least)
+            1. Repeat Song
+            2. Repeat Playlist
+            3. Song Auto-Delete (remove song from queue) if the other two are disabled
+            4. Stop playback if we're at the end of the queue and repeat_playlist is disabled
+            5. Move to next song
         */
         this.dispatcher.on('finish', () => {
             let playerState = {
@@ -44,13 +48,14 @@ class MusicPlayer {
                 current_index: this.queue.current_index,
             }
             if(!playerState.stopped) {
-                if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
-                    this.queue.removeSong(this.data.song);
-                }
                 if(this.repeat_current_song) {
                     this.play(connection, message);
-                }
-                else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist) {
+                } else if(this.queue.isLast() && this.repeat_playlist) {
+                    this.queue.current_index = 0;
+                    this.play(connection, message);
+                } else if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
+                    this.queue.removeSong(this.data.song);
+                } else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist) {
                     console.log("stopping playback because repeat playlist is disabled.");
                     this.stop();
                 } else {
@@ -130,6 +135,9 @@ class MusicPlayer {
             }
             return;
         }
+    }
+    toggleRepeatPlaylist() {
+        return this.repeat_playlist = !this.repeat_playlist;
     }
     toggleRepeatSong() {
         return this.repeat_current_song = !this.repeat_current_song;

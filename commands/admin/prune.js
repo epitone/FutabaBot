@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require('../../utils/discord-utils')
 
-module.exports = class Prune extends Command {
+module.exports = class PruneCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'prune',
