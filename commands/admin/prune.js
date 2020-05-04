@@ -42,7 +42,13 @@ module.exports = class Prune extends Command {
                 console.log(`Retrieved ${messages.size} messages`);
                 let messagesToDelete = messages.filter(message => {
                     if (user) {
-
+                        if (!removePinned) {
+                            console.log(`found message: “${message}” by ${message.author.username}`)
+                            return !message.pinned && message.author.id === user.id;
+                        } else {
+                            console.log(`found message: “${message}” by ${message.author.username}`)
+                            return message.author.id === user.id
+                        }
                     } else {
                         if (!removePinned) {
                             console.log(`found message: “${message}” by ${message.author.username}`)
