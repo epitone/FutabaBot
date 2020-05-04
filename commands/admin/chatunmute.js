@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const discordUtils = require('../../utils/discord-utils')
 
 module.exports = class ChatUnmuteCommand extends Command {
     constructor(client) {

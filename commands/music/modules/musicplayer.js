@@ -8,7 +8,7 @@ class MusicPlayer {
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
         this.volume = 1;
-        this.stopped = false;
+        this.stopped = true;
         this.paused = false;
         this.repeat_current_song = false;
         this.auto_delete = false;
@@ -34,6 +34,9 @@ class MusicPlayer {
             'footer' : `${this.data.song.total_time} | ${this.data.song.requester}`
         });
 
+        /* Order of Precedence (From Most to Least
+            1. 
+        */
         this.dispatcher.on('finish', () => {
             let playerState = {
                 queue_length: this.queue.length,
