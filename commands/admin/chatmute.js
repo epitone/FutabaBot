@@ -48,7 +48,7 @@ module.exports = class ChatMute extends Command {
                 })
             })
             .catch(error => {
-                console.log(error)
+                console.error(error)
                 discordUtils.embedResponse(message, `Oops! Something went wrong`, true);
             })
         } else {
@@ -59,7 +59,7 @@ module.exports = class ChatMute extends Command {
                 discordUtils.embedResponse(message, response, false);
             })
             .catch(error => {
-                console.log(error)
+                console.error(error)
                 discordUtils.embedResponse(message, `Oops! Something went wrong`, true);
             })
         }

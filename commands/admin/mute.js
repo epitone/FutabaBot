@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed, Permissions } = require('discord.js');
 const moment = require('moment');
 const timeUtils = require('../../utils/string-utils');
 
@@ -50,21 +49,21 @@ module.exports = class MuteCommand extends Command {
                 muteRole = newRole;
             })
             .catch(error => {
-                console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
+                console.error(error)
+                discordUtils.embedResponse(message, {
+                    'color': 'RED',
+                    'description': 'Oops! Something went wrong!'
+                });
             });
         }
         user.addRole(muteRole)
             .then((muted) => {
                 let response = `Successfully muted “${muted.displayName}”`;
                 console.log(response);
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(response);
-                message.embed(embed);
+                discordUtils.embedResponse(message, {
+                    'color': 'ORANGE',
+                    'description': response
+                });
                 if (timeout) {
                     timeout = timeout.replace(/\s+/g, '');
                     let duration = moment.duration("PT" + timeout.toUpperCase()).asMilliseconds();
@@ -75,11 +74,11 @@ module.exports = class MuteCommand extends Command {
                 }
             })
             .catch(error => {
-                console.log(error)
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(`Oops! Something went wrong!`);
-                message.embed(embed);
+                console.error(error)
+                discordUtils.embedResponse(message, {
+                    'color': 'RED',
+                    'description': 'Oops! Something went wrong!'
+                });
             });
     }
 }  

@@ -28,7 +28,7 @@ module.exports = class CreateVoiceChan extends Command {
 			discordUtils.embedResponse(messagee, response, false)
         })
         .catch(error => {
-			console.log(error)
+			console.error(error)
 			discordUtils.embedResponse(messagee, `Oops! Something went wrong`, true)
         });
 	}

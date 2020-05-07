@@ -1,7 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed, Permissions } = require('discord.js');
-const moment = require('moment');
-const stringUtils = require('../../utils/string-utils');
+const { Permissions } = require('discord.js');
 
 // TODO: check edge cases for this command
 
@@ -52,18 +50,18 @@ module.exports = class VoiceMute extends Command {
             .then(updated => {
                 let response = `Successfully muted “${updated.displayName}”`;
                 console.log(response);
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(response);
-                message.embed(embed);
+                discordUtils.embedResponse(message, {
+                    'color': 'ORANGE',
+                    'description': response
+                });
             })
         })
         .catch(error => {
-            console.log(error)
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(`Oops! Something went wrong!`);
-            message.embed(embed);
+            console.error(error)
+            discordUtils.embedResponse(message, {
+                'color': 'RED',
+                'description': 'Oops! Something went wrong!'
+            });
         })
     }
 }  

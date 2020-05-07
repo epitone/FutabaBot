@@ -27,14 +27,8 @@ module.exports = class PlayCommand extends Command {
 
 	async run(message, { play_argument }) {
         const { voice: voiceState } = message.member;
-
-        if(!voiceState) {
-            let response = `You need to be in a voice channel on this server to run this command.`;
+        if(!discordUtils.inVoiceChannel(voiceState, message)) {
             console.log(`${message.author.tag} attempted to play music without being in a voice channel.`);
-            discordUtils.embedResponse(message, {
-                'color': `RED`,
-                'description': response
-            });
             return;
         }
 
@@ -65,7 +59,7 @@ module.exports = class PlayCommand extends Command {
             let youtube = new YouTube(config.yt_api);
             let streamObject = null;
             switch(play_argument) {
-                case stringUtils.validUrl(play_argument):
+                case stringUtils.validYTUrl(play_argument):
                     streamObject = await youtube.getVideo(play_argument);
                     break;
                 case stringUtils.validYTID(play_argument):

@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
+const discordUtils = require('../../utils/discord-utils')
 
 module.exports = class ChatUnmuteCommand extends Command {
     constructor(client) {
@@ -23,27 +23,27 @@ module.exports = class ChatUnmuteCommand extends Command {
         if(!muteRole) {
             let response = `Looks like the chat mute role hasn't been created yet! Have you muted anyone?`;
             console.log(response);
-            const embed = new RichEmbed()
-                .setColor(0xd29846)
-                .setDescription(response);
-            message.embed(embed);
+            discordUtils.embedResponse(message, {
+                'color': 'ORANGE',
+                'description': response
+            });
         } else {
             if(!user.roles.some(userRole => userRole === muteRole)) {
                 let response = `This user has not been muted, please try again.`;
                 console.log(response);
-                const embed = new RichEmbed()
-                    .setColor(0xd29846)
-                    .setDescription(response);
-                message.embed(embed);
+                discordUtils.embedResponse(message, {
+                    'color': 'ORANGE',
+                    'description': response
+                });
             } else {
                 user.removeRole(muteRole)
                 .then(updatedUser => {
                     let response = `Successfully unmuted “${updatedUser.displayName}”`
                     console.log(response);
-                    const embed = new RichEmbed()
-                        .setColor(0xd29846)
-                        .setDescription(response);
-                    message.embed(embed);
+                    discordUtils.embedResponse(message, {
+                        'color': 'ORANGE',
+                        'description': response
+                    });
                 })
             }
         }

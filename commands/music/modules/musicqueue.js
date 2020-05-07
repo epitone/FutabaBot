@@ -30,7 +30,6 @@ module.exports = class MusicQueue {
             }
             walk++;
         }
-        // console.log('returning data: ', walkNode ? walkNode.data : null);
         if(walkNode) {
             return {
                 index: walk,
@@ -74,6 +73,7 @@ module.exports = class MusicQueue {
         this.length++;
         return this.current_index + 1; // return the index to play next
     }
+
     isLast() {
         return this.current_index == this.length - 1;
     }
@@ -86,17 +86,24 @@ module.exports = class MusicQueue {
             let current = this.head;
             let previous = null;
             let counter = 0;
+            let removedNode = null;
+
             if(counter === index) {
+                removedNode = this.head;
                 this.head = current.next;
+                if(this.length <= 2) this.tail = this.head; // update tail if we are going to end up with 1 or less items
             } else {
                 while(counter < index) {
                     previous = current;
                     current = current.next;
                     counter++;
                 }
-                previous = current.next;
+                removedNode = current;
+                previous.next = current.next;
+                if(counter === (this.length--)) this.tail = previous
             }
             this.length--;
+            return removedNode;
         }
     }
 
@@ -131,5 +138,12 @@ module.exports = class MusicQueue {
     
     count() {
         return this.length
+    }
+
+    reset() {
+        this.head = null;
+        this.tail = null;
+        this.length = 0;
+        this._current_index = 0;
     }
 }

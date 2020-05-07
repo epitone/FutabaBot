@@ -11,49 +11,17 @@ exports.validTime = (time_string) => {
 };
 
 
-// Shoutout to https://gist.github.com/dperini/729294
-exports.validUrl = (url_string) => {
-    var re_weburl = new RegExp(
-        "^" +
-          // protocol identifier (optional)
-          // short syntax // still required
-          "(?:(?:(?:https?|ftp):)?\\/\\/)" +
-          // user:pass BasicAuth (optional)
-          "(?:\\S+(?::\\S*)?@)?" +
-          "(?:" +
-            // IP address exclusion
-            // private & local networks
-            "(?!(?:10|127)(?:\\.\\d{1,3}){3})" +
-            "(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})" +
-            "(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})" +
-            // IP address dotted notation octets
-            // excludes loopback network 0.0.0.0
-            // excludes reserved space >= 224.0.0.0
-            // excludes network & broadcast addresses
-            // (first & last IP address of each class)
-            "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-            "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-            "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-          "|" +
-            // host & domain names, may end with dot
-            // can be replaced by a shortest alternative
-            // (?![-_])(?:[-\\w\\u00a1-\\uffff]{0,63}[^-_]\\.)+
-            "(?:" +
-              "(?:" +
-                "[a-z0-9\\u00a1-\\uffff]" +
-                "[a-z0-9\\u00a1-\\uffff_-]{0,62}" +
-              ")?" +
-              "[a-z0-9\\u00a1-\\uffff]\\." +
-            ")+" +
-            // TLD identifier name, may end with dot
-            "(?:[a-z\\u00a1-\\uffff]{2,}\\.?)" +
-          ")" +
-          // port number (optional)
-          "(?::\\d{2,5})?" +
-          // resource path (optional)
-          "(?:[/?#]\\S*)?" +
-        "$", "i"
-    );
+/**
+ * JavaScript function to match (and return) the video Id
+ * of any valid Youtube Url, given as input string.
+ * @author: Stephan Schmitz <eyecatchup@gmail.com>
+ * @url: https://stackoverflow.com/a/10315969/624466
+ * 
+ * Addendum: added support for mobile youtube urls, see:
+ * https://stackoverflow.com/a/30534640/2467270
+ */
+exports.validYTUrl = (url_string) => {
+    var re_weburl = new RegExp(/(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/);
     return re_weburl.test(url_string);
 }
 
@@ -69,13 +37,13 @@ exports.fancy_time = (time_seconds) => {
     var secs = ~~time_seconds % 60;
 
     // Output like "1:01" or "4:03:59" or "123:03:59"
-    var ret = "";
+    var fancy_time = "";
 
     if (hrs > 0) {
-        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+        fancy_time += "" + hrs + ":" + (mins < 10 ? "0" : "");
     }
 
-    ret += "" + mins + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
+    fancy_time += "" + mins + ":" + (secs < 10 ? "0" : "");
+    fancy_time += "" + secs;
+    return fancy_time;
 }

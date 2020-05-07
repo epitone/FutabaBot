@@ -1,21 +1,41 @@
-module.exports = {
-	name: 'settopic',
-	description: 'Sets the topic of the current channel',
-	args: true, // does the command have arguments?
-	guildOnly: true, // can this command be used outside of the discord channel?
-	execute(message, args) {
-        const server = message.guild;
-        const topic = args.join(' ');
-        const channel = message.channel;
-        channel.setTopic(topic)
-        .then(updated => {
-            let response = `Channel's new topic is “${updated.topic}”`;
-            message.channel.send(response);
-            console.log(response);
-        })
-        .catch(() => {
-            message.channel.send("Oops! Something went wrong!");
-            console.log(error);
+const { Command } = require('discord.js-commando');
+const discordUtils = require ('../../utils/discord-utils');
+
+module.exports = class setTopicCommand extends Command {
+    constructor(client) {
+        super(client, {
+            name: 'settopic',
+            aliases: ['st'],
+            group: 'admin',
+            memberName: 'settopic',
+            description: `Sets (or changes) the topic of the current channel.`,
+            args: [
+                {
+                    key: 'new_topic',
+                    prompt: 'What is the new topic?',
+                    type: 'string', 
+                }
+            ]
         });
-	},
-};
+    }
+    async run(message, { new_topic: newTopic }) {
+        let currentChannel = message.channel
+
+        currentChannel.setTopic(newTopic)
+        .then(updatedChannel => {
+            discordUtils.embedResponse(message, {
+                'color': 'ORANGE',
+                'description': `Successfully changed topic to “${updatedChannel.topic}”.`
+              });
+              console.debug(`Successfully changed topic to “${updatedChannel.topic}”`);
+              return;
+        })
+        .catch((err) => {
+            discordUtils.embedResponse(message, {
+                'color': 'RED',
+                'description': `Oops! Something went wrong!`
+              });
+              console.error(err);
+        });
+    }
+}

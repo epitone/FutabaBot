@@ -13,7 +13,7 @@ module.exports = class NextCommand extends Command {
 			args: [
 				{
 					key: 'skip_count',
-					prompt: 'What are you trying to do? (You can provide an integer to jump to a specific song, or a search query to add a song to the queue)',
+					prompt: 'How many songs would you like to skip?',
 					type: 'integer',
                     default: 1, 
                 }
@@ -22,13 +22,23 @@ module.exports = class NextCommand extends Command {
 	}
 
 	async run(message, { skip_count }) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
-            let response = `You need to be in the same voice channel as the bot on this server to run this command.`;
-            console.log(response);
-            discordUtils.embedResponse(message, response, true);
+		const { voice: voiceState } = message.member;
+		let botVoiceChannelID;
+		let response;
+        if(!discordUtils.inVoiceChannel(voiceState, message)) {
+            console.log(`${message.author.tag} attempted to skip a song without being in a voice channel.`);
             return;
-        }
+		}
+
+		botVoiceChannelID = message.client.guilds.cache.get(message.guild.id).voice.channelID;
+		if (botVoiceChannelID != voiceState.channelID) {
+			response = `${message.author.tag} attempted to skip a song but wasn't in the bot's voice channel.`
+			discordUtils.embedResponse(message, {
+				'color': `RED`,
+				'description': `You must be in the same voice channel as the bot to run this command.`
+			});
+			return;
+		}
         musicplayer.skip(skip_count)
     }
 }

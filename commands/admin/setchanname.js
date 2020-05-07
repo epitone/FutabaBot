@@ -1,21 +1,42 @@
-module.exports = {
-	name: 'setchanname',
-	description: 'Sets the name of the current channel',
-	args: true, // does the command have arguments?
-	guildOnly: true, // can this command be used outside of the discord channel?
-	execute(message, args) {
-        const server = message.guild;
-        const channelName = args.join('-');
-        const channel = message.channel;
-        channel.setName(channelName)
-        .then(updated => {
-            let response = `Channel's new name is “${updated.name}”`;
-            message.channel.send(response);
-            console.log(response);
+const { Command } = require('discord.js-commando');
+const discordUtils = require ('../../utils/discord-utils');
+
+module.exports = class SetChannelNameCommand extends Command {
+    constructor(client) {
+        super(client, {
+            name: 'setchanname',
+            aliases: ['schn'],
+            group: 'admin',
+            memberName: 'setchanname',
+            description: `Changes the name of the current channel.`,
+            args: [
+                {
+                    key: 'new_channel_name',
+                    prompt: 'What is the new channel name?',
+                    type: 'string', 
+                }
+            ]
+        });
+    }
+    async run(message, { new_channel_name: newChannelName }) {
+        let currentChannel = message.channel
+        let oldChannelName = message.channel.name;
+
+        currentChannel.setName(newChannelName)
+        .then(updatedChannel => {
+            discordUtils.embedResponse(message, {
+                'color': 'ORANGE',
+                'description': `Successfully changed “#${oldChannelName}” to “#${updatedChannel.name}”.`
+              });
+              console.debug(`Successfully changed “#${oldChannelName}” to “#${updatedChannel.name}”`);
+              return;
         })
         .catch((err) => {
-            message.channel.send("Oops! Something went wrong!");
-            console.log(err);
+            discordUtils.embedResponse(message, {
+                'color': 'RED',
+                'description': `Oops! Something went wrong!`
+              });
+              console.error(err);
         });
-	},
-};
+    }
+}

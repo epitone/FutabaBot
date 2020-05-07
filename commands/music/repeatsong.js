@@ -1,7 +1,5 @@
 const { Command } = require('discord.js-commando');
 const YouTube = require("discord-youtube-api");
-const config = require('../../config.json');
-const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
@@ -18,33 +16,38 @@ module.exports = class RepeatSongCommand extends Command {
 	}
 
 	async run(message) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
-            let response = `You need to be in a voice channel on this server to run this command.`;
+        const { voice: voiceState } = message.member;
+        if(!discordUtils.inVoiceChannel(voiceState, message)) {
             console.log(`${message.author.tag} attempted to run a music command without being in a voice channel.`);
-            discordUtils.embedResponse(message, {
-                'color': `RED`,
-                'description': response
-            });
             return;
-        } else if(musicplayer.queue.current() != null) {
-            if(musicplayer.toggleRepeatSong()) {
-                let current_song = musicplayer.queue.current();
-                discordUtils.embedResponse(message, {
-                    'author' : `🔂 Repeating track`,
-                    'title' : current_song.title,
-                    'url' : current_song.url,
-                    'color' : 'ORANGE',
-                    'footer' : `${current_song.total_time} | ${current_song.provider} | ${current_song.requester}`
-                })
+        }
+        
+        if(musicplayer.queue.current()) {
+            if(!musicplayer.stopped) {
+                if(musicplayer.toggleRepeatSong()) {
+                    let current_song = musicplayer.queue.current().song;
+                    discordUtils.embedResponse(message, {
+                        'author' : `🔂 Repeating track`,
+                        'title' : current_song.title,
+                        'url' : current_song.url,
+                        'color' : 'ORANGE',
+                        'footer' : `${current_song.total_time} | ${current_song.provider} | ${current_song.requester}`
+                    });
+                } else {
+                    discordUtils.embedResponse(message, {
+                        'author' : `🔂 Current track repeat disabled`,
+                        'color' : 'ORANGE'
+                    });
+                }
             } else {
+                let repeatSongEnabled = musicplayer.toggleRepeatSong();
                 discordUtils.embedResponse(message, {
-                    'author' : `🔂 Current track repeat stopped`,
+                    'author' : `🔂 Current track repeat ${(repeatSongEnabled ? `enabled` : `disabled`)}`,
                     'color' : 'ORANGE'
-                })
+                });
             }
         } else {
-            let response = `There is currently no song playing.`;
+            let response = `The music player is not currently active.`;
             discordUtils.embedResponse(message, {
                 'color': `RED`,
                 'description': response

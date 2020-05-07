@@ -26,21 +26,18 @@ module.exports = class QueueCommand extends Command {
 	}
 
 	async run(message, { query_string }) {
-        const { voiceChannel } = message.member;
-        if(!voiceChannel) {
-            let response = `You need to be in a voice channel on this server to run this command.`
-            console.log(`${message.author.tag} attempted to queue up a song without being in a voice channel.`);
 
-            discordUtils.embedResponse(message, {
-                'color': `RED`,
-                'description': response
-            });
+        const { voice: voiceState } = message.member;
+        if(!discordUtils.inVoiceChannel(voiceState, message, `You need to be in a voice channel on this server to run this command.`)) {
+            console.log(`${message.author.tag} attempted to queue music without being in a voice channel.`);
             return;
         }
+
         let youtube = new YouTube(config.yt_api);
         let streamObject = null;
+        let userVoiceChannel = voiceState.channel;
         switch(query_string) {
-            case stringUtils.validUrl(query_string):
+            case stringUtils.validYTUrl(query_string):
                 streamObject = await youtube.getVideo(query_string);
                 break;
             case stringUtils.validYTID(query_string):
@@ -67,8 +64,8 @@ module.exports = class QueueCommand extends Command {
                         description: `A song has been queued but the player is stopped. To start playback use the \`.play\` command.`
                     })  
                 } else {
-                    if(!message.guild.voiceConnection) {
-                        voiceChannel.join().then(connection => {
+                    if(!message.guild.voice) {
+                        userVoiceChannel.join().then(connection => {
                             musicplayer.play(connection, message) // start playing
                         });
                     }
