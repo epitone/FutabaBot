@@ -71,11 +71,12 @@ module.exports = class PlayCommand extends Command {
             if(streamObject) {
                 let songInfo = new SongInfo(streamObject, message);
                 
-                musicplayer.queue.add(songInfo);
-                console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queue.length}`);
+                musicplayer.a
+                musicplayer.Enqueue(songInfo);
+                console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.QueueCount()}`);
 
                 discordUtils.embedResponse(message, {
-                    'author' : `Queued song #${musicplayer.queue.length}`,
+                    'author' : `Queued song #${musicplayer.QueueCount()}`,
                     'title' : songInfo.title,
                     'url' : songInfo.url,
                     'color' : 'ORANGE',

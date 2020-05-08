@@ -8,12 +8,13 @@ class MusicPlayer {
         this.repeat_playlist = false;
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
-        this.volume = 1;
+        this.volume = 1; // TODO once defvol is implemented, make sure to check there's no default val in the db
         this.stopped = true;
         this.paused = false;
         this.repeat_current_song = false;
         this.auto_delete = false;
         this.manual_index = false;
+        this.autodcEnabled = false;
     }
 
     async play(connection, message) {
@@ -32,10 +33,10 @@ class MusicPlayer {
             'title' : this.data.song.title,
             'url' : this.data.song.url,
             'color' : 'ORANGE',
-            'footer' : `${this.data.song.total_time} | ${this.data.song.requester}`
+            'footer' : `${this.data.song.prettyTotalTime} | ${this.data.song.requester}`
         });
 
-        /* Order of Precedence (From Most to Least)
+        /* Order of Precedence (From most important to Least)
             1. Repeat Song
             2. Repeat Playlist
             3. Song Auto-Delete (remove song from queue) if the other two are disabled
@@ -54,6 +55,8 @@ class MusicPlayer {
                 } else if(this.queue.IsLast() && this.repeat_playlist) {
                     this.queue.current_index = 0;
                     this.play(connection, message);
+                } else if(this.queue.IsLast() && this.autodcEnabled) {
+                    connection.disconnect();
                 } else if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
                     this.queue.RemoveSong(this.data.song);
                 } else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist) {
@@ -67,7 +70,7 @@ class MusicPlayer {
         });
     }
 
-    enqueue(song) {
+    Enqueue(song) {
         if(song != null) {
             this.queue.Add(song);
             return this.queue.length - 1;
@@ -155,7 +158,9 @@ class MusicPlayer {
     toggleSongAutodelete() {
         return this.auto_delete = !this.auto_delete;
     }
-
+    ToggleAutoDC() {
+        return this.autodcEnabled = !this.autodcEnabled;
+    }
     QueueArray() {
         let current = this.queue.head;
         let queueArray = [];
