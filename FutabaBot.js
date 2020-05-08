@@ -1,4 +1,4 @@
-//TODO: salt token
+// TODO salt token
 const Commando = require('discord.js-commando');
 const path = require('path');
 const token = require('./config.json').token;

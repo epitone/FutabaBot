@@ -20,17 +20,25 @@ exports.validTime = (time_string) => {
  * Addendum: added support for mobile youtube urls, see:
  * https://stackoverflow.com/a/30534640/2467270
  */
-exports.validYTUrl = (url_string) => {
+exports.ValidYTUrl = (url_string) => {
     var re_weburl = new RegExp(/(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/);
     return re_weburl.test(url_string);
 }
 
-exports.validYTID = (id_string) => {
+exports.ValidYTID = (id_string) => {
   const regex = /[a-zA-Z0-9_-]{11}/g;
   return id_string.match(regex);
 }
 
-exports.fancy_time = (time_seconds) => {
+
+// Info on reduce: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
+// See https://stackoverflow.com/a/45292588/2467270 for explanation
+// Essentially it does (60 * ((60 * HHHH) + MM)) + SS
+exports.DurationToSeconds = (duration) => {
+    return +(duration.split(':').reduce((acc,time) => (60 * acc) + +time));
+}
+
+exports.FancyTime = (time_seconds) => {
     // Hours, minutes and seconds
     var hrs = ~~(time_seconds / 3600); // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators for ~~ meaning (it's double bitwise NOT)
     var mins = ~~((time_seconds % 3600) / 60);

@@ -19,7 +19,8 @@ module.exports = class MusicQueue {
         if(this.length == 0) this._current_index = 0
         else { this._current_index = value %= this.length }
     }
-    current() {
+
+    Current() {
         let walkNode = this.head;
         let walk = 0;
         while(walk < this.current_index) {
@@ -43,7 +44,7 @@ module.exports = class MusicQueue {
         }
     }
 
-    add(songInfo) {
+    Add(songInfo) {
         let node = new Node(songInfo);
         if(!this.head) {
             this.head = node;
@@ -55,10 +56,10 @@ module.exports = class MusicQueue {
         this.length++;
     }
 
-    addNext(songInfo) {
-        let current_song = this.current().song;
+    AddNext(songInfo) {
+        let current_song = this.Current().song;
         if(!current_song) {
-            this.add(songInfo);
+            this.Add(songInfo);
             return this.length;
         }
         let index = 0;
@@ -74,12 +75,12 @@ module.exports = class MusicQueue {
         return this.current_index + 1; // return the index to play next
     }
 
-    isLast() {
+    IsLast() {
         return this.current_index == this.length - 1;
     }
 
     // Should we return this node?
-    removeAt(index) {
+    RemoveAt(index) {
         if(index < 0 || index > this.length) {
             throw new RangeError(`${index} is out of bounds`);
         } else {
@@ -107,7 +108,7 @@ module.exports = class MusicQueue {
         }
     }
 
-    removeSong(song) {
+    RemoveSong(song) {
         if(this.head == null) return false;
         
         let walk_node = this.head;
@@ -132,15 +133,15 @@ module.exports = class MusicQueue {
         }
     }
 
-    next(skip_count = 1) {
+    Next(skip_count = 1) {
         this.current_index += skip_count;
     }
     
-    count() {
+    Count() {
         return this.length
     }
 
-    reset() {
+    Reset() {
         this.head = null;
         this.tail = null;
         this.length = 0;

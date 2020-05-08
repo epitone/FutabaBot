@@ -1,10 +1,5 @@
-const string_utils = require(`../../../utils/string-utils`)
+const { Util } = require(`discord.js`);
 
-
-/* TOOD: add a "prettyInfo" variable that contains"
-    the song name, url, title, song duration, 
-    provider, and requester username
-*/
 module.exports = class SongInfo {
     constructor (streamObject, message) {
         this.provider = "YouTube"; // TODO: eventually add support for SoundCloud
@@ -12,7 +7,13 @@ module.exports = class SongInfo {
         this.title = streamObject.title;
         this.url = streamObject.url;
         this.thumbnail = streamObject.thumbnail;
-        this.total_time = streamObject.length
-        this.requester = message.author.tag
+        this.totalTime = streamObject.durationSeconds; // time duration in seconds
+        this.requester = Util.cleanContent(message.author.tag, message);
+
+        // These variables are for display purposes
+        this.prettyName = `**[${streamObject.title.substring(0, 65)}](${this.url})**`;
+        this.prettyTotalTime = streamObject.length;
+        this.prettyInfo = `${this.prettyTotalTime} | Youtube | ${this.requester}`;
+        this.prettyFullName = `${this.prettyName}\n\t\t\`${this.prettyTotalTime} | Youtube | ${this.requester.length > 15 ? (this.requester) : (this.requester.substring(0, 15) + "...")}\``;
     }
 }

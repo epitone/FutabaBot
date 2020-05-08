@@ -35,10 +35,10 @@ module.exports = class PlayCommand extends Command {
         let voiceChannel = voiceState.channel;
 
         if(!play_argument) {
-            if(musicplayer.queue.count() == 0) {
+            if(musicplayer.QueueCount() == 0) {
                 discordUtils.embedResponse(message, {
                     'author' : `It doesn't look like there are any songs in the queue.`,
-                    'color' : 'RED',
+                    'color' : 'ORANGE',
                 })
             } else {
                 musicplayer.skip(1);
@@ -59,10 +59,10 @@ module.exports = class PlayCommand extends Command {
             let youtube = new YouTube(config.yt_api);
             let streamObject = null;
             switch(play_argument) {
-                case stringUtils.validYTUrl(play_argument):
+                case stringUtils.ValidYTUrl(play_argument):
                     streamObject = await youtube.getVideo(play_argument);
                     break;
-                case stringUtils.validYTID(play_argument):
+                case stringUtils.ValidYTID(play_argument):
                     streamObject = await youtube.getVideoByID(play_argument);
                     break;
                 default:

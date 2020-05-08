@@ -37,10 +37,10 @@ module.exports = class QueueCommand extends Command {
         let streamObject = null;
         let userVoiceChannel = voiceState.channel;
         switch(query_string) {
-            case stringUtils.validYTUrl(query_string):
+            case stringUtils.ValidYTUrl(query_string):
                 streamObject = await youtube.getVideo(query_string);
                 break;
-            case stringUtils.validYTID(query_string):
+            case stringUtils.ValidYTID(query_string):
                 streamObject = await youtube.getVideoByID(query_string);
                 break;
             default:

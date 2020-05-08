@@ -1,6 +1,7 @@
 const ytdl = require('ytdl-core-discord');
 const MusicQueue = require('./musicqueue');
 const discordUtils = require ('../../../utils/discord-utils');
+const stringUtils = require('../../../utils/string-utils');
 
 class MusicPlayer {
     constructor() {
@@ -16,7 +17,7 @@ class MusicPlayer {
     }
 
     async play(connection, message) {
-        this.data = this.queue.current();
+        this.data = this.queue.Current();
         let stream = await ytdl(this.data.song.url, { filter: `audioonly`});
 
         this.dispatcher = connection.play(stream, {
@@ -50,16 +51,16 @@ class MusicPlayer {
             if(!playerState.stopped) {
                 if(this.repeat_current_song) {
                     this.play(connection, message);
-                } else if(this.queue.isLast() && this.repeat_playlist) {
+                } else if(this.queue.IsLast() && this.repeat_playlist) {
                     this.queue.current_index = 0;
                     this.play(connection, message);
                 } else if(this.auto_delete && !this.repeat_current_song && !this.repeat_playlist && this.data != null) {
-                    this.queue.removeSong(this.data.song);
+                    this.queue.RemoveSong(this.data.song);
                 } else if(playerState.queue_length - 1 == this.data.index && !this.repeat_playlist) {
                     console.log("stopping playback because repeat playlist is disabled.");
                     this.stop();
                 } else {
-                    this.queue.next();
+                    this.queue.Next();
                     this.play(connection, message);
                 }
             }
@@ -68,7 +69,7 @@ class MusicPlayer {
 
     enqueue(song) {
         if(song != null) {
-            this.queue.add(song);
+            this.queue.Add(song);
             return this.queue.length - 1;
         }
         else return -1;
@@ -77,7 +78,7 @@ class MusicPlayer {
 
     enqueueNext(song) {
         if(song != null) {
-            let return_index = this.queue.addNext(song);
+            let return_index = this.queue.AddNext(song);
             if(this.stopped) {
                 this.setIndex(return_index);
             }
@@ -96,20 +97,20 @@ class MusicPlayer {
     }
 
     removeAt(index) {
-        return this.queue.removeAt(index);
+        return this.queue.RemoveAt(index);
     }
 
     reset() {
         this.stopped = true;
-        this.queue.reset();
+        this.queue.Reset();
     }
 
     skip(skip_count = 1) {
         if(!this.stopped) {
-            if(!this.repeat_playlist && this.queue.isLast()) {
+            if(!this.repeat_playlist && this.queue.IsLast()) {
                 this.stop();
                 return;
-            } else this.queue.next(skip_count - 1);
+            } else this.queue.Next(skip_count - 1);
         } else this.queue.current_index = 0;
         
         this.stopped = false;
@@ -153,6 +154,32 @@ class MusicPlayer {
     }
     toggleSongAutodelete() {
         return this.auto_delete = !this.auto_delete;
+    }
+
+    QueueArray() {
+        let current = this.queue.head;
+        let queueArray = [];
+        while(current != null) {
+            queueArray.push(current.data);
+            current = current.next;
+        }
+        return {
+            current: this.queue.current_index,
+            songs: queueArray
+        };
+    }
+
+    QueueCount() {
+        return this.queue.Count();
+    }
+
+    TotalPlaytime() {
+        let songs = this.QueueArray().songs;
+        let totalPlaytimeSeconds = 0;
+        for(const song of songs) {
+            totalPlaytimeSeconds += song.totalTime;
+        }
+        return totalPlaytimeSeconds;
     }
 }
 module.exports = new MusicPlayer()

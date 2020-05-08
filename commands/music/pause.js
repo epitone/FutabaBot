@@ -21,7 +21,7 @@ module.exports = class PauseCommannd extends Command {
             return;
         }
 
-        // TODO: we're repeating code here, probably should simplify this
+        // FIXME we're repeating code here, probably should simplify this
         if(musicplayer.paused) {
             musicplayer.togglePause();
             console.log(`${message.author.tag} resumed playback.`);

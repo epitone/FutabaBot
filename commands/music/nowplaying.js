@@ -14,7 +14,6 @@ module.exports = class NowPlayingCommand extends Command {
         });
 	}
 
-    // TODO: if player is paused, still list the song but put [PAUSED] next to it
 	async run(message) {
         if(musicplayer == null) {
             discordUtils.embedResponse(message, {
