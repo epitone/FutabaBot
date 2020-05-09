@@ -152,15 +152,19 @@ class MusicPlayer {
     toggleRepeatPlaylist() {
         return this.repeat_playlist = !this.repeat_playlist;
     }
+
     toggleRepeatSong() {
         return this.repeat_current_song = !this.repeat_current_song;
     }
+
     toggleSongAutodelete() {
         return this.auto_delete = !this.auto_delete;
     }
+
     ToggleAutoDC() {
         return this.autodcEnabled = !this.autodcEnabled;
     }
+
     QueueArray() {
         let current = this.queue.head;
         let queueArray = [];
@@ -185,6 +189,10 @@ class MusicPlayer {
             totalPlaytimeSeconds += song.totalTime;
         }
         return totalPlaytimeSeconds;
+    }
+
+    MoveSong(position1, position2) {
+        return this.queue.SwapNodes(position1, position2);
     }
 }
 module.exports = new MusicPlayer()

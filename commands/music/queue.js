@@ -49,7 +49,7 @@ module.exports = class QueueCommand extends Command {
         if(streamObject) {
             let songInfo = new SongInfo(streamObject, message);
             
-            let song_index = musicplayer.enqueue(songInfo); // add song to the player queue
+            let song_index = musicplayer.Enqueue(songInfo); // add song to the player queue
             if(song_index != -1) {
                 discordUtils.embedResponse(message, {
                     author : `Queued Song #${song_index + 1}`,

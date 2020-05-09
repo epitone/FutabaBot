@@ -1,13 +1,17 @@
 // TODO salt token
 const Commando = require('discord.js-commando');
 const path = require('path');
-const token = require('./config.json').token;
+const { token } = require('./config.json');
 const sqlite = require('sqlite');
 
 const client = new Commando.Client({
 	commandPrefix: '.',
 	owner: '94705001439436800'
 });
+
+client.setProvider(
+    sqlite.open(path.join(__dirname, 'database.sqlite3')).then(db => new Commando.SQLiteProvider(db))
+).catch(console.error);
 
 client
     .on('error', console.error)
@@ -22,11 +26,9 @@ client
     .on('commandError', (cmd, err) => {
         if(err instanceof Commando.FriendlyError) return;
         console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
-    })
+    });
 
-client.setProvider(
-    sqlite.open(path.join(__dirname, 'database.sqlite3')).then(db => new Commando.SQLiteProvider(db))
-).catch(console.error);
+
 
 client.registry
     .registerDefaultTypes()

@@ -79,7 +79,6 @@ module.exports = class MusicQueue {
         return this.current_index == this.length - 1;
     }
 
-    // Should we return this node?
     RemoveAt(index) {
         if(index < 0 || index > this.length) {
             throw new RangeError(`${index} is out of bounds`);
@@ -106,6 +105,33 @@ module.exports = class MusicQueue {
             this.length--;
             return removedNode;
         }
+    }
+
+    SwapNodes(indexOne, indexTwo) {
+        let node1 = null;
+        let node2 = null;
+        let iterator = this.head;
+        let counter = 0;
+
+        while(iterator != null) {
+            if(counter == indexOne)
+                node1 = iterator
+            else if(counter == indexTwo)
+                node2 = iterator
+            counter++;
+            iterator = iterator.next;
+        }
+
+        // swap the data for each node instead of swapping the individual nodes
+        if(node1 && node2) {
+            let tempData = node1.data;
+            node1.data = node2.data;
+            node2.data = tempData;
+        } else {
+            return;
+        }
+        
+        return { node1, node2 }; // remember the nodes have their data swapped
     }
 
     RemoveSong(song) {
