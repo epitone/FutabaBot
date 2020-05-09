@@ -114,3 +114,4 @@ public
 # Node ignoreables end here
 
 config.json
+database.sqlite3
