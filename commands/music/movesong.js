@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const musicplayer = require(`./modules/musicplayer`);
 const discordUtils = require ('../../utils/discord-utils');
 
 module.exports = class MoveSongCommand extends Command {
@@ -34,6 +33,8 @@ module.exports = class MoveSongCommand extends Command {
     }
 
     async run(message, { position1, position2 }) {
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
         let { node1, node2 } = musicplayer.MoveSong(position1-1, position2-1);
         let response = node1 && node2 ? `**${message.author.tag}** I have successfully moved ${node2.data.prettyName} from position ${position1} to ${position2}.` :
         `Something went wrong! Please try again.`

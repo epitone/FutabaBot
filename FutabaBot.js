@@ -3,6 +3,9 @@ const Commando = require('discord.js-commando');
 const path = require('path');
 const { token } = require('./config.json');
 const sqlite = require('sqlite');
+const MusicService = require(`./modules/music/services/musicservice`);
+
+let musicService;
 
 const client = new Commando.Client({
 	commandPrefix: '.',
@@ -26,9 +29,38 @@ client
     .on('commandError', (cmd, err) => {
         if(err instanceof Commando.FriendlyError) return;
         console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
+    })
+    .on('providerReady', () => {
+        //setup music service
+        musicService = new MusicService(client.provider.db, client);
+
+        // setup tables if necessary
+        client.provider.db.exec(`
+        CREATE TABLE IF NOT EXISTS "playlists" (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "guild"	INTEGER,
+            "author"	TEXT,
+            "author_id"	INTEGER,
+            "name"	TEXT,
+            FOREIGN KEY("guild") REFERENCES "playlists"("guild")
+        );
+        CREATE TABLE IF NOT EXISTS "playlist_song"(
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            "music_playlist_id" INTEGER NOT NULL,
+            "provider" TEXT,
+            "query" TEXT,
+            "title" TEXT,
+            "uri" TEXT,
+            FOREIGN KEY("id") REFERENCES "playlist_song"("music_playlist_id")
+        );`);
     });
 
-
+function getMusicService() {
+    if(!musicService) {
+        musicService = new MusicService(client.provider.db, client);
+    }
+    return musicService;
+}
 
 client.registry
     .registerDefaultTypes()
@@ -43,3 +75,5 @@ client.registry
 client.login(token);
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
+
+module.exports = { getMusicService };

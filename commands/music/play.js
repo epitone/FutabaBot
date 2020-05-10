@@ -5,7 +5,7 @@ const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
-let musicplayer = require(`./modules/musicplayer`);
+// let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class PlayCommand extends Command {
 	constructor(client) {
@@ -33,7 +33,9 @@ module.exports = class PlayCommand extends Command {
         }
 
         let voiceChannel = voiceState.channel;
-
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+        
         if(!play_argument) {
             if(musicplayer.QueueCount() == 0) {
                 discordUtils.embedResponse(message, {

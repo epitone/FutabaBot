@@ -1,14 +1,13 @@
 const ytdl = require('ytdl-core-discord');
 const MusicQueue = require('./musicqueue');
 const discordUtils = require ('../../../utils/discord-utils');
-const stringUtils = require('../../../utils/string-utils');
 
 class MusicPlayer {
-    constructor() {
+    constructor(volume) {
         this.repeat_playlist = false;
         this.queue = new MusicQueue(); // this is the persistent queue for the server
         this.dispatcher = null;
-        this.volume = 1; // TODO once defvol is implemented, make sure to check there's no default val in the db
+        this.volume = volume;
         this.stopped = true;
         this.paused = false;
         this.repeat_current_song = false;
@@ -127,7 +126,7 @@ class MusicPlayer {
         else return;
     }
 
-    setVolume(volume_level) {
+    SetVolume(volume_level) {
         this.volume = volume_level / 100;
         if(this.dispatcher) {
             this.dispatcher.setVolume(this.volume);
@@ -195,4 +194,4 @@ class MusicPlayer {
         return this.queue.SwapNodes(position1, position2);
     }
 }
-module.exports = new MusicPlayer()
+module.exports = MusicPlayer

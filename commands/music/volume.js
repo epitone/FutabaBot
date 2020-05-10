@@ -1,11 +1,5 @@
 const { Command } = require('discord.js-commando');
-const YouTube = require("discord-youtube-api");
-const config = require('../../config.json');
-const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
-
-const SongInfo = require(`./modules/songinfo`);
-let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class VolumeCommand extends Command {
 	constructor(client) {
@@ -36,7 +30,9 @@ module.exports = class VolumeCommand extends Command {
             return;
         }
 
-        musicplayer.setVolume(volume_level);
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+        musicplayer.SetVolume(volume_level);
         let response = `**${message.author.tag}** set volume to ${volume_level}%`
         discordUtils.embedResponse(message, {
             'color': 'ORANGE',

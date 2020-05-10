@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-let musicplayer = require(`./modules/musicplayer`);
 const discordUtils = require ('../../utils/discord-utils');
 const stringUtils = require('../../utils/string-utils');
 const ITEMS_PER_PAGE = 10;
@@ -25,6 +24,8 @@ module.exports = class ListQueue extends Command {
     }
 
     async run(message, { page_number: pageNumber }) {
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
         let {current: currentIndex, songs: queueArray } = musicplayer.QueueArray();
         
         if(typeof queueArray === "undefined" || queueArray.length === 0) {
