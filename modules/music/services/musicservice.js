@@ -35,7 +35,8 @@ class MusicService {
     const response = await this.database.run(SQL`INSERT INTO playlists(guild, author, author_id, name)
         VALUES(${guild.id}, ${authorName}, ${authorId}, ${playlistName});`)
     if (response) {
-      return this.SavePlaylistSong(response) // monitor this
+      const { playlistID, songAdded } = await this.SavePlaylistSong(response)
+      return { playlistName, playlistID, songAdded }
     }
   }
 
@@ -44,15 +45,27 @@ class MusicService {
     const playlistArray = this.musicplayer.QueueArray().songs
     // TODO: should we save the user who requested the song?
     const songsInfo = playlistArray.map(song => [playlistID, song.provider, song.query, song.title, song.url])
-    const results = []
+    const songAdded = []
 
     await this.database.run('BEGIN;')
     for (const song of songsInfo) {
-      results.push(await this.database.run(`INSERT INTO playlist_song(music_playlist_id, provider, query, title, uri) 
+      songAdded.push(await this.database.run(`INSERT INTO playlist_song(music_playlist_id, provider, query, title, uri) 
             VALUES(${song[0]}, "${song[1]}", "${song[2]}", "${song[3]}", "${song[4]}");`))
     }
     await this.database.run('END;')
-    return results
+    return { playlistID, songAdded }
+  }
+
+  async LoadPlaylist (guild, playlistID) {
+    const playlist = await this.database.all(SQL`
+    SELECT pls.provider AS provider, pls.query AS query_msg, pls.title AS title, pls.uri AS uri, 
+    playlists.id AS id, playlists.name AS playlist_name, playlists.author_id AS author_id
+    FROM playlist_song AS pls
+    LEFT JOIN playlists
+    ON pls.music_playlist_id = playlists.id
+    WHERE playlists.id = ${playlistID}
+    AND playlists.guild = ${guild};`)
+    return playlist
   }
 }
 module.exports = MusicService

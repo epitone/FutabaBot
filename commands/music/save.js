@@ -32,19 +32,23 @@ module.exports = class SaveCommand extends Command {
     }
 
     // FIXME: message.member will return bad values if the message author isn't a part of the server anymore
-    const result = await musicService.SavePlaylist(message.guild, playlistName, message.member)
-    if (!Array.isArray(result) || !result.length) {
+    const playlistInfo = await musicService.SavePlaylist(message.guild, playlistName, message.member)
+    if (!Array.isArray(playlistInfo.songAdded) || !playlistInfo.songAdded.length) {
       console.error('There was an error inserting into the database.')
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** Oops! Something went wrong!`
       })
     } else {
-      if (!result.includes(undefined)) {
+      if (!playlistInfo.songAdded.includes(undefined)) {
         // TODO: return the playlist id and name to the user
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
-          description: `**${message.author.tag}** I successfully saved the songs under the “${playlistName}” playlist.`
+          title: '**Playlist Saved**',
+          fields: [
+            { name: 'Name', value: `${playlistInfo.playlistName}` },
+            { name: 'ID', value: `${playlistInfo.playlistID}` }
+          ]
         })
       } else {
         // TODO report which songs were not saved successfully

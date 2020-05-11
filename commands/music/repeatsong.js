@@ -30,7 +30,7 @@ module.exports = class RepeatSongCommand extends Command {
             title: currentSong.title,
             url: currentSong.url,
             color: 'ORANGE',
-            footer: `${currentSong.total_time} | ${currentSong.provider} | ${currentSong.requester}`
+            footer: `${currentSong.prettyTotalTime} | ${currentSong.provider} | ${currentSong.requester}`
           })
         } else {
           discordUtils.embedResponse(message, {

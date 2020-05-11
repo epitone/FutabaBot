@@ -8,6 +8,15 @@ exports.embedResponse = (message, embedOptions) => {
   if (embedOptions.url) embed.setURL(embedOptions.url)
   if (embedOptions.author) embed.setAuthor(embedOptions.author)
   if (embedOptions.footer) embed.setFooter(embedOptions.footer)
+  if (embedOptions.fields) {
+    for (const field of embedOptions.fields) {
+      embed.addFields({
+        name: field.name,
+        value: field.value,
+        inline: field.inline ? field.inline : false
+      })
+    }
+  }
   message.embed(embed)
 }
 

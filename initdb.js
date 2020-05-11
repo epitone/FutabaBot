@@ -1,9 +1,10 @@
-const path = require('path')
-const sqlite = require('sqlite') // eslint-disable-line func-call-spacing
+const path = require('path'); // eslint-disable-line
+const sqlite = require('sqlite'); // eslint-disable-line func-call-spacing
 
 (async function () { // eslint-disable-line no-unexpected-multiline
+  console.log('Creating database')
   const db = await sqlite.open(path.join(__dirname, 'database.sqlite3'))
-
+  console.log('Creating database tables')
   // setup the necessary tables
   db.exec(`
   CREATE TABLE IF NOT EXISTS "playlists" (
@@ -23,6 +24,6 @@ const sqlite = require('sqlite') // eslint-disable-line func-call-spacing
     "uri" TEXT,
     FOREIGN KEY("id") REFERENCES "playlist_song"("music_playlist_id")
   );`)
-
+  console.log('Tables created, closing database.')
   db.close()
 })()

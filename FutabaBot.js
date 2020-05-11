@@ -33,27 +33,6 @@ client
   .on('providerReady', () => {
     // setup music service
     musicService = new MusicService(client.provider.db, client)
-
-    // setup tables if necessary
-    client.provider.db.exec(`
-        CREATE TABLE IF NOT EXISTS "playlists" (
-            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-            "guild" INTEGER,
-            "author" TEXT,
-            "author_id" INTEGER,
-            "name" TEXT,
-            FOREIGN KEY("guild") REFERENCES "playlists"("guild")
-        );
-        CREATE TABLE IF NOT EXISTS "playlist_song"(
-            "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-            "music_playlist_id" INTEGER NOT NULL,
-            "provider" TEXT,
-            "query" TEXT,
-            "title" TEXT,
-            "uri" TEXT,
-            FOREIGN KEY("id") REFERENCES "playlist_song"("music_playlist_id")
-        );`
-    )
   })
 
 function getMusicService () {
