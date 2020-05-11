@@ -4,7 +4,7 @@ const config = require('../../config.json');
 const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
+const SongInfo = require(`./../../modules/music/songinfo`);
 
 module.exports = class QueueCommand extends Command {
 	constructor(client) {
@@ -26,7 +26,7 @@ module.exports = class QueueCommand extends Command {
 
 	async run(message, { query_string }) {
 
-        const { voice: voiceState } = message.member;
+    const { voice: voiceState } = message.member;
         if(!discordUtils.inVoiceChannel(voiceState, message, `You need to be in a voice channel on this server to run this command.`)) {
             console.log(`${message.author.tag} attempted to queue music without being in a voice channel.`);
             return;

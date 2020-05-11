@@ -4,7 +4,7 @@ const config = require('../../config.json');
 const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
+const SongInfo = require(`./../../modules/music/songinfo`);
 
 module.exports = class QueueNextCommand extends Command {
 	constructor(client) {

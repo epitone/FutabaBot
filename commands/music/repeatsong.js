@@ -2,7 +2,7 @@ const { Command } = require('discord.js-commando');
 const YouTube = require("discord-youtube-api");
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
+const SongInfo = require(`./../../modules/music/songinfo`);
 
 module.exports = class RepeatSongCommand extends Command {
 	constructor(client) {

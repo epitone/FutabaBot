@@ -1,4 +1,4 @@
-let MusicPlayer = require(`../../../commands/music/modules/musicplayer`);
+let MusicPlayer = require(`./../musicplayer`);
 const SQL = require('sql-template-strings');
 
 class MusicService {

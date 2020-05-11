@@ -4,7 +4,7 @@ const config = require('../../config.json');
 const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
-const SongInfo = require(`./modules/songinfo`);
+const SongInfo = require(`./../../modules/music/songinfo`);
 
 module.exports = class PlayCommand extends Command {
 	constructor(client) {
@@ -17,7 +17,7 @@ module.exports = class PlayCommand extends Command {
 				{
 					key: 'play_argument',
 					prompt: 'What are you trying to do? (You can provide an integer to jump to a specific song, or a search query to add a song to the queue)',
-					type: 'string',
+                type: 'string',
                     default: '', // if no argument is given, this is the default
                 }
 			]
@@ -71,8 +71,7 @@ module.exports = class PlayCommand extends Command {
             }
             if(streamObject) {
                 let songInfo = new SongInfo(streamObject, message);
-                
-                musicplayer.a
+            
                 musicplayer.Enqueue(songInfo);
                 console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.QueueCount()}`);
 

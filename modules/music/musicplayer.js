@@ -1,6 +1,6 @@
 const ytdl = require('ytdl-core-discord');
 const MusicQueue = require('./musicqueue');
-const discordUtils = require ('../../../utils/discord-utils');
+const discordUtils = require ('./../../utils/discord-utils');
 
 class MusicPlayer {
     constructor(volume) {
