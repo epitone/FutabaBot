@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require ('../../utils/discord-utils');
 
-let musicplayer = require(`./modules/musicplayer`);
-
 module.exports = class PauseCommannd extends Command {
 	constructor(client) {
 		super(client, {
@@ -21,6 +19,9 @@ module.exports = class PauseCommannd extends Command {
             return;
         }
 
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+
         // FIXME we're repeating code here, probably should simplify this
         if(musicplayer.paused) {
             musicplayer.togglePause();
@@ -30,7 +31,7 @@ module.exports = class PauseCommannd extends Command {
                 'description': `Playback resumed.`
             });
         } else {
-            musicplayer.togglePause();
+            musicplayer.TogglePause();
             console.log(`${message.author.tag} paused playback.`);
             discordUtils.embedResponse(message, {
                 'color': `ORANGE`,

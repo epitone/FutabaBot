@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require ('../../utils/discord-utils');
 
-let musicplayer = require(`./modules/musicplayer`);
-
 module.exports = class NowPlayingCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -15,6 +13,10 @@ module.exports = class NowPlayingCommand extends Command {
 	}
 
 	async run(message) {
+
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+        
         if(musicplayer == null) {
             discordUtils.embedResponse(message, {
                 color : 'RED',

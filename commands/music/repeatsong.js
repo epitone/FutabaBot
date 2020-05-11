@@ -3,7 +3,6 @@ const YouTube = require("discord-youtube-api");
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
-let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class RepeatSongCommand extends Command {
 	constructor(client) {
@@ -22,6 +21,9 @@ module.exports = class RepeatSongCommand extends Command {
             return;
         }
         
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+
         if(musicplayer.current()) {
             if(!musicplayer.stopped) {
                 if(musicplayer.toggleRepeatSong()) {

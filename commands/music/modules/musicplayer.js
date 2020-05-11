@@ -136,7 +136,7 @@ class MusicPlayer {
         return this.data;
     }
 
-    togglePause() {
+    TogglePause() {
         if(this.dispatcher) {
             if(!this.dispatcher.paused) {
                 this.paused = true;

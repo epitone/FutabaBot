@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require ('../../utils/discord-utils');
 
-let musicplayer = require(`./modules/musicplayer`);
-
 module.exports = class SongAutoDeleteCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -15,12 +13,15 @@ module.exports = class SongAutoDeleteCommand extends Command {
 	}
 
 	async run(message) {
-        const { voiceChannel } = message.member;
         const { voice: voiceState } = message.member;
         if(!discordUtils.inVoiceChannel(voiceState, message, `You need to be in a voice channel on this server to run this command.`)) {
             console.log(`${message.author.tag} attempted to use songautodelete without being in a voice channel.`);
             return;
         }
+
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+
         var autodelete = musicplayer.toggleSongAutodelete();
         var response = `Song Auto-Delete is now ${autodelete ? "on" : "off"}`;
         discordUtils.embedResponse(message, {

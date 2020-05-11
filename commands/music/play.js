@@ -5,7 +5,6 @@ const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
-// let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class PlayCommand extends Command {
 	constructor(client) {

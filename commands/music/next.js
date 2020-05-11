@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require ('../../utils/discord-utils');
-let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class NextCommand extends Command {
 	constructor(client) {
@@ -29,6 +28,9 @@ module.exports = class NextCommand extends Command {
             console.log(`${message.author.tag} attempted to skip a song without being in a voice channel.`);
             return;
 		}
+
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
 
 		botVoiceChannelID = message.client.guilds.cache.get(message.guild.id).voice.channelID;
 		if (botVoiceChannelID != voiceState.channelID) {

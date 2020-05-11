@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require('../../utils/discord-utils');
 
-let musicplayer = require(`./modules/musicplayer`);
-
 module.exports = class SongRemoveCommand extends Command {
     constructor(client) {
         super(client, {
@@ -31,6 +29,10 @@ module.exports = class SongRemoveCommand extends Command {
 
         // TODO: test individual song removal
         songIndex = +songIndex || songIndex.toLowerCase();
+
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+
         if(!isNaN(songIndex)) {
             let removedNode = musicplayer.removeAt(--songIndex);
             if(removedNode) {

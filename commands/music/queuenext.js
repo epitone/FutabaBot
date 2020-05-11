@@ -5,7 +5,6 @@ const stringUtils = require('../../utils/string-utils');
 const discordUtils = require ('../../utils/discord-utils');
 
 const SongInfo = require(`./modules/songinfo`);
-let musicplayer = require(`./modules/musicplayer`);
 
 module.exports = class QueueNextCommand extends Command {
 	constructor(client) {
@@ -35,6 +34,9 @@ module.exports = class QueueNextCommand extends Command {
         let youtube = new YouTube(config.yt_api);
         let streamObject = null;
         let userVoiceChannel = voiceState.channel;
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
+        
         switch(query_string) {
             case stringUtils.ValidYTUrl(query_string):
                 streamObject = await youtube.getVideo(query_string);

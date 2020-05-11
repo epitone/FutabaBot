@@ -1,8 +1,6 @@
 const { Command } = require('discord.js-commando');
 const discordUtils = require('../../utils/discord-utils');
 
-let musicplayer = require(`./modules/musicplayer`);
-
 module.exports = class RepeatPlaylistCommand extends Command {
     constructor(client) {
         super(client, {
@@ -20,6 +18,9 @@ module.exports = class RepeatPlaylistCommand extends Command {
             console.log(`${message.author.tag} attempted to run a music command without being in a voice channel.`);
             return;
         }
+
+        let musicService = require(`./../../FutabaBot`).getMusicService();
+        let musicplayer = musicService.GetMusicPlayer(message.guild);
 
         let toggleEnabled = musicplayer.toggleRepeatPlaylist();
         discordUtils.embedResponse(message, {
