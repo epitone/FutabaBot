@@ -1,42 +1,42 @@
-const { Command } = require('discord.js-commando');
-const discordUtils = require ('../../utils/discord-utils');
+const { Command } = require('discord.js-commando')
+const discordUtils = require('../../utils/discord-utils')
 
 module.exports = class VolumeCommand extends Command {
-	constructor(client) {
-		super(client, {
-            name: 'volume',
-            aliases: ['vol'],
-			group: 'music', //the command group the command is a part of.
-			memberName: 'volume',
-			description: 'Sets the music playback volume (0-100%)',
-			args: [
-				{
-					key: 'volume_level',
-					prompt: 'What would you like to set the volume to?',
-                    type: 'integer',
-                    validate: volume_level => {
-                        let volume_int = parseInt(volume_level)
-                        return volume_int >= 0 && volume_int <= 100 // between 0 - 100
-                    },
-                }
-			]
-        });
-	}
-
-	async run(message, { volume_level }) {
-        const { voice: voiceState } = message.member;
-        if(!discordUtils.inVoiceChannel(voiceState, message, `You need to be in a voice channel on this server to run this command.`)) {
-            console.log(`${message.author.tag} attempted to change the music volume without being in a voice channel.`);
-            return;
+  constructor (client) {
+    super(client, {
+      name: 'volume',
+      aliases: ['vol'],
+      group: 'music', // the command group the command is a part of.
+      memberName: 'volume',
+      description: 'Sets the music playback volume (0-100%)',
+      args: [
+        {
+          key: 'volume_level',
+          prompt: 'What would you like to set the volume to?',
+          type: 'integer',
+          validate: volumeLevel => {
+            const volumeInt = parseInt(volumeLevel)
+            return volumeInt >= 0 && volumeInt <= 100 // between 0 - 100
+          }
         }
+      ]
+    })
+  }
 
-        let musicService = require(`./../../FutabaBot`).getMusicService();
-        let musicplayer = musicService.GetMusicPlayer(message.guild);
-        musicplayer.SetVolume(volume_level);
-        let response = `**${message.author.tag}** set volume to ${volume_level}%`
-        discordUtils.embedResponse(message, {
-            'color': 'ORANGE',
-            'description' : response
-        });
+  async run (message, { volume_level: volumeLevel }) {
+    const { voice: voiceState } = message.member
+    if (!discordUtils.inVoiceChannel(voiceState, message, 'You need to be in a voice channel on this server to run this command.')) {
+      console.log(`${message.author.tag} attempted to change the music volume without being in a voice channel.`)
+      return
     }
+
+    const musicService = require('./../../FutabaBot').getMusicService()
+    const musicplayer = musicService.GetMusicPlayer(message.guild)
+    musicplayer.SetVolume(volumeLevel)
+    const response = `**${message.author.tag}** set volume to ${volumeLevel}%`
+    discordUtils.embedResponse(message, {
+      color: 'ORANGE',
+      description: response
+    })
+  }
 }

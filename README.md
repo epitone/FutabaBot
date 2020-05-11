@@ -1,5 +1,5 @@
 # FutabaBot
-![david dependency tracker](https://david-dm.org/epitone/FutabaBot.svg)
+![david dependency tracker](https://david-dm.org/epitone/FutabaBot.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 a personal discord bot
 
