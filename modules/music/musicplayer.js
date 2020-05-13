@@ -69,18 +69,18 @@ class MusicPlayer {
     })
   }
 
-  Enqueue (song) {
+  enqueue (song) {
     if (song != null) {
       this.queue.Add(song)
       return this.queue.length - 1
     } else return -1
   }
 
-  enqueueNext (song) {
+  EnqueueNext (song) {
     if (song != null) {
       const returnIndex = this.queue.AddNext(song)
       if (this.stopped) {
-        this.setIndex(returnIndex)
+        this.SetIndex(returnIndex)
       }
       return returnIndex
     } else {
@@ -88,7 +88,7 @@ class MusicPlayer {
     }
   }
 
-  setIndex (index) {
+  SetIndex (index) {
     if (index < 0) throw new RangeError(`${index} is out of bounds`)
     if (this.autoDelete && index >= this.queue.currentIndex && index > 0) index--
     this.queue.currentIndex = index
@@ -146,12 +146,12 @@ class MusicPlayer {
     }
   }
 
-  toggleRepeatPlaylist () {
+  ToggleRepeatPlaylist () {
     this.repeatPlaylist = !this.repeatPlaylist
     return this.repeatPlaylist
   }
 
-  toggleRepeatSong () {
+  ToggleRepeatSong () {
     this.repeatCurrentSong = !this.repeatCurrentSong
     return this.repeatCurrentSong
   }
@@ -194,6 +194,19 @@ class MusicPlayer {
 
   MoveSong (position1, position2) {
     return this.queue.SwapNodes(position1, position2)
+  }
+
+  destroy () {
+    this.dispatcher.disconnect()
+    this.dispatcher = null // reset the dispatcher
+  }
+
+  SetMaxQueueSize (size) {
+    if (size === -1 || this.maxQueueSize <= size) {
+      this.queue.maxQueueSize = size
+      return true
+    }
+    return false
   }
 }
 module.exports = MusicPlayer

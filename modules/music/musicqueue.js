@@ -11,6 +11,7 @@ module.exports = class MusicQueue {
     this.tail = null
     this.length = 0
     this._currentIndex = 0
+    this.maxQueueSize = -1
   }
 
   get currentIndex () { return this._currentIndex }
@@ -45,6 +46,8 @@ module.exports = class MusicQueue {
   }
 
   Add (songInfo) {
+    // TODO: create a QueueFullError class
+    if (this.maxQueueSize !== -1 && this.maxQueueSize >= this.length) { throw new RangeError('Queue is full, cannot add song.') }
     const node = new Node(songInfo)
     if (!this.head) {
       this.head = node
@@ -57,6 +60,7 @@ module.exports = class MusicQueue {
   }
 
   AddNext (songInfo) {
+    if (this.maxQueueSize !== -1 && this.maxQueueSize >= this.length) { throw new RangeError('Queue is full, cannot add song.') }
     const currentSong = this.Current().song
     if (!currentSong) {
       this.Add(songInfo)
