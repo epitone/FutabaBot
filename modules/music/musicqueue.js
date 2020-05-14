@@ -1,3 +1,5 @@
+const BotRandom = require('./../../modules/botrandom')
+
 class Node {
   constructor (songInfo) {
     this.data = songInfo // a SongInfo object
@@ -12,6 +14,7 @@ module.exports = class MusicQueue {
     this.length = 0
     this._currentIndex = 0
     this.maxQueueSize = -1
+    this.shuffleArray = []
   }
 
   get currentIndex () { return this._currentIndex }
@@ -171,5 +174,13 @@ module.exports = class MusicQueue {
     this.tail = null
     this.length = 0
     this._currentIndex = 0
+  }
+
+  Random () {
+    this.currentIndex = BotRandom.nextMax(this.length)
+    while (this.shuffleArray.includes(this.currentIndex)) {
+      this.currentIndex = BotRandom.next(this.length)
+    }
+    return this.currentIndex
   }
 }

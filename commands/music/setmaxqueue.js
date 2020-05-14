@@ -5,7 +5,8 @@ module.exports = class SetMaxQueueCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'setmaxqueue',
-      group: 'smq', // the command group the command is a part of.
+      aliases: ['smq'],
+      group: 'music', // the command group the command is a part of.
       memberName: 'setmaxqueue', // the name of the command within the group (this can be different from the name).
       description: 'Sets the maximum queue size. Specify no parameters to have no limit.', // TODO should this persist between sessions?
       args: [

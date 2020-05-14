@@ -13,7 +13,9 @@ class MusicPlayer {
     this.repeatCurrentSong = false
     this.autoDelete = false
     this.manualIndex = false
-    this.autodcEnabled = false
+    this.manualSkip = false
+    this.autoDC = false
+    this.shuffle = false
   }
 
   async play (connection, message) {
@@ -35,33 +37,28 @@ class MusicPlayer {
       footer: `${this.data.song.prettyTotalTime} | ${this.data.song.requester}`
     })
 
-    /* Order of Precedence (From most important to Least)
-            1. Repeat Song
-            2. Repeat Playlist
-            3. Song Auto-Delete (remove song from queue) if the other two are disabled
-            4. Stop playback if we're at the end of the queue and repeat_playlist is disabled
-            5. Move to next song
-        */
     this.dispatcher.on('finish', () => {
       const playerState = {
         queue_length: this.queue.length,
         stopped: this.stopped,
         current_index: this.queue.currentIndex
       }
+
       if (!playerState.stopped) {
-        if (this.repeatCurrentSong) {
+        if (this.repeatCurrentSong) { // TODO: if song is manually skipped, disable repeat song
           this.play(connection, message)
-        } else if (this.queue.IsLast() && this.repeatPlaylist) {
+        } else if (!this.shuffle && this.queue.IsLast() && this.repeatPlaylist) { // if shuffle is disabled, we're at the end of the queue, and repeat playlist is enable, start over
+          console.log.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
           this.queue.currentIndex = 0
           this.play(connection, message)
-        } else if (this.queue.IsLast() && this.autodcEnabled) {
-          connection.disconnect()
-        } else if (this.autoDelete && !this.repeatCurrentSong && !this.repeatPlaylist && this.data != null) {
+        } else if (this.autoDelete && !this.repeatCurrentSong && !this.repeatPlaylist) { // if auto-delete enabled and repeat song and repeated playlist disabled, delete the song
+          console.log.info(`Autodelete is on. Removing ${this.queue.Current().song.title} from the queue`)
           this.queue.RemoveSong(this.data.song)
-        } else if (playerState.queue_length - 1 === this.data.index && !this.repeatPlaylist) {
-          console.log('stopping playback because repeat playlist is disabled.')
+        } else if (playerState.queue_length - 1 === this.data.index && !this.repeatPlaylist && !this.manualSkip) {
+          console.log.info('Stopping playback because repeatplaylist is disabled')
           this.stop()
         } else {
+          console.log.info('Playing next song')
           this.queue.Next()
           this.play(connection, message)
         }
@@ -106,20 +103,23 @@ class MusicPlayer {
   }
 
   skip (skipCount = 1) {
+    this.manualSkip = true
     if (!this.stopped) {
-      if (!this.repeatPlaylist && this.queue.IsLast()) {
+      if (!this.repeatPlaylist && this.queue.IsLast()) { // if it's the last song in the queue and repeat playlist is disabled
         this.stop()
         return
-      } else this.queue.Next(skipCount - 1)
-    } else this.queue.currentIndex = 0
-
+      } else {
+        this.queue.Next(skipCount - 1)
+      }
+    } else {
+      this.queue.currentIndex = 0
+    }
     this.stopped = false
     if (this.dispatcher) this.dispatcher.end()
   }
 
   stop () {
     this.stopped = true
-
     if (this.dispatcher) this.dispatcher.destroy()
   }
 
@@ -162,8 +162,8 @@ class MusicPlayer {
   }
 
   ToggleAutoDC () {
-    this.autodcEnabled = !this.autodcEnabled
-    return this.autodcEnabled
+    this.autoDC = !this.autoDC
+    return this.autoDC
   }
 
   QueueArray () {
@@ -207,6 +207,11 @@ class MusicPlayer {
       return true
     }
     return false
+  }
+
+  ToggleShuffle () {
+    this.shuffle = !this.shuffle
+    return this.shuffle
   }
 }
 module.exports = MusicPlayer

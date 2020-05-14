@@ -1,5 +1,5 @@
 const path = require('path'); // eslint-disable-line
-const sqlite = require('sqlite'); // eslint-disable-line func-call-spacing
+const sqlite = require('sqlite'); // eslint-disable-line
 
 (async function () { // eslint-disable-line no-unexpected-multiline
   console.log('Creating database')
