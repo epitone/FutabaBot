@@ -24,7 +24,7 @@ module.exports = class PauseCommannd extends Command {
 
     // FIXME we're repeating code here, probably should simplify this
     if (musicplayer.paused) {
-      musicplayer.togglePause()
+      musicplayer.TogglePause()
       console.log(`${message.author.tag} resumed playback.`)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',

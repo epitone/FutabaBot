@@ -11,7 +11,6 @@ module.exports = class ListQueue extends Command {
       group: 'music', // the command group the command is a part of.
       memberName: 'listqueue', // the name of the command within the group (this can be different from the name).
       description: 'Displays a paginated list of songs in the queue. There are 10 songs per page. The default page is whatever page the current song is playing from.',
-      // TODO: add a check to make sure the page number is valid (>0 and less than possible page max)
       args: [
         {
           key: 'page_number',
@@ -38,7 +37,11 @@ module.exports = class ListQueue extends Command {
     }
 
     // if we're using the default value then we need to get the page of the currently playing song
-    if (--pageNumber === -1) pageNumber = currentIndex / ITEMS_PER_PAGE
+    if (--pageNumber === -1) {
+      // TODO: probably should just convert this to a utility function
+      const pages = Math.floor(currentIndex / ITEMS_PER_PAGE)
+      pageNumber = pages || 1
+    }
 
     const totalPlaytimeSeconds = musicplayer.TotalPlaytime()
     const totalFancyTime = stringUtils.FancyTime(totalPlaytimeSeconds)
@@ -51,14 +54,26 @@ module.exports = class ListQueue extends Command {
     let listNumber = 0 + startAt
     let queueList = ''
     let skipCounter = 0
+    const pages = Math.floor(songsArray.length / ITEMS_PER_PAGE)
+    const maxPages = pages || 1
+    if (currentPage > maxPages) {
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: `**${message.author.tag}** That page number is invalid!`
+      })
+      return
+    }
 
-    for (const song of songsArray) {
-      while (skipCounter++ < startAt) continue
+    while (skipCounter < startAt) {
+      skipCounter++
+    }
+    const songsSliced = songsArray.slice(skipCounter, (skipCounter + ITEMS_PER_PAGE))
+    for (const song of songsSliced) {
       queueList += (listNumber++ === currentIndex) ? `▶ ${listNumber}. ${song.prettyFullName} \n` : `${listNumber}. ${song.prettyFullName} \n`
     }
     queueList = `🔊 ${songsArray[currentIndex].prettyName}\n\n` + queueList
 
-    const queueTitle = `Player Queue - Page ${(currentPage + 1)}/${~~((songsArray.length / ITEMS_PER_PAGE) + 1)} \n\n`
+    const queueTitle = `Player Queue - Page ${(currentPage + 1)}/${maxPages} \n\n`
     const footer = `${songsArray.length} ${songsArray.length > 1 ? 'tracks' : 'track'} | ${durationTime}`
 
     discordUtils.embedResponse(message, {

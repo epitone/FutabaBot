@@ -28,45 +28,66 @@ class MusicPlayer {
     })
     this.stopped = false
     this.paused = false
-    console.log(`now playing: “${this.data.song.title}”`)
+    console.info(`now playing: “${this.data.song.title}”`)
     discordUtils.embedResponse(message, {
       author: `Playing song #${this.queue.currentIndex + 1}`,
       title: this.data.song.title,
       url: this.data.song.url,
       color: 'ORANGE',
-      footer: `${this.data.song.prettyTotalTime} | ${this.data.song.requester}`
+      footer: `${this.data.song.prettyTotalTime} | ${this.data.song.provider} | ${this.data.song.requester}`
     })
 
-    this.dispatcher.on('finish', () => {
+    this.dispatcher.on('finish', async () => {
       const playerState = {
         queue_length: this.queue.length,
         stopped: this.stopped,
-        current_index: this.queue.currentIndex
+        current_index: this.queue.currentIndex,
+        current_song: this.current().song
       }
 
+      discordUtils.embedResponse(message, {
+        author: 'Finished song',
+        title: playerState.current_song.title,
+        url: playerState.current_song.url,
+        color: 'ORANGE',
+        footer: `${playerState.current_song.url.totalTime} | ${playerState.current_song.provider} | ${playerState.current_song.url.requester}`
+      })
+
       if (!playerState.stopped) {
-        if (this.repeatCurrentSong) { // TODO: if song is manually skipped, disable repeat song
-          this.play(connection, message)
-        } else if (!this.shuffle && this.queue.IsLast() && this.repeatPlaylist) { // if shuffle is disabled, we're at the end of the queue, and repeat playlist is enable, start over
-          console.log.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
-          this.queue.currentIndex = 0
-          this.play(connection, message)
-        } else if (this.autoDelete && !this.repeatCurrentSong && !this.repeatPlaylist) { // if auto-delete enabled and repeat song and repeated playlist disabled, delete the song
-          console.log.info(`Autodelete is on. Removing ${this.queue.Current().song.title} from the queue`)
+        if (!this.manualSkip && !this.manualIndex) { // if we have not moved to a specific song or skipped at all
+          if (this.repeatCurrentSong) {
+            this.play(connection, message)
+          } else if (!this.shuffle && this.queue.IsLast() && this.repeatPlaylist) { // if we're at the end of the queue and repeat playlist enabled
+            console.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
+            this.queue.currentIndex = 0
+            this.play(connection, message)
+          }
+        }
+        if (this.autoDelete && !this.repeatCurrentSong && !this.repeatPlaylist) { // if repeat track and repeat playlist is off and autodelete on
+          console.info(`Autodelete enabled, removing ${this.queue.currentIndex().song.title} from queue.`)
           this.queue.RemoveSong(this.data.song)
-        } else if (playerState.queue_length - 1 === this.data.index && !this.repeatPlaylist && !this.manualSkip) {
-          console.log.info('Stopping playback because repeatplaylist is disabled')
-          this.stop()
-        } else {
-          console.log.info('Playing next song')
-          this.queue.Next()
-          this.play(connection, message)
+        }
+        if (!this.manualIndex && (!this.repeatCurrentSong || this.manualSkip)) {
+          if (this.shuffle) {
+            console.info('Shuffle enabled. Picking random song.')
+            const index = await this.queue.Random()
+            console.log(`Index Chosen: ${index}`)
+            this.play(connection, message)
+          } else if (this.queue.IsLast() && !this.repeatPlaylist && !this.manualSkip) {
+            console.info('Stopping because repeatplaylist is disabled.')
+            this.stop()
+          } else {
+            console.info('Playing next song')
+            this.queue.Next()
+            this.play(connection, message)
+          }
         }
       }
     })
   }
 
-  enqueue (song) {
+  Enqueue (song) {
+    // TODO: make sure there is space in the queue to add another song
     if (song != null) {
       this.queue.Add(song)
       return this.queue.length - 1

@@ -1,11 +1,6 @@
 class BotRandom {
   constructor () {
-    this.crypto; // eslint-disable-line
-    try {
-      this.crypto = require('random-number-csprng')
-    } catch (err) {
-      console.log('crypto support is disabled!')
-    }
+    this.crypto = require('random-number-csprng')
   }
 
   async next () {
@@ -13,7 +8,8 @@ class BotRandom {
   }
 
   async nextMax (maxValue) {
-    return Math.abs(this.crypto(-maxValue, maxValue))
+    const randomNumber = await this.crypto(-maxValue, maxValue)
+    return Math.abs(randomNumber)
   }
 
   async nextRange (minValue, maxValue) {

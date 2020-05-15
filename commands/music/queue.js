@@ -37,15 +37,24 @@ module.exports = class QueueCommand extends Command {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
 
-    switch (queryString) {
-      case stringUtils.ValidYTUrl(queryString):
-        streamObject = await youtube.getVideo(queryString)
-        break
-      case stringUtils.ValidYTID(queryString):
-        streamObject = await youtube.getVideoByID(queryString)
-        break
-      default:
-        streamObject = await youtube.searchVideos(queryString)
+    try {
+      switch (queryString) {
+        case stringUtils.ValidYTUrl(queryString):
+          streamObject = await youtube.getVideo(queryString)
+          break
+        case stringUtils.ValidYTID(queryString):
+          streamObject = await youtube.getVideoByID(queryString)
+          break
+        default:
+          streamObject = await youtube.searchVideos(queryString)
+      }
+    } catch (err) {
+      console.error(`error fetching youtube stream object: ${err}`)
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: `**${message.author.tag}** I couldn't get data for that song! Try another link maybe?`
+      })
+      return
     }
     if (streamObject) {
       const songInfo = new SongInfo(streamObject, message)
@@ -72,8 +81,6 @@ module.exports = class QueueCommand extends Command {
           }
         }
       }
-    } else {
-      discordUtils.embedResponse(message, 'I couldn\'t find that song!', true)
     }
   }
 }
