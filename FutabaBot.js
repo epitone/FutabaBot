@@ -2,7 +2,7 @@
 const Commando = require('discord.js-commando')
 const path = require('path')
 const { token } = require('./config.json')
-const sqlite = require('sqlite')
+const Database = require('better-sqlite3')
 const MusicService = require('./modules/music/services/musicservice')
 
 let musicService
@@ -12,9 +12,8 @@ const client = new Commando.Client({
   owner: '94705001439436800'
 })
 
-client.setProvider(
-  sqlite.open(path.join(__dirname, 'database.sqlite3')).then(db => new Commando.SQLiteProvider(db))
-).catch(console.error)
+const sql = new Database(path.join(__dirname, 'database.sqlite3'))
+client.setProvider(new Commando.SyncSQLiteProvider(sql)).catch(console.error)
 
 client
   .on('error', console.error)
@@ -32,7 +31,7 @@ client
   })
   .on('providerReady', () => {
     // setup music service
-    musicService = new MusicService(client.provider.db, client)
+    musicService = new MusicService(client.provider.conn, client)
   })
 
 function getMusicService () {

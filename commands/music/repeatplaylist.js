@@ -21,7 +21,7 @@ module.exports = class RepeatPlaylistCommand extends Command {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
 
-    const toggleEnabled = musicplayer.toggleRepeatPlaylist()
+    const toggleEnabled = musicplayer.ToggleRepeatPlaylist()
     discordUtils.embedResponse(message, {
       color: 'ORANGE',
       author: `🔁 Repeat Playlist ${(toggleEnabled ? 'Enabled' : 'Disabled')}`

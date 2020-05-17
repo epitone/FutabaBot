@@ -15,7 +15,7 @@ module.exports = class PlaylistSongsCommand extends Command {
 
   async run (message) {
     const musicService = require('./../../FutabaBot').getMusicService()
-    const playlists = await musicService.LoadAllPlaylists(message.guild.id)
+    const playlists = musicService.LoadAllPlaylists(message.guild.id)
 
     const prefix = this.client.commandPrefix
     if (playlists.length === 0) {

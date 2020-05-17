@@ -27,77 +27,91 @@ class MusicService {
   }
 
   // TODO: check whether these inputs are worth sanitizing
-  // FIXME: return the playlist name and ID if successful
-  async SavePlaylist (guild, playlistName, guildMember) {
+  SavePlaylist (guild, playlistName, guildMember) {
     const authorId = guildMember.id
     const authorName = guildMember.user.tag
 
-    const response = await this.database.run(SQL`INSERT INTO playlists(guild, author, author_id, name)
-        VALUES(${guild.id}, ${authorName}, ${authorId}, ${playlistName});`)
-    if (response) {
-      const { playlistID, songAdded } = await this.SavePlaylistSong(response)
-      return { playlistName, playlistID, songAdded }
+    const insert = this.database.prepare('INSERT INTO playlists (guild, author, author_id, name) VALUES (?, ?, ?, ?);')
+    const result = insert.run(guild.id, authorName, authorId, playlistName)
+    console.log(result.changes)
+
+    if (result.lastInsertRowid) {
+      const { playlistID, songsAdded } = this.SavePlaylistSong(result.lastInsertRowid)
+      return { playlistName, playlistID, songsAdded}
     }
   }
 
-  async SavePlaylistSong (playlist) {
-    const playlistID = playlist.lastID
+  SavePlaylistSong (playlistID) {
     const playlistArray = this.musicplayer.QueueArray().songs
-    // TODO: should we save the user who requested the song?
-    const songsInfo = playlistArray.map(song => [playlistID, song.provider, song.query, song.title, song.url])
-    const songAdded = []
+    const songsInfo = playlistArray.map(song => {
+      const songObj = {}
+      songObj.id = playlistID
+      songObj.provider = song.provider
+      songObj.query = song.query
+      songObj.title = song.title
+      songObj.url = song.url
+      return songObj
+    })
+    let songsAdded = 0
 
-    await this.database.run('BEGIN;')
-    for (const song of songsInfo) {
-      songAdded.push(await this.database.run(`INSERT INTO playlist_song(music_playlist_id, provider, query, title, uri) 
-            VALUES(${song[0]}, "${song[1]}", "${song[2]}", "${song[3]}", "${song[4]}");`))
-    }
-    await this.database.run('END;')
-    return { playlistID, songAdded }
+    const insertStatement = this.database.prepare(`
+    INSERT INTO playlist_song(music_playlist_id, provider, query, title, uri) 
+    VALUES(@id, @provider, @query, @title, @url)`)
+
+    const transaction = this.database.transaction((songs) => {
+      console.log('BEGIN TRANSACTION')
+      for (const song of songs) {
+        songsAdded += insertStatement.run(song).changes
+      }
+      console.log('END TRANSACTION')
+    })
+
+    transaction(songsInfo)
+
+    return { playlistID, songsAdded }
   }
 
-  async LoadPlaylist (guild, playlistID) {
-    const playlist = await this.database.all(SQL`
+  LoadPlaylist (guild, playlistID) {
+    const statement = this.database.prepare(SQL`
     SELECT pls.provider AS provider, pls.query AS query_msg, pls.title AS title, pls.uri AS uri, 
     playlists.id AS id, playlists.name AS playlist_name, playlists.author_id AS author_id
     FROM playlist_song AS pls
     LEFT JOIN playlists
     ON pls.music_playlist_id = playlists.id
-    WHERE playlists.id = ${playlistID}
-    AND playlists.guild = ${guild};`)
-    return playlist
+    WHERE playlists.id = ?
+    AND playlists.guild = ?;`)
+
+    return statement.all(playlistID, guild)
   }
 
   // TODO check if we need to force an order by for this query
-  async LoadPlaylistSongs (guild, playlistID) {
-    console.log(`SELECT pls.provider AS provider, pls.title AS title, pls.uri AS uri, 
-    playlists.name AS playlist_name, playlists.author_id AS author_id
+  LoadPlaylistSongs (guild, playlistID) {
+    const statement = this.database.prepare(`
+    SELECT pls.provider AS provider, pls.title AS title, pls.uri AS uri, playlists.name AS playlist_name, playlists.author_id AS author_id
     FROM playlist_song AS pls
     LEFT JOIN playlists
     ON pls.music_playlist_id = playlists.id
-    WHERE playlists.id = ${playlistID}
-    AND playlists.guild = ${guild}`)
-    const playlistSongs = await this.database.all(SQL`
-    SELECT pls.provider AS provider, pls.title AS title, pls.uri AS uri, 
-    playlists.name AS playlist_name, playlists.author_id AS author_id
-    FROM playlist_song AS pls
-    LEFT JOIN playlists
-    ON pls.music_playlist_id = playlists.id
-    WHERE playlists.id = ${playlistID}
-    AND playlists.guild = ${guild}`)
-    return playlistSongs
+    WHERE playlists.id = ?
+    AND playlists.guild = ?;`)
+
+    return statement.all(playlistID, guild)
   }
 
-  async LoadAllPlaylists (guild) {
-    const playlists = await this.database.all(SQL`
+  LoadAllPlaylists (guild) {
+    const statement = this.database.prepare(`
     SELECT p.id, p.name AS name, p.author_id AS author_id,
     COUNT(*) AS total_songs
     FROM playlists AS p
     LEFT JOIN playlist_song AS pls
     ON p.id = pls.music_playlist_id
-    WHERE guild = ${guild}
+    WHERE guild = ?
     GROUP BY p.id`)
-    return playlists
+
+    return statement.all(guild)
   }
+
+  // async DeletePlaylist (guild, playlistID) {
+  //   const deletedPlaylist = await this.database.run('BEGIN TRANSACTION')
+  // }
 }
 module.exports = MusicService

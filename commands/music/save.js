@@ -33,7 +33,7 @@ module.exports = class SaveCommand extends Command {
 
     // FIXME: message.member will return bad values if the message author isn't a part of the server anymore
     const playlistInfo = await musicService.SavePlaylist(message.guild, playlistName, message.member)
-    if (!Array.isArray(playlistInfo.songAdded) || !playlistInfo.songAdded.length) {
+    if (playlistInfo.songAdded < musicplayer.QueueCount()) {
       console.error('There was an error inserting into the database.')
       discordUtils.embedResponse(message, {
         color: 'RED',
@@ -41,7 +41,6 @@ module.exports = class SaveCommand extends Command {
       })
     } else {
       if (!playlistInfo.songAdded.includes(undefined)) {
-        // TODO: return the playlist id and name to the user
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
           title: '**Playlist Saved**',
