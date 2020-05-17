@@ -81,9 +81,10 @@ module.exports = class PlayCommand extends Command {
           footer: `${songInfo.total_time} | ${songInfo.requester}`
         })
         if (musicplayer.is_stopped) {
+          const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {
             color: 'RED',
-            description: 'A song has been queued but the player is stopped. To start playback use the `.play` command.'
+            description: `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`
           })
         } else if (!message.guild.voiceConnection) {
           voiceChannel.join().then(connection => {

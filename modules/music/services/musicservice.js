@@ -67,5 +67,37 @@ class MusicService {
     AND playlists.guild = ${guild};`)
     return playlist
   }
+
+  // TODO check if we need to force an order by for this query
+  async LoadPlaylistSongs (guild, playlistID) {
+    console.log(`SELECT pls.provider AS provider, pls.title AS title, pls.uri AS uri, 
+    playlists.name AS playlist_name, playlists.author_id AS author_id
+    FROM playlist_song AS pls
+    LEFT JOIN playlists
+    ON pls.music_playlist_id = playlists.id
+    WHERE playlists.id = ${playlistID}
+    AND playlists.guild = ${guild}`)
+    const playlistSongs = await this.database.all(SQL`
+    SELECT pls.provider AS provider, pls.title AS title, pls.uri AS uri, 
+    playlists.name AS playlist_name, playlists.author_id AS author_id
+    FROM playlist_song AS pls
+    LEFT JOIN playlists
+    ON pls.music_playlist_id = playlists.id
+    WHERE playlists.id = ${playlistID}
+    AND playlists.guild = ${guild}`)
+    return playlistSongs
+  }
+
+  async LoadAllPlaylists (guild) {
+    const playlists = await this.database.all(SQL`
+    SELECT p.id, p.name AS name, p.author_id AS author_id,
+    COUNT(*) AS total_songs
+    FROM playlists AS p
+    LEFT JOIN playlist_song AS pls
+    ON p.id = pls.music_playlist_id
+    WHERE guild = ${guild}
+    GROUP BY p.id`)
+    return playlists
+  }
 }
 module.exports = MusicService

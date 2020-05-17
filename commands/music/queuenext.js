@@ -59,9 +59,10 @@ module.exports = class QueueNextCommand extends Command {
         })
         console.log(`added “${songInfo.title}” to queue position ${songIndex + 1}`)
         if (musicplayer.stopped) {
+          const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {
             color: 'RED',
-            description: 'A song has been queued but the player is stopped. To start playback use the `.play` command.'
+            description: `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`
           })
         } else {
           if (!message.guild.voice) {
