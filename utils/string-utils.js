@@ -53,3 +53,10 @@ exports.FancyTime = (timeSeconds) => {
   fancyTime += '' + secs
   return fancyTime
 }
+
+exports.escapeBraces = (string) => {
+  if (!string.includes('[') || !string.includes(']')) {
+    return string
+  }
+  return string.replace(/\[|\]/g, '\\$&')
+}

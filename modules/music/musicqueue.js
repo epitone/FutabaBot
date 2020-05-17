@@ -180,7 +180,7 @@ module.exports = class MusicQueue {
     const random = new BotRandom()
     this.currentIndex = await random.nextMax(this.length)
     while (this.shuffleArray.includes(this.currentIndex)) {
-      this.currentIndex = random.nextMax(this.length)
+      this.currentIndex = await random.nextMax(this.length)
     }
     return this.currentIndex
   }

@@ -15,7 +15,6 @@ module.exports = class PauseCommannd extends Command {
   async run (message) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.log(`${message.author.tag} attempted to pause music without being in a voice channel.`)
       return
     }
 

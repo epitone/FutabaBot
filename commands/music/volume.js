@@ -26,7 +26,6 @@ module.exports = class VolumeCommand extends Command {
   async run (message, { volume_level: volumeLevel }) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message, 'You need to be in a voice channel on this server to run this command.')) {
-      console.log(`${message.author.tag} attempted to change the music volume without being in a voice channel.`)
       return
     }
 

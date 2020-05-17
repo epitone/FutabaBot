@@ -14,7 +14,6 @@ module.exports = class DestroyCommand extends Command {
   async run (message) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.warn(`${message.author.tag} attempted to use a music command without being in a voice channel.`)
       return
     }
 

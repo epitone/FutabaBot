@@ -23,7 +23,6 @@ module.exports = class SongRemoveCommand extends Command {
   async run (message, { songIndex }) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.log(`${message.author.tag} attempted to run a music command without being in a voice channel.`)
       return
     }
 

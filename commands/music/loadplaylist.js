@@ -26,7 +26,6 @@ module.exports = class LoadPlaylistCommand extends Command {
     // This should not overwrite the current playlist, just tack it on the end
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.warn(`${message.author.tag} attempted to use a music command without being in a voice channel.`)
       return
     }
 
@@ -39,10 +38,10 @@ module.exports = class LoadPlaylistCommand extends Command {
     })
     const playlistSongs = await musicService.LoadPlaylist(message.guild.id, playlistID)
 
-    if (!(playlistSongs !== 'undefined') && !(playlistSongs.length > 0)) {
+    if (!(playlistSongs !== 'undefined') || playlistSongs.length === 0) {
       console.error('There was an error trying to load a playlist from the database')
       discordUtils.embedResponse(message, {
-        color: 'ORANGE',
+        color: 'RED',
         description: `**${message.author.tag}** there was an error loading the playlist!`
       })
       return
@@ -54,6 +53,7 @@ module.exports = class LoadPlaylistCommand extends Command {
       musicplayer.Enqueue(songInfo)
     }
 
+    // TODO display the name of the playlist that was loaded so the user can confirm
     discordUtils.embedResponse(message, {
       color: 'ORANGE',
       description: `**${message.author.tag}** playlist load successful.`

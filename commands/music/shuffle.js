@@ -16,7 +16,6 @@ module.exports = class ShuffleCommand extends Command {
   async run (message) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.log(`${message.author.tag} attempted to play music without being in a voice channel.`)
       return
     }
 

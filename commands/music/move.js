@@ -18,7 +18,6 @@ module.exports = class MoveCommand extends Command {
 
     // make sure the bot and user aren't in the same voice channel
     if (!DiscordUtils.inVoiceChannel(voiceState, message)) {
-      console.warn(`${message.author.tag} attempted to use a music command without being in a voice channel.`)
       return
     } else if (botVoiceState.id === voiceState.id) {
       console.warn(`${message.author.tag} tried to move the bot but they're in the same voice channel.`)

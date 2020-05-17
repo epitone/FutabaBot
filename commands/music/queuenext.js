@@ -27,7 +27,6 @@ module.exports = class QueueNextCommand extends Command {
   async run (message, { query_string: queryString }) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message, 'You need to be in a voice channel on this server to run this command.')) {
-      console.log(`${message.author.tag} attempted to queue music without being in a voice channel.`)
       return
     }
 

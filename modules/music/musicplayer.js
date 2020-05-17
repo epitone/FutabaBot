@@ -19,6 +19,10 @@ class MusicPlayer {
   }
 
   async play (connection, message) {
+    if (this.shuffle) {
+      console.info('Shuffle enabled. Picking random song.')
+      await this.queue.Random()
+    }
     this.data = this.queue.Current()
     const stream = await ytdl(this.data.song.url, { filter: 'audioonly' })
 
@@ -28,7 +32,7 @@ class MusicPlayer {
     })
     this.stopped = false
     this.paused = false
-    console.info(`now playing: “${this.data.song.title}”`)
+    console.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
     discordUtils.embedResponse(message, {
       author: `Playing song #${this.queue.currentIndex + 1}`,
       title: this.data.song.title,
@@ -50,7 +54,7 @@ class MusicPlayer {
         title: playerState.current_song.title,
         url: playerState.current_song.url,
         color: 'ORANGE',
-        footer: `${playerState.current_song.url.totalTime} | ${playerState.current_song.provider} | ${playerState.current_song.url.requester}`
+        footer: `${playerState.current_song.prettyTotalTime} | ${playerState.current_song.provider} | ${playerState.current_song.requester}`
       })
 
       if (!playerState.stopped) {
@@ -69,10 +73,17 @@ class MusicPlayer {
         }
         if (!this.manualIndex && (!this.repeatCurrentSong || this.manualSkip)) {
           if (this.shuffle) {
-            console.info('Shuffle enabled. Picking random song.')
-            const index = await this.queue.Random()
-            console.log(`Index Chosen: ${index}`)
-            this.play(connection, message)
+            if (this.queue.shuffleArray.length !== this.QueueCount() - 1) { // check if we just played the last song
+              this.queue.shuffleArray.push(playerState.current_index)
+              this.play(connection, message)
+            } else if (!this.repeatPlaylist) {
+              console.info('Stopping because repeatplaylist is disabled.')
+              this.stop()
+            } else {
+              console.info('Repeat playlist and shuffle enabled, end of queue reached, clearing cache and reshuffling queue')
+              this.queue.shuffleArray.length = 0
+              this.play(connection, message)
+            }
           } else if (this.queue.IsLast() && !this.repeatPlaylist && !this.manualSkip) {
             console.info('Stopping because repeatplaylist is disabled.')
             this.stop()

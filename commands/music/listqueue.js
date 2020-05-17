@@ -38,9 +38,7 @@ module.exports = class ListQueue extends Command {
 
     // if we're using the default value then we need to get the page of the currently playing song
     if (--pageNumber === -1) {
-      // TODO: probably should just convert this to a utility function
-      const pages = Math.floor(currentIndex / ITEMS_PER_PAGE)
-      pageNumber = pages || 1
+      pageNumber = parseInt(currentIndex / ITEMS_PER_PAGE)
     }
 
     const totalPlaytimeSeconds = musicplayer.TotalPlaytime()
@@ -55,7 +53,7 @@ module.exports = class ListQueue extends Command {
     let queueList = ''
     let skipCounter = 0
     const pages = Math.floor(songsArray.length / ITEMS_PER_PAGE)
-    const maxPages = pages || 1
+    const maxPages = pages + 1 || 1
     if (currentPage > maxPages) {
       discordUtils.embedResponse(message, {
         color: 'RED',

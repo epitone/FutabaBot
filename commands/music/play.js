@@ -27,7 +27,6 @@ module.exports = class PlayCommand extends Command {
   async run (message, { play_argument: playArgument }) {
     const { voice: voiceState } = message.member
     if (!discordUtils.inVoiceChannel(voiceState, message)) {
-      console.log(`${message.author.tag} attempted to play music without being in a voice channel.`)
       return
     }
 
