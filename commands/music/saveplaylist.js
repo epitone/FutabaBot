@@ -20,7 +20,7 @@ module.exports = class SaveCommand extends Command {
   }
 
   async run (message, { playlist_name: playlistName }) {
-    const musicService = require('./../../FutabaBot').getMusicService()
+    const musicService = require('../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
 
     if (musicplayer.QueueCount() < 1) {
@@ -32,15 +32,15 @@ module.exports = class SaveCommand extends Command {
     }
 
     // FIXME: message.member will return bad values if the message author isn't a part of the server anymore
-    const playlistInfo = await musicService.SavePlaylist(message.guild, playlistName, message.member)
-    if (playlistInfo.songAdded < musicplayer.QueueCount()) {
+    const playlistInfo = musicService.SavePlaylist(message.guild, playlistName, message.member)
+    if (playlistInfo.songsAdded < musicplayer.QueueCount()) {
       console.error('There was an error inserting into the database.')
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** Oops! Something went wrong!`
       })
     } else {
-      if (!playlistInfo.songAdded.includes(undefined)) {
+      if (playlistInfo.songsAdded === musicplayer.QueueCount()) {
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
           title: '**Playlist Saved**',

@@ -37,7 +37,7 @@ class MusicService {
 
     if (result.lastInsertRowid) {
       const { playlistID, songsAdded } = this.SavePlaylistSong(result.lastInsertRowid)
-      return { playlistName, playlistID, songsAdded}
+      return { playlistName, playlistID, songsAdded }
     }
   }
 
@@ -110,8 +110,38 @@ class MusicService {
     return statement.all(guild)
   }
 
-  // async DeletePlaylist (guild, playlistID) {
-  //   const deletedPlaylist = await this.database.run('BEGIN TRANSACTION')
-  // }
+  DeletePlaylist (guildID, playlistID, memberID, botOwner = false) {
+    let deleteStatement = null
+    let result = null
+
+    const selectStatement = this.database.prepare(`
+      SELECT id, name FROM playlists
+      WHERE guild = ?
+      AND id = ?
+    `)
+
+    const selectedPlaylist = selectStatement.get(guildID, playlistID)
+
+    if (!botOwner) {
+      deleteStatement = this.database.prepare(`
+      DELETE FROM playlists
+      WHERE guild = ?
+      AND id = ?
+      AND author_id = ?`)
+      result = deleteStatement.run(guildID, playlistID, memberID)
+    } else {
+      // TODO: if a user is not a bot owner and didn't create the original playlist, we should return a specific error
+      deleteStatement = this.database.prepare(`
+      DELETE FROM playlists
+      WHERE guild = ?
+      AND id = ?`)
+      result = deleteStatement.run(guildID, playlistID)
+    }
+
+    return {
+      successfulDelete: result.lastInsertRowid === selectedPlaylist.id,
+      playlistInfo: selectedPlaylist
+    }
+  }
 }
 module.exports = MusicService
