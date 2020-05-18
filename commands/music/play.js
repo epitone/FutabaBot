@@ -35,7 +35,7 @@ module.exports = class PlayCommand extends Command {
     const musicplayer = musicService.GetMusicPlayer(message.guild)
 
     if (!playArgument) {
-      if (musicplayer.QueueCount() === 0) {
+      if (musicplayer.queueCount() === 0) {
         discordUtils.embedResponse(message, {
           author: 'It doesn\'t look like there are any songs in the queue.',
           color: 'ORANGE'
@@ -68,13 +68,14 @@ module.exports = class PlayCommand extends Command {
           streamObject = await youtube.searchVideos(playArgument)
       }
       if (streamObject) {
+        streamObject.provider = 'YouTube'
         const songInfo = new SongInfo(streamObject, message)
 
-        musicplayer.Enqueue(songInfo)
-        console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.QueueCount()}`)
+        musicplayer.enqueue(songInfo)
+        console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queueCount()}`)
 
         discordUtils.embedResponse(message, {
-          author: `Queued song #${musicplayer.QueueCount()}`,
+          author: `Queued song #${musicplayer.queueCount()}`,
           title: songInfo.title,
           url: songInfo.url,
           color: 'ORANGE',

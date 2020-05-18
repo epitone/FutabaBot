@@ -1,8 +1,8 @@
 const { Util } = require('discord.js')
-const stringUtils = require('./../../utils/string-utils')
+
 module.exports = class SongInfo {
   constructor (streamObject, message) {
-    this.provider = 'YouTube' // TODO: eventually add support for SoundCloud
+    this.provider = streamObject.provider // TODO: eventually add support for SoundCloud
     this.query = message.content
     this.title = streamObject.title
     this.url = streamObject.url
@@ -11,9 +11,10 @@ module.exports = class SongInfo {
 
     // These variables are for display purposes
     // this.prettyName = `**[${stringUtils.escapeBraces(streamObject.title.substring(0, 65))}](${this.url})**`
-    this.prettyName = `**[${streamObject.title}](${this.url})**`
+    this.prettyName = this.provider !== 'Local' ? `**[${this.title}](${this.url})**` : `**${this.title}**`
     this.prettyTotalTime = streamObject.length
     this.prettyInfo = `${this.prettyTotalTime} | Youtube | ${this.requester}`
-    this.prettyFullName = `${this.prettyName}\n\t\t\`${this.prettyTotalTime} | Youtube | ${this.requester.length > 15 ? (this.requester) : (this.requester.substring(0, 15) + '...')}\``
+    this.prettyFullName = `${this.prettyName}\n\t\t\`${this.prettyTotalTime} | ${this.provider} | \
+${this.requester.length <= 15 ? (this.requester) : (this.requester.substring(0, 15) + '...')}\``
   }
 }

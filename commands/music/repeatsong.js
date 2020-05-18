@@ -22,7 +22,7 @@ module.exports = class RepeatSongCommand extends Command {
 
     if (musicplayer.current()) {
       if (!musicplayer.stopped) {
-        if (musicplayer.ToggleRepeatSong()) {
+        if (musicplayer.toggleRepeatSong()) {
           const currentSong = musicplayer.current().song
           discordUtils.embedResponse(message, {
             author: '🔂 Repeating track',

@@ -16,7 +16,7 @@ module.exports = class MoveSongCommand extends Command {
           type: 'integer'
           // validate: position1 => {
           //   position1 = parseInt(position1)
-          //   return position1 >= 1 && position1 <= musicPlayer.QueueCount()
+          //   return position1 >= 1 && position1 <= musicPlayer.queueCount()
           // }
         },
         {
@@ -25,7 +25,7 @@ module.exports = class MoveSongCommand extends Command {
           type: 'integer'
           // validate: position2 => {
           //   position2 = parseInt(position2)
-          //   return position2 >= 1 && position2 <= musicPlayer.QueueCount()
+          //   return position2 >= 1 && position2 <= musicPlayer.queueCount()
           // }
         }
       ]
@@ -36,7 +36,7 @@ module.exports = class MoveSongCommand extends Command {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicPlayer = musicService.GetMusicPlayer(message.guild)
 
-    const { node1, node2 } = musicPlayer.MoveSong(position1 - 1, position2 - 1)
+    const { node1, node2 } = musicPlayer.moveSong(position1 - 1, position2 - 1)
     const response = node1 && node2 ? `**${message.author.tag}** I have successfully moved ${node2.data.prettyName} from position ${position1} to ${position2}.`
       : 'Something went wrong! Please try again.'
     if (node1 && node2) {

@@ -3,6 +3,8 @@ const discordUtils = require('./../../utils/discord-utils')
 const YouTube = require('discord-youtube-api')
 const config = require('../../config.json')
 const SongInfo = require('./../../modules/music/songinfo')
+const MusicMetadata = require('music-metadata')
+const stringUtils = require('./../../utils/string-utils')
 
 module.exports = class LoadPlaylistCommand extends Command {
   constructor (client) {
@@ -36,7 +38,7 @@ module.exports = class LoadPlaylistCommand extends Command {
       color: 'ORANGE',
       description: 'Attempting to load the playlist...'
     })
-    const playlistSongs = await musicService.LoadPlaylist(message.guild.id, playlistID)
+    const playlistSongs = musicService.LoadPlaylist(message.guild.id, playlistID)
 
     if (!(playlistSongs !== 'undefined') || playlistSongs.length === 0) {
       console.error('There was an error trying to load a playlist from the database')
@@ -46,11 +48,31 @@ module.exports = class LoadPlaylistCommand extends Command {
       })
       return
     }
-    // TODO should we build a song info object or ping the API?
+    // TODO should we build a song info object ourselves or ping the API?
+    // TODO we should make this a separate function - it's cleaner
     const youtube = new YouTube(config.yt_api)
     for (const song of playlistSongs) {
-      const songInfo = new SongInfo(await youtube.getVideo(song.uri), message)
-      musicplayer.Enqueue(songInfo)
+      let songInfo = null
+      if (song.provider === 'Local') {
+        try {
+          const path = song.uri.slice(7)
+          const metadata = await MusicMetadata.parseFile(path, { mimeType: 'audio/mpeg' })
+          const streamObject = {
+            provider: song.provider,
+            title: song.title,
+            url: path,
+            durationSeconds: metadata.format.duration,
+            length: metadata.format.duration ? stringUtils.FancyTime(metadata.format.duration) : '?:??'
+          }
+          songInfo = new SongInfo(streamObject, message)
+        } catch (err) {
+          // TODO: set a variable to alert the user to an error
+          console.error(err)
+        }
+      } else {
+        songInfo = new SongInfo(await youtube.getVideo(song.uri), message)
+      }
+      musicplayer.enqueue(songInfo)
     }
 
     // TODO display the name of the playlist that was loaded so the user can confirm

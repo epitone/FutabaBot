@@ -14,8 +14,6 @@ module.exports = class StopCommand extends Command {
   async run (message) {
     const { voice: voiceState } = message.member
 
-    // TODO: make this a utility method since it's used so much, should make the code easier to deal with
-
     if (!discordUtils.inVoiceChannel(voiceState, message)) return
 
     const musicService = require('./../../FutabaBot').getMusicService()

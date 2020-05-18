@@ -14,7 +14,7 @@ module.exports = class AutoDCCommand extends Command {
   async run (message) {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
-    const autodcEnabled = musicplayer.ToggleAutoDC()
+    const autodcEnabled = musicplayer.toggleAutoDC()
     const response = autodcEnabled ? `**${message.author.tag}** I will disconnect from the voice channel when there are no more songs to play.`
       : `**${message.author.tag}** I will no longer disconnect from the voice channel when there are no more songs to play.`
     DiscordUtils.embedResponse(message, {

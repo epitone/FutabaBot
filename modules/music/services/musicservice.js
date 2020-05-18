@@ -27,9 +27,9 @@ class MusicService {
   }
 
   // TODO: check whether these inputs are worth sanitizing
-  SavePlaylist (guild, playlistName, guildMember) {
-    const authorId = guildMember.id
-    const authorName = guildMember.user.tag
+  SavePlaylist (guild, playlistName, member) {
+    const authorId = member.id
+    const authorName = member.tag
 
     const insert = this.database.prepare('INSERT INTO playlists (guild, author, author_id, name) VALUES (?, ?, ?, ?);')
     const result = insert.run(guild.id, authorName, authorId, playlistName)
@@ -42,14 +42,14 @@ class MusicService {
   }
 
   SavePlaylistSong (playlistID) {
-    const playlistArray = this.musicplayer.QueueArray().songs
+    const playlistArray = this.musicplayer.queueArray().songs
     const songsInfo = playlistArray.map(song => {
       const songObj = {}
       songObj.id = playlistID
       songObj.provider = song.provider
       songObj.query = song.query
       songObj.title = song.title
-      songObj.url = song.url
+      songObj.url = song.provider === 'Local' ? `file://${song.url}` : song.url
       return songObj
     })
     let songsAdded = 0
@@ -72,7 +72,7 @@ class MusicService {
   }
 
   LoadPlaylist (guild, playlistID) {
-    const statement = this.database.prepare(SQL`
+    const statement = this.database.prepare(`
     SELECT pls.provider AS provider, pls.query AS query_msg, pls.title AS title, pls.uri AS uri, 
     playlists.id AS id, playlists.name AS playlist_name, playlists.author_id AS author_id
     FROM playlist_song AS pls

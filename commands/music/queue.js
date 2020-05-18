@@ -56,9 +56,10 @@ module.exports = class QueueCommand extends Command {
       return
     }
     if (streamObject) {
+      streamObject.provider = 'YouTube'
       const songInfo = new SongInfo(streamObject, message)
 
-      const songIndex = musicplayer.Enqueue(songInfo) // add song to the player queue
+      const songIndex = musicplayer.enqueue(songInfo) // add song to the player queue
       if (songIndex !== -1) {
         discordUtils.embedResponse(message, {
           author: `Queued Song #${songIndex + 1}`,

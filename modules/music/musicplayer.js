@@ -1,6 +1,7 @@
 const ytdl = require('ytdl-core-discord')
 const MusicQueue = require('./musicqueue')
 const discordUtils = require('./../../utils/discord-utils')
+const fs = require('fs')
 
 class MusicPlayer {
   constructor (volume) {
@@ -19,24 +20,34 @@ class MusicPlayer {
   }
 
   async play (connection, message) {
+    let stream = null
     if (this.shuffle) {
       console.info('Shuffle enabled. Picking random song.')
       await this.queue.Random()
     }
     this.data = this.queue.Current()
-    const stream = await ytdl(this.data.song.url, { filter: 'audioonly' })
+    if (this.data.song.provider !== 'Local') {
+      stream = await ytdl(this.data.song.url, { filter: 'audioonly' })
+    } else {
+      stream = fs.createReadStream(this.data.song.url)
+    }
 
-    this.dispatcher = connection.play(stream, {
-      volume: this.volume,
-      type: 'opus'
-    })
+    if (this.data.song.provider !== 'Local') {
+      this.dispatcher = connection.play(stream, {
+        volume: this.volume,
+        type: 'opus'
+      })
+    } else {
+      this.dispatcher = connection.play(stream, { volume: this.volume })
+    }
+
     this.stopped = false
     this.paused = false
     console.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
     discordUtils.embedResponse(message, {
       author: `Playing song #${this.queue.currentIndex + 1}`,
       title: this.data.song.title,
-      url: this.data.song.url,
+      url: this.data.song.provider !== 'Local' ? this.data.song.url : undefined, // TODO: if we have a local provider, ignore the url
       color: 'ORANGE',
       footer: `${this.data.song.prettyTotalTime} | ${this.data.song.provider} | ${this.data.song.requester}`
     })
@@ -52,7 +63,7 @@ class MusicPlayer {
       discordUtils.embedResponse(message, {
         author: 'Finished song',
         title: playerState.current_song.title,
-        url: playerState.current_song.url,
+        url: playerState.current_song.provider !== 'Local' ? playerState.current_song.url : undefined, // TODO: don't use url if file is local
         color: 'ORANGE',
         footer: `${playerState.current_song.prettyTotalTime} | ${playerState.current_song.provider} | ${playerState.current_song.requester}`
       })
@@ -73,7 +84,7 @@ class MusicPlayer {
         }
         if (!this.manualIndex && (!this.repeatCurrentSong || this.manualSkip)) {
           if (this.shuffle) {
-            if (this.queue.shuffleArray.length !== this.QueueCount() - 1) { // check if we just played the last song
+            if (this.queue.shuffleArray.length !== this.queueCount() - 1) { // check if we just played the last song
               this.queue.shuffleArray.push(playerState.current_index)
               this.play(connection, message)
             } else if (!this.repeatPlaylist) {
@@ -97,7 +108,7 @@ class MusicPlayer {
     })
   }
 
-  Enqueue (song) {
+  enqueue (song) {
     // TODO: make sure there is space in the queue to add another song
     if (song != null) {
       this.queue.Add(song)
@@ -105,11 +116,11 @@ class MusicPlayer {
     } else return -1
   }
 
-  EnqueueNext (song) {
+  enqueueNext (song) {
     if (song != null) {
       const returnIndex = this.queue.AddNext(song)
       if (this.stopped) {
-        this.SetIndex(returnIndex)
+        this.setIndex(returnIndex)
       }
       return returnIndex
     } else {
@@ -117,7 +128,7 @@ class MusicPlayer {
     }
   }
 
-  SetIndex (index) {
+  setIndex (index) {
     if (index < 0) throw new RangeError(`${index} is out of bounds`)
     if (this.autoDelete && index >= this.queue.currentIndex && index > 0) index--
     this.queue.currentIndex = index
@@ -126,7 +137,7 @@ class MusicPlayer {
   }
 
   removeAt (index) {
-    return this.queue.RemoveAt(index)
+    return this.queue.removeAt(index)
   }
 
   reset () {
@@ -135,12 +146,12 @@ class MusicPlayer {
   }
 
   skip (skipCount = 1) {
-    this.manualSkip = true
     if (!this.stopped) {
       if (!this.repeatPlaylist && this.queue.IsLast()) { // if it's the last song in the queue and repeat playlist is disabled
         this.stop()
         return
       } else {
+        this.manualSkip = true
         this.queue.Next(skipCount - 1)
       }
     } else {
@@ -155,7 +166,7 @@ class MusicPlayer {
     if (this.dispatcher) this.dispatcher.destroy()
   }
 
-  SetVolume (volumeLevel) {
+  setVolume (volumeLevel) {
     this.volume = volumeLevel / 100
     if (this.dispatcher) {
       this.dispatcher.setVolume(this.volume)
@@ -166,7 +177,7 @@ class MusicPlayer {
     return this.data
   }
 
-  TogglePause () {
+  togglePause () {
     if (this.dispatcher) {
       if (!this.dispatcher.paused) {
         this.paused = true
@@ -178,12 +189,12 @@ class MusicPlayer {
     }
   }
 
-  ToggleRepeatPlaylist () {
+  toggleRepeatPlaylist () {
     this.repeatPlaylist = !this.repeatPlaylist
     return this.repeatPlaylist
   }
 
-  ToggleRepeatSong () {
+  toggleRepeatSong () {
     this.repeatCurrentSong = !this.repeatCurrentSong
     return this.repeatCurrentSong
   }
@@ -193,12 +204,12 @@ class MusicPlayer {
     return this.autoDelete
   }
 
-  ToggleAutoDC () {
+  toggleAutoDC () {
     this.autoDC = !this.autoDC
     return this.autoDC
   }
 
-  QueueArray () {
+  queueArray () {
     let current = this.queue.head
     const queueArray = []
     while (current != null) {
@@ -211,12 +222,12 @@ class MusicPlayer {
     }
   }
 
-  QueueCount () {
+  queueCount () {
     return this.queue.Count()
   }
 
-  TotalPlaytime () {
-    const songs = this.QueueArray().songs
+  totalPlaytime () {
+    const songs = this.queueArray().songs
     let totalPlaytimeSeconds = 0
     for (const song of songs) {
       totalPlaytimeSeconds += song.totalTime
@@ -224,7 +235,7 @@ class MusicPlayer {
     return totalPlaytimeSeconds
   }
 
-  MoveSong (position1, position2) {
+  moveSong (position1, position2) {
     return this.queue.SwapNodes(position1, position2)
   }
 
@@ -233,7 +244,7 @@ class MusicPlayer {
     this.dispatcher = null // reset the dispatcher
   }
 
-  SetMaxQueueSize (size) {
+  setMaxQueueSize (size) {
     if (size === -1 || this.maxQueueSize <= size) {
       this.queue.maxQueueSize = size
       return true
@@ -241,7 +252,7 @@ class MusicPlayer {
     return false
   }
 
-  ToggleShuffle () {
+  toggleShuffle () {
     this.shuffle = !this.shuffle
     return this.shuffle
   }

@@ -25,7 +25,7 @@ module.exports = class ListQueue extends Command {
   async run (message, { page_number: pageNumber }) {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
-    const { current: currentIndex, songs: queueArray } = musicplayer.QueueArray()
+    const { current: currentIndex, songs: queueArray } = musicplayer.queueArray()
 
     if (typeof queueArray === 'undefined' || queueArray.length === 0) {
       discordUtils.embedResponse(message, {
@@ -41,7 +41,7 @@ module.exports = class ListQueue extends Command {
       pageNumber = parseInt(currentIndex / ITEMS_PER_PAGE)
     }
 
-    const totalPlaytimeSeconds = musicplayer.TotalPlaytime()
+    const totalPlaytimeSeconds = musicplayer.totalPlaytime()
     const totalFancyTime = stringUtils.FancyTime(totalPlaytimeSeconds)
 
     this.embedBuilder(message, pageNumber, currentIndex, queueArray, totalFancyTime)

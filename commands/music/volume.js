@@ -31,7 +31,7 @@ module.exports = class VolumeCommand extends Command {
 
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
-    musicplayer.SetVolume(volumeLevel)
+    musicplayer.setVolume(volumeLevel)
     const response = `**${message.author.tag}** set volume to ${volumeLevel}%`
     discordUtils.embedResponse(message, {
       color: 'ORANGE',

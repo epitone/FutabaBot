@@ -47,6 +47,7 @@ module.exports = class QueueNextCommand extends Command {
         streamObject = await youtube.searchVideos(queryString)
     }
     if (streamObject) {
+      streamObject.provider = 'YouTube'
       const songInfo = new SongInfo(streamObject, message)
 
       const songIndex = musicplayer.enqueueNext(songInfo)

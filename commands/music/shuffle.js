@@ -22,7 +22,7 @@ module.exports = class ShuffleCommand extends Command {
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicPlayer = musicService.GetMusicPlayer(message.guild)
 
-    const shuffleEnabled = musicPlayer.ToggleShuffle()
+    const shuffleEnabled = musicPlayer.toggleShuffle()
     discordUtils.embedResponse(message, {
       color: 'ORANGE',
       description: `**${message.author.tag}** ${shuffleEnabled ? 'enabled' : 'disabled'} shuffle playback.`

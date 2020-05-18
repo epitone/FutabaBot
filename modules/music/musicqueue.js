@@ -86,6 +86,7 @@ module.exports = class MusicQueue {
     return this.currentIndex === this.length - 1
   }
 
+  // FIXME: when there's two items in the queue, this returns the wrong index
   RemoveAt (index) {
     if (index < 0 || index > this.length) {
       throw new RangeError(`${index} is out of bounds`)
@@ -107,7 +108,7 @@ module.exports = class MusicQueue {
         }
         removedNode = current
         previous.next = current.next
-        if (counter === (this.length--)) this.tail = previous
+        if (counter === this.length - 1) this.tail = previous
       }
       this.length--
       return removedNode

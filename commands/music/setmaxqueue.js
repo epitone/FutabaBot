@@ -25,7 +25,7 @@ module.exports = class SetMaxQueueCommand extends Command {
     const musicService = require('../../modules/music/services/musicservice')
     const musicPlayer = musicService.GetMusicPlayer()
 
-    const queueSizeSet = musicPlayer.SetMaxQueueSize(maxSize)
+    const queueSizeSet = musicPlayer.setMaxQueueSize(maxSize)
     if (!queueSizeSet) {
       console.error(`**${message.author.tag}** tried to set the max queue size to an incorrect value: ${maxSize}`)
       discordUtils.embedResponse(message, {
