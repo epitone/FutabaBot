@@ -25,7 +25,6 @@ module.exports = class PlaylistSongsCommand extends Command {
       })
       return
     }
-
     // Build the song list
     this.embedBuilder(message, playlists)
   }
