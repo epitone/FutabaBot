@@ -1,6 +1,6 @@
 const { MessageEmbed } = require('discord.js')
 
-exports.embedResponse = (message, embedOptions) => {
+exports.embedResponse = (message, embedOptions, textChannel = null) => {
   const embed = new MessageEmbed()
   if (embedOptions.color) embed.setColor(embedOptions.color)
   if (embedOptions.title) embed.setTitle(embedOptions.title)
@@ -16,6 +16,10 @@ exports.embedResponse = (message, embedOptions) => {
         inline: field.inline ? field.inline : false
       })
     }
+  }
+  if (textChannel) {
+    textChannel.send(embed)
+    return
   }
   message.embed(embed)
 }

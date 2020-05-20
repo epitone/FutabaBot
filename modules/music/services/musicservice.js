@@ -1,16 +1,17 @@
 const MusicPlayer = require('./../musicplayer')
-const YouTube = require('discord-youtube-api')
-const config = require('../../../config.json')
 const MusicMetadata = require('music-metadata')
 const SongInfo = require('../songinfo')
 const stringUtils = require('../../../utils/string-utils')
 const discordUtils = require('./../../../utils/discord-utils')
 class MusicService {
   constructor (database, client) {
-    console.log('setting up music service')
+    console.log('Setting up music service')
     this.musicplayer = null
     this.client = client
     this.database = database
+    this.musicChannel = null
+    console.log('Music service Initialized')
+
   }
 
   GetMusicPlayer (guild) {
@@ -148,38 +149,6 @@ class MusicService {
     }
   }
 
-  // async buildPlaylist (playlistSongs, message) {
-  //   const youtube = new YouTube(config.yt_api)
-  //   const builtPlaylist = []
-  //   const playlistTitle = playlistSongs[0].playlist_name
-  //   for (const song of playlistSongs) {
-  //     if (song.provider === 'Local') {
-  //       try {
-  //         const path = song.uri.slice(7)
-  //         const metadata = await MusicMetadata.parseFile(path, { mimeType: 'audio/mpeg' })
-  //         const streamObject = {
-  //           provider: song.provider,
-  //           title: song.title,
-  //           url: path,
-  //           durationSeconds: metadata.format.duration,
-  //           length: metadata.format.duration ? stringUtils.FancyTime(metadata.format.duration) : '?:??'
-  //         }
-  //         const songInfo = new SongInfo(streamObject, message)
-  //         builtPlaylist.push(songInfo)
-  //       } catch (err) {
-  //         // TODO: set a variable to alert the user to an error
-  //         builtPlaylist.push(null)
-  //         console.error(err)
-  //       }
-  //     } else {
-  //       const songInfo = new SongInfo(await youtube.getVideo(song.uri), message)
-  //       builtPlaylist.push(songInfo)
-  //     }
-  //     // musicplayer.enqueue(songInfo)
-  //     return { playlistTitle, builtPlaylist }
-  //   }
-  // }
-
   async buildLocalFile (path, message) {
     let songInfo = null
     try {
@@ -208,6 +177,11 @@ class MusicService {
       }
     }
     return songInfo
+  }
+
+  setMusicChannel (textChannel) {
+    this.musicChannel = textChannel
+    return this.musicChannel === textChannel
   }
 }
 module.exports = MusicService

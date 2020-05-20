@@ -14,7 +14,7 @@ module.exports = class DeleteVoiceChan extends Command {
         {
           key: 'voice_channel',
           prompt: 'What is the name of the voice channel you\'d like to delete?',
-          type: 'string'
+          type: 'voice-channel'
         }
       ]
     })

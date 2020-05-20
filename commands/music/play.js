@@ -67,10 +67,12 @@ module.exports = class PlayCommand extends Command {
         default:
           streamObject = await youtube.searchVideos(playArgument)
       }
+
+      // TODO: move this to a function
       if (streamObject) {
         streamObject.provider = 'YouTube'
         const songInfo = new SongInfo(streamObject, message)
-
+        const musicChannel = musicService.musicChannel
         musicplayer.enqueue(songInfo)
         console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queueCount()}`)
 
@@ -80,7 +82,7 @@ module.exports = class PlayCommand extends Command {
           url: songInfo.url,
           color: 'ORANGE',
           footer: `${songInfo.total_time} | ${songInfo.requester}`
-        })
+        }, musicChannel)
         if (musicplayer.is_stopped) {
           const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {

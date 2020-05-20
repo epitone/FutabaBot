@@ -42,13 +42,11 @@ function getMusicService () {
 }
 
 client.registry
-  .registerDefaultTypes()
+  .registerDefaults()
   .registerGroups([
     ['admin', 'Administrative commands'],
     ['music', 'Music-related commands']
   ])
-  .registerDefaultGroups()
-  .registerDefaultCommands()
   .registerCommandsIn(path.join(__dirname, 'commands'))
 
 client.login(token)

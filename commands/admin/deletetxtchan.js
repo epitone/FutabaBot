@@ -14,7 +14,7 @@ module.exports = class DeleteTxtChan extends Command {
         {
           key: 'text_channel',
           prompt: 'What is the name of the text channel you\'d like to delete?',
-          type: 'string'
+          type: 'text-channel'
         }
       ]
     })

@@ -20,22 +20,31 @@ module.exports = class PauseCommannd extends Command {
 
     const musicService = require('./../../FutabaBot').getMusicService()
     const musicplayer = musicService.GetMusicPlayer(message.guild)
+    const musicChannel = musicService.musicChannel
+    const current = musicplayer.current()
 
     // FIXME we're repeating code here, probably should simplify this
     if (musicplayer.paused) {
       musicplayer.togglePause()
+
       console.log(`${message.author.tag} resumed playback.`)
       discordUtils.embedResponse(message, {
+        author: `Resumed song #${current.index + 1}`,
+        title: current.song.title,
+        url: current.song.provider !== 'Local' ? current.song.url : undefined,
         color: 'ORANGE',
-        description: 'Playback resumed.'
-      })
+        footer: `${current.song.prettyTotalTime} | ${current.song.provider} | ${current.song.requester}`
+      }, musicChannel)
     } else {
       musicplayer.togglePause()
       console.log(`${message.author.tag} paused playback.`)
       discordUtils.embedResponse(message, {
+        author: `Paused song #${current.index + 1}`,
+        title: current.song.title,
+        url: current.song.provider !== 'Local' ? current.song.url : undefined,
         color: 'ORANGE',
-        description: 'Playback paused.'
-      })
+        footer: `${current.song.prettyTotalTime} | ${current.song.provider} | ${current.song.requester}`
+      }, musicChannel)
     }
   }
 }

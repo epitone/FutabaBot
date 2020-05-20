@@ -22,8 +22,8 @@ module.exports = class SetMaxQueueCommand extends Command {
   }
 
   async run (message, { max_size: maxSize }) {
-    const musicService = require('../../modules/music/services/musicservice')
-    const musicPlayer = musicService.GetMusicPlayer()
+    const musicService = require('./../../FutabaBot').getMusicService()
+    const musicPlayer = musicService.GetMusicPlayer(message.guild)
 
     const queueSizeSet = musicPlayer.setMaxQueueSize(maxSize)
     if (!queueSizeSet) {

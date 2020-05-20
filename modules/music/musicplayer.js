@@ -17,10 +17,14 @@ class MusicPlayer {
     this.manualSkip = false
     this.autoDC = false
     this.shuffle = false
+    this.maxPlaytime = 0
   }
 
   async play (connection, message) {
     let stream = null
+    const musicService = require('./../../FutabaBot').getMusicService()
+    const musicChannel = musicService.musicChannel
+
     if (this.shuffle) {
       console.info('Shuffle enabled. Picking random song.')
       await this.queue.Random()
@@ -43,13 +47,16 @@ class MusicPlayer {
 
     this.stopped = false
     this.paused = false
-    console.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
-    discordUtils.embedResponse(message, {
-      author: `Playing song #${this.queue.currentIndex + 1}`,
-      title: this.data.song.title,
-      url: this.data.song.provider !== 'Local' ? this.data.song.url : undefined, // TODO: if we have a local provider, ignore the url
-      color: 'ORANGE',
-      footer: `${this.data.song.prettyTotalTime} | ${this.data.song.provider} | ${this.data.song.requester}`
+
+    this.dispatcher.on('start', async () => {
+      console.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
+      discordUtils.embedResponse(message, {
+        author: `Playing song #${this.queue.currentIndex + 1}`,
+        title: this.data.song.title,
+        url: this.data.song.provider !== 'Local' ? this.data.song.url : undefined, // TODO: if we have a local provider, ignore the url
+        color: 'ORANGE',
+        footer: `${this.data.song.prettyTotalTime} | ${this.data.song.provider} | ${this.data.song.requester}`
+      }, musicChannel)
     })
 
     this.dispatcher.on('finish', async () => {
@@ -66,7 +73,7 @@ class MusicPlayer {
         url: playerState.current_song.provider !== 'Local' ? playerState.current_song.url : undefined, // TODO: don't use url if file is local
         color: 'ORANGE',
         footer: `${playerState.current_song.prettyTotalTime} | ${playerState.current_song.provider} | ${playerState.current_song.requester}`
-      })
+      }, musicChannel)
 
       if (!playerState.stopped) {
         if (!this.manualSkip && !this.manualIndex) { // if we have not moved to a specific song or skipped at all
@@ -255,6 +262,11 @@ class MusicPlayer {
   toggleShuffle () {
     this.shuffle = !this.shuffle
     return this.shuffle
+  }
+
+  setMaxPlaytime (maxLength) {
+    this.maxPlaytime = maxLength
+    return this.maxPlaytime
   }
 }
 module.exports = MusicPlayer

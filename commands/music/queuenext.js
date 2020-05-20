@@ -49,7 +49,7 @@ module.exports = class QueueNextCommand extends Command {
     if (streamObject) {
       streamObject.provider = 'YouTube'
       const songInfo = new SongInfo(streamObject, message)
-
+      const musicChannel = musicService.musicChannel
       const songIndex = musicplayer.enqueueNext(songInfo)
       if (songIndex !== -1) {
         discordUtils.embedResponse(message, {
@@ -57,7 +57,7 @@ module.exports = class QueueNextCommand extends Command {
           title: songInfo.title,
           url: songInfo.url,
           color: 'ORANGE'
-        })
+        }, musicChannel)
         console.log(`added “${songInfo.title}” to queue position ${songIndex + 1}`)
         if (musicplayer.stopped) {
           const prefix = this.client.commandPrefix
