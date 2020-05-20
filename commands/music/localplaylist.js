@@ -1,8 +1,7 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
-const fs = require('fs').promises
 const { lstatSync } = require('fs')
-const { join, extname } = require('path')
+const listDirectory = require('./../../utils/fslist')
 
 module.exports = class LocalPlaylistCommand extends Command {
   constructor (client) {
@@ -17,7 +16,7 @@ module.exports = class LocalPlaylistCommand extends Command {
           key: 'path',
           prompt: 'Please provide a full directory path',
           type: 'string',
-          validate: path => { lstatSync(path).isDirectory() }
+          validate: path => { return lstatSync(path).isDirectory() }
         }
       ],
       ownerOnly: true
@@ -42,7 +41,7 @@ module.exports = class LocalPlaylistCommand extends Command {
       description: 'Adding songs to playlist...'
     })
 
-    const musicFiles = await this.getAllFiles(path, '.mp3') // TODO: eveentually add support for multiple file types
+    const musicFiles = await listDirectory(path, { matchWhat: 'ext', match: 'mp3' }) // TODO: good first issue - get support for multiple file types 🙂
     for (const file of musicFiles) {
       const songInfo = await musicService.buildLocalFile(file, message)
       if (musicplayer.enqueue(songInfo) !== -1) {
@@ -55,7 +54,7 @@ module.exports = class LocalPlaylistCommand extends Command {
       if (musicplayer.stopped) {
         discordUtils.embedResponse(message, {
           color: 'RED',
-          description: `**${message.author.tag}** some songs could not be added to the playlist, but I tried my best! Use ${prefix}play to start playback.`
+          description: `**${message.author.tag}** some songs could not be added to the playlist, but I tried my best! Use \`${prefix}play\` to start playback.`
         })
       } else {
         discordUtils.embedResponse(message, {
@@ -67,7 +66,7 @@ module.exports = class LocalPlaylistCommand extends Command {
       if (musicplayer.stopped) {
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
-          description: `**${message.author.tag}** ${musicFiles.length > 1 ? 'songs were' : 'song was'} added to the playlist but the player is stopped. Use ${prefix}play to start playback.`
+          description: `**${message.author.tag}** ${musicFiles.length > 1 ? 'songs were' : 'song was'} added to the playlist but the player is stopped. Use \`${prefix}play\` to start playback.`
         })
       } else {
         discordUtils.embedResponse(message, {
@@ -81,19 +80,5 @@ module.exports = class LocalPlaylistCommand extends Command {
         }
       }
     }
-  }
-
-  // TODO: good first issue - get support for multiple file types 🙂
-  async getAllFiles (directory, extension) {
-    const files = await fs.readdir(directory)
-    const filePaths = []
-    for (let index = 0; index < files.length; index++) {
-      const filePath = join(directory, files[index])
-      const stats = await fs.stat(filePath)
-      if (stats.isFile() && extname(filePath) === extension) {
-        filePaths.push(filePath)
-      }
-    }
-    return filePaths
   }
 }
