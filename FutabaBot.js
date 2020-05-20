@@ -1,9 +1,9 @@
 // TODO salt token
 const Commando = require('discord.js-commando')
 const path = require('path')
-const { token } = require('./config.json')
 const Database = require('better-sqlite3')
 const MusicService = require('./modules/music/services/musicservice')
+require('dotenv').config()
 
 let musicService
 
@@ -49,7 +49,7 @@ client.registry
   ])
   .registerCommandsIn(path.join(__dirname, 'commands'))
 
-client.login(token)
+client.login(process.env.TOKEN)
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
 

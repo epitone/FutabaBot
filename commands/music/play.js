@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando')
 const YouTube = require('discord-youtube-api')
-const config = require('../../config.json')
+require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
 
@@ -55,7 +55,7 @@ module.exports = class PlayCommand extends Command {
       const songIndex = parseInt(playArgument)
       musicplayer.skip(songIndex)
     } else {
-      const youtube = new YouTube(config.yt_api)
+      const youtube = new YouTube(process.env.yt_api)
       let streamObject = null
       switch (playArgument) {
         case stringUtils.ValidYTUrl(playArgument):

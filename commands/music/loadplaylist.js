@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('./../../utils/discord-utils')
 const YouTube = require('discord-youtube-api')
-const config = require('../../config.json')
+require('dotenv').config()
 const SongInfo = require('./../../modules/music/songinfo')
 const MusicMetadata = require('music-metadata')
 const stringUtils = require('./../../utils/string-utils')
@@ -50,7 +50,7 @@ module.exports = class LoadPlaylistCommand extends Command {
     }
     // TODO should we build a song info object ourselves or ping the API?
     // TODO we should make this a separate function - it's cleaner
-    const youtube = new YouTube(config.yt_api)
+    const youtube = new YouTube(process.env.yt_api)
     for (const song of playlistSongs) {
       let songInfo = null
       if (song.provider === 'Local') {

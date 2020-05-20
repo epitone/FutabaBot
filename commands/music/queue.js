@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando')
 const YouTube = require('discord-youtube-api')
-const config = require('../../config.json')
+require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
 
@@ -30,7 +30,7 @@ module.exports = class QueueCommand extends Command {
       return
     }
 
-    const youtube = new YouTube(config.yt_api)
+    const youtube = new YouTube(process.env.yt_api)
     let streamObject = null
     const userVoiceChannel = voiceState.channel
     const musicService = require('./../../FutabaBot').getMusicService()
