@@ -3,6 +3,7 @@ const YouTube = require('discord-youtube-api')
 require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 const SongInfo = require('./../../modules/music/songinfo')
 
@@ -58,7 +59,7 @@ module.exports = class QueueNextCommand extends Command {
           url: songInfo.url,
           color: 'ORANGE'
         }, musicChannel)
-        console.log(`added “${songInfo.title}” to queue position ${songIndex + 1}`)
+        winston.info(`added “${songInfo.title}” to queue position ${songIndex + 1}`)
         if (musicplayer.stopped) {
           const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {

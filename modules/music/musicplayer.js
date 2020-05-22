@@ -2,6 +2,7 @@ const ytdl = require('ytdl-core-discord')
 const MusicQueue = require('./musicqueue')
 const discordUtils = require('./../../utils/discord-utils')
 const fs = require('fs')
+const winston = require('winston')
 
 class MusicPlayer {
   constructor (volume) {
@@ -26,7 +27,7 @@ class MusicPlayer {
     const musicChannel = musicService.musicChannel
 
     if (this.shuffle) {
-      console.info('Shuffle enabled. Picking random song.')
+      winston.info('Shuffle enabled. Picking random song.')
       await this.queue.Random()
     }
     this.data = this.queue.Current()
@@ -49,7 +50,7 @@ class MusicPlayer {
     this.paused = false
 
     this.dispatcher.on('start', async () => {
-      console.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
+      winston.info(`now playing: “${this.data.song.title} requested by ${this.data.song.requester}”`)
       discordUtils.embedResponse(message, {
         author: `Playing song #${this.queue.currentIndex + 1}`,
         title: this.data.song.title,
@@ -80,13 +81,13 @@ class MusicPlayer {
           if (this.repeatCurrentSong) {
             this.play(connection, message)
           } else if (!this.shuffle && this.queue.IsLast() && this.repeatPlaylist) { // if we're at the end of the queue and repeat playlist enabled
-            console.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
+            winston.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
             this.queue.currentIndex = 0
             this.play(connection, message)
           }
         }
         if (this.autoDelete && !this.repeatCurrentSong && !this.repeatPlaylist) { // if repeat track and repeat playlist is off and autodelete on
-          console.info(`Autodelete enabled, removing ${this.queue.currentIndex().song.title} from queue.`)
+          winston.info(`Autodelete enabled, removing ${this.queue.currentIndex().song.title} from queue.`)
           this.queue.RemoveSong(this.data.song)
         }
         if (!this.manualIndex && (!this.repeatCurrentSong || this.manualSkip)) {
@@ -95,18 +96,18 @@ class MusicPlayer {
               this.queue.shuffleArray.push(playerState.current_index)
               this.play(connection, message)
             } else if (!this.repeatPlaylist) {
-              console.info('Stopping because repeatplaylist is disabled.')
+              winston.info('Stopping because repeatplaylist is disabled.')
               this.stop()
             } else {
-              console.info('Repeat playlist and shuffle enabled, end of queue reached, clearing cache and reshuffling queue')
+              winston.info('Repeat playlist and shuffle enabled, end of queue reached, clearing cache and reshuffling queue')
               this.queue.shuffleArray.length = 0
               this.play(connection, message)
             }
           } else if (this.queue.IsLast() && !this.repeatPlaylist && !this.manualSkip) {
-            console.info('Stopping because repeatplaylist is disabled.')
+            winston.info('Stopping because repeatplaylist is disabled.')
             this.stop()
           } else {
-            console.info('Playing next song')
+            winston.info('Playing next song')
             this.queue.Next()
             this.play(connection, message)
           }

@@ -5,6 +5,7 @@ require('dotenv').config()
 const SongInfo = require('./../../modules/music/songinfo')
 const MusicMetadata = require('music-metadata')
 const stringUtils = require('./../../utils/string-utils')
+const winston = require('winston')
 
 module.exports = class LoadPlaylistCommand extends Command {
   constructor (client) {
@@ -41,7 +42,7 @@ module.exports = class LoadPlaylistCommand extends Command {
     const playlistSongs = musicService.LoadPlaylist(message.guild.id, playlistID)
 
     if (!(playlistSongs !== 'undefined') || playlistSongs.length === 0) {
-      console.error('There was an error trying to load a playlist from the database')
+      winston.error('There was an error trying to load a playlist from the database')
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** there was an error loading the playlist!`
@@ -50,7 +51,7 @@ module.exports = class LoadPlaylistCommand extends Command {
     }
     // TODO should we build a song info object ourselves or ping the API?
     // TODO we should make this a separate function - it's cleaner
-    const youtube = new YouTube(process.env.yt_api)
+    const youtube = new YouTube(process.env.YT_API)
     for (const song of playlistSongs) {
       let songInfo = null
       if (song.provider === 'Local') {
@@ -67,7 +68,7 @@ module.exports = class LoadPlaylistCommand extends Command {
           songInfo = new SongInfo(streamObject, message)
         } catch (err) {
           // TODO: set a variable to alert the user to an error
-          console.error(err)
+          winston.error(err)
         }
       } else {
         songInfo = new SongInfo(await youtube.getVideo(song.uri), message)

@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('./../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class UnmuteCommand extends Command {
   constructor (client) {
@@ -22,7 +23,7 @@ module.exports = class UnmuteCommand extends Command {
     const muteRole = message.guild.roles.find('name', 'muted')
     if (!muteRole) {
       const response = 'Looks like the mute role hasn\'t been created yet! Have you muted anyone?'
-      console.log(response)
+      winston.info(response)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: response
@@ -30,7 +31,7 @@ module.exports = class UnmuteCommand extends Command {
     } else {
       if (!user.roles.some(userRole => userRole === muteRole)) {
         const response = 'This user has not been muted, please try again.'
-        console.log(response)
+        winston.info(response)
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
           description: response
@@ -39,7 +40,7 @@ module.exports = class UnmuteCommand extends Command {
         user.removeRole(muteRole)
           .then(updatedUser => {
             const response = `Successfully unmuted “${updatedUser.displayName}”`
-            console.log(response)
+            winston.info(response)
             discordUtils.embedResponse(message, {
               color: 'ORANGE',
               description: response

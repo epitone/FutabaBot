@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando')
 const { Permissions } = require('discord.js')
 const discordUtils = require('./../../utils/discord-utils')
+const winston = require('winston')
 
 // TODO: check edge cases for this command
 
@@ -36,21 +37,21 @@ module.exports = class VoiceMute extends Command {
                 CONNECT: false,
                 SPEAK: false
               })
-                .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(role))}`))
-                .catch(console.error)
+                .then(updated => winston.info(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(role))}`))
+                .catch(winston.error)
             }
           }
-          console.log(`created role with name ${role.name}`)
+          winston.info(`created role with name ${role.name}`)
           muteRole = role
         })
     }
     user.setVoiceChannel(null) // remove user from any voice channels first
       .then(removedUser => {
-        console.log(`Successfully removed ${removedUser.displayName} from all voice channels`)
+        winston.info(`Successfully removed ${removedUser.displayName} from all voice channels`)
         user.addRole(muteRole)
           .then(updated => {
             const response = `Successfully muted “${updated.displayName}”`
-            console.log(response)
+            winston.info(response)
             discordUtils.embedResponse(message, {
               color: 'ORANGE',
               description: response
@@ -58,7 +59,7 @@ module.exports = class VoiceMute extends Command {
           })
       })
       .catch(error => {
-        console.error(error)
+        winston.error(error)
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: 'Oops! Something went wrong!'

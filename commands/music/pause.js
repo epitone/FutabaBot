@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class PauseCommannd extends Command {
   constructor (client) {
@@ -27,7 +28,7 @@ module.exports = class PauseCommannd extends Command {
     if (musicplayer.paused) {
       musicplayer.togglePause()
 
-      console.log(`${message.author.tag} resumed playback.`)
+      winston.info(`${message.author.tag} resumed playback.`)
       discordUtils.embedResponse(message, {
         author: `Resumed song #${current.index + 1}`,
         title: current.song.title,
@@ -37,7 +38,7 @@ module.exports = class PauseCommannd extends Command {
       }, musicChannel)
     } else {
       musicplayer.togglePause()
-      console.log(`${message.author.tag} paused playback.`)
+      winston.info(`${message.author.tag} paused playback.`)
       discordUtils.embedResponse(message, {
         author: `Paused song #${current.index + 1}`,
         title: current.song.title,

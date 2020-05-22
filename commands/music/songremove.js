@@ -26,7 +26,6 @@ module.exports = class SongRemoveCommand extends Command {
       return
     }
 
-    // TODO: test individual song removal
     songIndex = +songIndex || songIndex.toLowerCase()
 
     const musicService = require('./../../FutabaBot').getMusicService()

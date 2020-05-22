@@ -3,6 +3,7 @@ const YouTube = require('discord-youtube-api')
 require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 const SongInfo = require('./../../modules/music/songinfo')
 
@@ -55,7 +56,7 @@ module.exports = class PlayCommand extends Command {
       const songIndex = parseInt(playArgument)
       musicplayer.skip(songIndex)
     } else {
-      const youtube = new YouTube(process.env.yt_api)
+      const youtube = new YouTube(process.env.YT_API)
       let streamObject = null
       switch (playArgument) {
         case stringUtils.ValidYTUrl(playArgument):
@@ -74,7 +75,7 @@ module.exports = class PlayCommand extends Command {
         const songInfo = new SongInfo(streamObject, message)
         const musicChannel = musicService.musicChannel
         musicplayer.enqueue(songInfo)
-        console.log(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queueCount()}`)
+        winston.info(`${message.author.tag} added “${songInfo.title}” to queue position ${musicplayer.queueCount()}`)
 
         discordUtils.embedResponse(message, {
           author: `Queued song #${musicplayer.queueCount()}`,

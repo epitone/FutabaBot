@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class SetChannelNameCommand extends Command {
   constructor (client) {
@@ -36,7 +37,7 @@ module.exports = class SetChannelNameCommand extends Command {
           color: 'RED',
           description: 'Oops! Something went wrong!'
         })
-        console.error(err)
+        winston.error(err)
       })
   }
 }

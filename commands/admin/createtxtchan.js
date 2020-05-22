@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class CreateTxtChanCommand extends Command {
   constructor (client) {
@@ -26,11 +27,11 @@ module.exports = class CreateTxtChanCommand extends Command {
     server.createChannel(textChannel, { type: 'text' })
       .then(newChannel => {
         const response = `Successfully created “#${newChannel.name}”`
-        console.log(response)
+        winston.info(response)
         discordUtils.embedResponse(message, response, false)
       })
       .catch((error) => {
-        console.error(error)
+        winston.error(error)
         discordUtils.embedResponse(message, 'Oops! Something went wrong', true)
       })
   }

@@ -3,15 +3,18 @@ const MusicMetadata = require('music-metadata')
 const SongInfo = require('../songinfo')
 const stringUtils = require('../../../utils/string-utils')
 const discordUtils = require('./../../../utils/discord-utils')
+const winston = require('winston')
+
 class MusicService {
   constructor (database, client) {
-    console.log('Setting up music service')
+    // console.info('Setting up music service')
+    winston.info('Setting up music service')
     this.musicplayer = null
     this.client = client
     this.database = database
     this.musicChannel = null
-    console.log('Music service Initialized')
-
+    // console.info('Music service Initialized')
+    winston.info('Music service Initialized')
   }
 
   GetMusicPlayer (guild) {
@@ -38,7 +41,7 @@ class MusicService {
 
     const insert = this.database.prepare('INSERT INTO playlists (guild, author, author_id, name) VALUES (?, ?, ?, ?);')
     const result = insert.run(guild.id, authorName, authorId, playlistName)
-    console.log(result.changes)
+    winston.info(result.changes)
 
     if (result.lastInsertRowid) {
       const { playlistID, songsAdded } = this.SavePlaylistSong(result.lastInsertRowid)
@@ -182,6 +185,10 @@ class MusicService {
   setMusicChannel (textChannel) {
     this.musicChannel = textChannel
     return this.musicChannel === textChannel
+  }
+
+  getMusicChannel () {
+    return this.musicChannel
   }
 }
 module.exports = MusicService

@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('./../../utils/discord-utils')
-module.exports = class SetMusicChannelComand extends Command {
+
+module.exports = class SetMusicChannelCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'setmusicchannel',

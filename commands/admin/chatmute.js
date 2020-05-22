@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando')
 const { Permissions } = require('discord.js')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 // TODO: check edge cases for this command
 
@@ -35,32 +36,31 @@ module.exports = class ChatMute extends Command {
               channel.overwritePermissions(role, {
                 SEND_MESSAGES: false
               })
-                .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(role))}`))
-                .catch(console.error)
+                .then(updated => winston.info(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(role))}`))
             }
           }
-          console.log(`created role with name ${role.name}`)
+          winston.info(`created role with name ${role.name}`)
           user.addRole(role)
             .then((muted) => {
               const response = `Successfully muted “${muted.displayName}”`
-              console.log(response)
-              discordUtils.embedResponse(message, response, false)
+              winston.info(response)
+              discordUtils.embedResponse(message, response)
             })
         })
         .catch(error => {
-          console.error(error)
-          discordUtils.embedResponse(message, 'Oops! Something went wrong', true)
+          winston.error(error)
+          discordUtils.embedResponse(message, 'Oops! Something went wrong')
         })
     } else {
       user.addRole(muteRole)
         .then(updated => {
           const response = `Successfully muted “${updated.displayName}”`
-          console.log(response)
-          discordUtils.embedResponse(message, response, false)
+          winston.info(response)
+          discordUtils.embedResponse(message, response)
         })
         .catch(error => {
-          console.error(error)
-          discordUtils.embedResponse(message, 'Oops! Something went wrong', true)
+          winston.error(error)
+          discordUtils.embedResponse(message, 'Oops! Something went wrong')
         })
     }
   }

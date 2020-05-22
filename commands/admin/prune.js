@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class PruneCommand extends Command {
   constructor (client) {
@@ -39,34 +40,34 @@ module.exports = class PruneCommand extends Command {
 
     channelMessages.fetch({ limit: messagesAmount }) // get the last n number of messages in the channel
       .then(messages => {
-        console.log(`Retrieved ${messages.size} messages`)
+        winston.info(`Retrieved ${messages.size} messages`)
         const messagesToDelete = messages.filter(message => {
           if (user) {
             if (!removePinned) {
-              console.log(`found message: “${message}” by ${message.author.username}`)
+              winston.info(`found message: “${message}” by ${message.author.username}`)
               return !message.pinned && message.author.id === user.id
             } else {
-              console.log(`found message: “${message}” by ${message.author.username}`)
+              winston.info(`found message: “${message}” by ${message.author.username}`)
               return message.author.id === user.id
             }
           } else {
             if (!removePinned) {
-              console.log(`found message: “${message}” by ${message.author.username}`)
+              winston.info(`found message: “${message}” by ${message.author.username}`)
               return !message.pinned && message.author.bot && message.author.id === message.client.user.id
             } else {
-              console.log(`found message: “${message}” by ${message.author.username}`)
+              winston.info(`found message: “${message}” by ${message.author.username}`)
               return message.author.bot && message.author.id === message.client.user.id
             }
           }
         })
 
-        console.log(`Messages to Delete: ${messagesToDelete}`)
+        winston.info(`Messages to Delete: ${messagesToDelete}`)
         const numMessagesToDelete = messagesToDelete.size
         if (numMessagesToDelete > 1) {
           message.channel.bulkDelete(messagesToDelete, false)
             .then(deleted => {
               const response = `Successfully deleted ${deleted.size} messages.`
-              console.log(response)
+              winston.info(response)
               discordUtils.embedResponse(message, {
                 color: 'ORANGE',
                 description: response
@@ -75,7 +76,7 @@ module.exports = class PruneCommand extends Command {
         } else {
           messagesToDelete.first().delete()
           const response = `Successfully deleted ${messagesToDelete.size} messages.`
-          console.log(response)
+          winston.info(response)
           discordUtils.embedResponse(message, {
             color: 'ORANGE',
             description: response
@@ -83,7 +84,7 @@ module.exports = class PruneCommand extends Command {
         }
       })
       .catch(error => {
-        console.error(error)
+        winston.error(error)
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: 'Oops! Something went wrong!'

@@ -29,12 +29,12 @@ module.exports = class NowPlayingCommand extends Command {
           description: 'Nothing is currently playing.'
         })
       } else {
-        // TODO: add footer data
         discordUtils.embedResponse(message, {
           author: musicplayer.paused ? '⏸ Now Playing' : '▶ Now Playing',
           title: song.title,
           url: song.url,
-          color: 'ORANGE'
+          color: 'ORANGE',
+          footer: `${song.prettyTotalTime} | ${song.provider} | ${song.requester}`
         })
       }
     }

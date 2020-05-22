@@ -3,6 +3,7 @@ const { Permissions } = require('discord.js')
 const moment = require('moment')
 const timeUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 // TODO: check edge cases for this command
 
@@ -45,13 +46,13 @@ module.exports = class MuteCommand extends Command {
               SPEAK: false,
               CONNECT: false
             })
-              .then(updated => console.log(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`))
+              .then(updated => winston.info(`new permissions for #${updated.name}: ${JSON.stringify(updated.permissionsFor(newRole))}`))
           }
-          console.log(`created role with name ${newRole.name}`)
+          winston.info(`created role with name ${newRole.name}`)
           muteRole = newRole
         })
         .catch(error => {
-          console.error(error)
+          winston.error(error)
           discordUtils.embedResponse(message, {
             color: 'RED',
             description: 'Oops! Something went wrong!'
@@ -61,7 +62,7 @@ module.exports = class MuteCommand extends Command {
     user.addRole(muteRole)
       .then((muted) => {
         const response = `Successfully muted “${muted.displayName}”`
-        console.log(response)
+        winston.info(response)
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
           description: response
@@ -71,12 +72,12 @@ module.exports = class MuteCommand extends Command {
           const duration = moment.duration('PT' + timeout.toUpperCase()).asMilliseconds()
           setTimeout(() => {
             muted.removeRole(muteRole)
-            console.log(`successfully unmuted “${user.displayName}”`)
+            winston.info(`successfully unmuted “${user.displayName}”`)
           }, duration)
         }
       })
       .catch(error => {
-        console.error(error)
+        winston.error(error)
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: 'Oops! Something went wrong!'

@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class SetMaxQueueCommand extends Command {
   constructor (client) {
@@ -27,7 +28,7 @@ module.exports = class SetMaxQueueCommand extends Command {
 
     const queueSizeSet = musicPlayer.setMaxQueueSize(maxSize)
     if (!queueSizeSet) {
-      console.error(`**${message.author.tag}** tried to set the max queue size to an incorrect value: ${maxSize}`)
+      winston.error(`**${message.author.tag}** tried to set the max queue size to an incorrect value: ${maxSize}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** the size you entered was smaller than the current queue, please pick a large number.`

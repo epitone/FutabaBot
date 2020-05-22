@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class DeleteRole extends Command {
   constructor (client) {
@@ -29,14 +30,14 @@ module.exports = class DeleteRole extends Command {
       foundRole.delete()
         .then((deleted) => {
           const response = `Deleted “${deleted.name}” role`
-          console.log(response)
+          winston.info(response)
           discordUtils.embedResponse(message, {
             color: 'ORANGE',
             description: response
           })
         })
         .catch((error) => {
-          console.error(error)
+          winston.error(error)
           discordUtils.embedResponse(message, {
             color: 'RED',
             description: 'Oops! Something went wrong!'

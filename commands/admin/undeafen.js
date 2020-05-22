@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('./../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class Deafen extends Command {
   constructor (client) {
@@ -30,7 +31,7 @@ module.exports = class Deafen extends Command {
       if (member.deaf) {
         member.setDeaf(false)
           .then(undeafenedUser => {
-            console.log(`Successfully deafened ${undeafenedUser.displayName}`)
+            winston.info(`Successfully deafened ${undeafenedUser.displayName}`)
             undeafenedStatus.push(undeafenedUser)
             index++
             if (index === users.length || undeafenedStatus.length === users.length) {
@@ -42,7 +43,7 @@ module.exports = class Deafen extends Command {
             }
           })
           .catch(error => {
-            console.error(error)
+            winston.error(error)
             discordUtils.embedResponse(message, {
               color: 'RED',
               description: 'Oops! Something went wrong!'

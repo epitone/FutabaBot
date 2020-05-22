@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class DeleteVoiceChan extends Command {
   constructor (client) {
@@ -27,14 +28,14 @@ module.exports = class DeleteVoiceChan extends Command {
       channel.delete()
         .then(deletedChannel => {
           const response = `Deleted “#${deletedChannel.name}”`
-          console.log(response)
+          winston.info(response)
           discordUtils.embedResponse(message, {
             color: 'ORANGE',
             description: response
           })
         })
         .catch(error => {
-          console.error(error)
+          winston.error(error)
           discordUtils.embedResponse(message, {
             color: 'RED',
             description: 'Oops! Something went wrong!'
@@ -42,7 +43,7 @@ module.exports = class DeleteVoiceChan extends Command {
         })
     } else {
       const response = 'Sorry I couldn\'t find that channel, or the channel cannot be deleted!'
-      console.log(response)
+      winston.info(response)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: response

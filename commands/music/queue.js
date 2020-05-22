@@ -3,6 +3,7 @@ const YouTube = require('discord-youtube-api')
 require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 const SongInfo = require('./../../modules/music/songinfo')
 
@@ -30,7 +31,7 @@ module.exports = class QueueCommand extends Command {
       return
     }
 
-    const youtube = new YouTube(process.env.yt_api)
+    const youtube = new YouTube(process.env.YT_API)
     let streamObject = null
     const userVoiceChannel = voiceState.channel
     const musicService = require('./../../FutabaBot').getMusicService()
@@ -48,7 +49,7 @@ module.exports = class QueueCommand extends Command {
           streamObject = await youtube.searchVideos(queryString)
       }
     } catch (err) {
-      console.error(`error fetching youtube stream object: ${err}`)
+      winston.error(`error fetching youtube stream object: ${err}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** I couldn't get data for that song! Try another link maybe?`
@@ -67,7 +68,7 @@ module.exports = class QueueCommand extends Command {
           url: songInfo.url,
           color: 'ORANGE'
         }, musicChannel)
-        console.log(`added “${songInfo.title}” to queue position ${songIndex}`)
+        winston.info(`added “${songInfo.title}” to queue position ${songIndex}`)
         if (musicplayer.stopped) {
           const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {

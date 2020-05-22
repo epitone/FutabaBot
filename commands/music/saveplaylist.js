@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class SaveCommand extends Command {
   constructor (client) {
@@ -33,7 +34,7 @@ module.exports = class SaveCommand extends Command {
 
     const playlistInfo = musicService.SavePlaylist(message.guild, playlistName, message.author)
     if (playlistInfo.songsAdded < musicplayer.queueCount()) {
-      console.error('There was an error inserting into the database.')
+      winston.error('There was an error inserting into the database.')
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** Oops! Something went wrong!`

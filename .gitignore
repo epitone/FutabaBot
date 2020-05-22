@@ -113,6 +113,4 @@ public
 
 # Node ignoreables end here
 
-config.json
 database.sqlite3
-commands/music/setmaxqueue.js

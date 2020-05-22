@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class StopCommand extends Command {
   constructor (client) {
@@ -21,7 +22,7 @@ module.exports = class StopCommand extends Command {
 
     musicplayer.stop()
     const response = 'Playback stopped.'
-    console.log(`${message.author.tag} stopped music playback.`)
+    winston.info(`${message.author.tag} stopped music playback.`)
     discordUtils.embedResponse(message, {
       color: 'ORANGE',
       description: response

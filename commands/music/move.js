@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando')
 const DiscordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
 
 module.exports = class MoveCommand extends Command {
   constructor (client) {
@@ -49,7 +50,7 @@ module.exports = class MoveCommand extends Command {
         color: 'ORANGE',
         description: response
       })
-      console.log(`${message.author.tag} moved me to ${userVoiceChannel.name}.`)
+      winston.info(`${message.author.tag} moved me to ${userVoiceChannel.name}.`)
     })
   }
 }
