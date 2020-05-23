@@ -25,16 +25,34 @@ const infoTransportFile = new winston.transports.File({
   format: alignedWithColorsAndTime
 })
 
+const print = format.printf((info) => {
+  const log = `${info.timestamp} ${info.level}: ${info.message}`
+
+  return info.stack ? `${log}\n${info.stack}` : log
+})
+
 const errorTransportFile = new winston.transports.File({
   filename: path.join(logPath, 'error.log'),
   timestamp: tsFormat,
   level: 'error',
-  format: alignedWithColorsAndTime
+  format: format.combine(
+    format.colorize(),
+    format.timestamp(),
+    format.align(),
+    format.errors({ stack: true }),
+    print
+  )
 })
 
 const devTransportConsole = new winston.transports.Console({
   level: 'info',
-  format: alignedWithColorsAndTime
+  format: format.combine(
+    format.colorize(),
+    format.timestamp(),
+    format.align(),
+    format.errors({ stack: true }),
+    print
+  )
 })
 
 winston.add(infoTransportFile)
