@@ -118,6 +118,21 @@ class MusicService {
     return statement.all(guild)
   }
 
+  deletePlaylists (guildID) {
+    const playlistCount = this.database.prepare(`
+      SELECT COUNT(*) AS total
+      FROM playlists
+      WHERE guild = ?
+    `).get(guildID)
+
+    const deleteResult = this.database.prepare(`
+      DELETE FROM playlists
+      WHERE guild = ?
+    `).run(guildID)
+
+    return { playlistCount, deleteResult }
+  }
+
   DeletePlaylist (guildID, playlistID, memberID, botOwner = false) {
     let deleteStatement = null
     let result = null

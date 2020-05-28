@@ -82,7 +82,7 @@ module.exports = class PlayCommand extends Command {
           title: songInfo.title,
           url: songInfo.url,
           color: 'ORANGE',
-          footer: `${songInfo.total_time} | ${songInfo.requester}`
+          footer: `${songInfo.prettyInfo}`
         }, musicChannel)
         if (musicplayer.is_stopped) {
           const prefix = this.client.commandPrefix

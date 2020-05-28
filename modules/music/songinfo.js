@@ -13,7 +13,7 @@ module.exports = class SongInfo {
     // this.prettyName = `**[${stringUtils.escapeBraces(streamObject.title.substring(0, 65))}](${this.url})**`
     this.prettyName = this.provider !== 'Local' ? `**[${this.title}](${this.url})**` : `**${this.title}**`
     this.prettyTotalTime = streamObject.length
-    this.prettyInfo = `${this.prettyTotalTime} | Youtube | ${this.requester}`
+    this.prettyInfo = `${this.prettyTotalTime} | ${this.provider} | ${this.requester}`
     this.prettyFullName = `${this.prettyName}\n\t\t\`${this.prettyTotalTime} | ${this.provider} | \
 ${this.requester.length <= 15 ? (this.requester) : (this.requester.substring(0, 15) + '...')}\``
   }

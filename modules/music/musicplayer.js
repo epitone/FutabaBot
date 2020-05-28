@@ -73,7 +73,7 @@ class MusicPlayer {
         title: playerState.current_song.title,
         url: playerState.current_song.provider !== 'Local' ? playerState.current_song.url : undefined, // TODO: don't use url if file is local
         color: 'ORANGE',
-        footer: `${playerState.current_song.prettyTotalTime} | ${playerState.current_song.provider} | ${playerState.current_song.requester}`
+        footer: `${playerState.current_song.prettyInfo}`
       }, musicChannel)
 
       if (!playerState.stopped) {
