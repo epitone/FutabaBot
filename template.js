@@ -1,25 +1,25 @@
 // const { Command } = require('discord.js-commando');
 
-// module.exports = class AutoAssignRoleCommand extends Command {
+// module.exports = class TemplateCommand extends Command {
 //   constructor (client) {
 //     super(client, {
-//       name: 'autoassignrole',
-//       aliases: ['aar'],
-//       group: 'admin', //the command group the command is a part of.
-//       memberName: 'autoassignrole', //the name of the command within the group (this can be different from the name).
-//       description: 'Automaticaly assigns a specified role to every user who joins the server. Provide no parameters to disable.',
+//       name: 'commandname',
+//       aliases: ['aliases', 'go', 'here'],
+//       group: 'command-group', //the command group the command is a part of.
+//       memberName: 'commandname', //the name of the command within the group (this can be different from the name).
+//       description: 'Description of command.',
 //       args: [
 //         {
-//           key: 'role',
-//           prompt: 'What role would you like to assign? (Leave blank to disable this feature)',
-//           type: 'role',
-//           default: '' // if no argument is given, this is the default
+//           key: 'arg-name',
+//           prompt: 'if no args provided, prompt the user with this message',
+//           type: 'arg-type',
+//           default: '' // if no argument is given, this is the default value
 //         }
 //       ]
 //     })
 //   }
 
-//   run (message, { name_of_argument }) {
+//   run (message, { arg-name }) {
 //     /// do stuff here
 //   }
 // }

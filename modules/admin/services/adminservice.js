@@ -18,5 +18,15 @@ class AdminService {
     winston.info(`Setting AAR ID to ${roleID}`)
     return guild.settings.set('autoAssignRole', roleID)
   }
+
+  setDefaultMuteRole (guild, role) {
+    winston.info(`Setting default mute role to “${role.name}” (${role.id})`)
+    return guild.settings.set('defaultMuteRole', role.id)
+  }
+
+  async getDefaultMuteRole (guild) {
+    const defaultMuteRole = guild.settings.get('defaultMuteRole', null)
+    return defaultMuteRole ? typeof defaultMuteRole !== 'undefined' ? defaultMuteRole : null : null
+  }
 }
 module.exports = AdminService
