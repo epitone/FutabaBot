@@ -9,12 +9,12 @@ class AdminService {
     winston.info('Admin service Initialized')
   }
 
-  async getAutoAssignRole (guild) {
+  getAutoAssignRole (guild) {
     const autoAssignRole = guild.settings.get('autoAssignRole', null)
     return autoAssignRole ? typeof autoAssignRole !== 'undefined' ? autoAssignRole : null : null
   }
 
-  async setAutoAssignRole (guild, roleID) {
+  setAutoAssignRole (guild, roleID) {
     winston.info(`Setting AAR ID to ${roleID}`)
     return guild.settings.set('autoAssignRole', roleID)
   }
@@ -24,7 +24,7 @@ class AdminService {
     return guild.settings.set('defaultMuteRole', role.id)
   }
 
-  async getDefaultMuteRole (guild) {
+  getDefaultMuteRole (guild) {
     const defaultMuteRole = guild.settings.get('defaultMuteRole', null)
     return defaultMuteRole ? typeof defaultMuteRole !== 'undefined' ? defaultMuteRole : null : null
   }

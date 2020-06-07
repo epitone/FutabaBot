@@ -23,28 +23,28 @@ module.exports = class SetMuteRoleCommand extends Command {
 
   async run (message, { mute_role: muteRole }) {
     const guild = message.guild
-    let defaultMuteRole
+    let defaultMuteRole = muteRole !== 'futaba-mute' ? guild.roles.cache.get(muteRole) : guild.roles.cache.find(defaultRole => defaultRole.name === muteRole)
     const mutedPermissions = new Permissions(67175424) // double check this to make the permissions are proper
     const adminService = require('../../FutabaBot').getAdminService()
 
-    if (guild.roles.cache.has(muteRole)) {
-      if (adminService.getDefaultMuteRole(guild) === muteRole.id) { // nothing to do
-        winston.warn(`${muteRole} is already the default mute role`)
+    if (defaultMuteRole) { // if the default mute role exists
+      if (adminService.getDefaultMuteRole(guild) === defaultMuteRole.id) { // nothing to do
+        winston.warn(`${defaultMuteRole} is already the default mute role`)
         discordUtils.embedResponse(message, {
           color: 'RED',
-          description: `**${message.author.tag}** ${muteRole} is already the default mute role`
+          description: `**${message.author.tag}** ${defaultMuteRole} is already the default mute role`
         })
       } else {
-        const updatedRole = await adminService.setDefaultMuteRole(guild, muteRole)
-        const successfulMsg = `**${message.author.tag}** I successfully set the default mute role to ${muteRole}`
+        const updatedRole = await adminService.setDefaultMuteRole(guild, defaultMuteRole)
+        const successfulMsg = `**${message.author.tag}** I successfully set the default mute role to ${defaultMuteRole}`
         discordUtils.embedResponse(message, {
-          color: updatedRole === muteRole.id ? 'ORANGE' : 'RED',
-          description: updatedRole === muteRole.id ? successfulMsg : 'Oops! Something went wrong!'
+          color: updatedRole === defaultMuteRole.id ? 'ORANGE' : 'RED',
+          description: updatedRole === defaultMuteRole.id ? successfulMsg : 'Oops! Something went wrong!'
         })
       }
     } else {
       if (muteRole === 'futaba-mute') {
-        // create the role and set it as the default
+        // create the default mute role and set it as the default
         defaultMuteRole = await guild.roles.create({
           data: {
             name: muteRole,
@@ -59,7 +59,7 @@ module.exports = class SetMuteRoleCommand extends Command {
           color: settingsMuteRole === defaultMuteRole.id ? 'ORANGE' : 'RED',
           description: settingsMuteRole === defaultMuteRole.id ? successfulMsg : 'Oops! Something went wrong!'
         })
-      } else { // the role hasn't been made, return an error message
+      } else { // FIXME: the role hasn't been made, return an error message (we have an inherent validator, this condition is probably unnecessary)
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: `**${message.author.tag}** that role doesn't exist, have you created it yet?`
