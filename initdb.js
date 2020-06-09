@@ -4,18 +4,16 @@ const Database = require('better-sqlite3'); // eslint-disable-line
 console.log('Creating database')
 const sql = new Database(path.join(__dirname, 'database.sqlite3'))
 
-const createPlaylists = sql.prepare(`
-CREATE TABLE "playlists" (
+sql.prepare(`
+CREATE TABLE IF NOT EXISTS "playlists" (
   "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
   "guild" INTEGER,
   "author" TEXT,
   "author_id" INTEGER,
-  "name" TEXT)`)
+  "name" TEXT)`).run()
 
-createPlaylists.run()
-
-const createPlaylistSongs = sql.prepare(`
-CREATE TABLE "playlist_song" (
+sql.prepare(`
+CREATE TABLE IF NOT EXISTS "playlist_song" (
  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
  "music_playlist_id" INTEGER NOT NULL,
  "provider" TEXT,
@@ -23,8 +21,16 @@ CREATE TABLE "playlist_song" (
  "title" TEXT,
  "uri" TEXT,
  FOREIGN KEY("music_playlist_id") REFERENCES "playlists"("id") ON DELETE CASCADE
-)`)
+)`).run()
 
-createPlaylistSongs.run()
+sql.prepare(`
+CREATE TABLE IF NOT EXISTS "playing_status" (
+ "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+  "guild" INTEGER NOT NULL,
+ "status_type"  TEXT NOT NULL,
+ "status_string" TEXT NOT NULL,
+ FOREIGN KEY("guild") REFERENCES "settings"("guild")
+)`).run()
+
 console.log('Tables created, closing database')
 sql.close()

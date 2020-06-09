@@ -7,6 +7,7 @@ class AdminService {
     this.client = client
     this.database = database
     winston.info('Admin service Initialized')
+    this.playingStatuses = {}
   }
 
   getAutoAssignRole (guild) {
@@ -27,6 +28,21 @@ class AdminService {
   getDefaultMuteRole (guild) {
     const defaultMuteRole = guild.settings.get('defaultMuteRole', null)
     return defaultMuteRole ? typeof defaultMuteRole !== 'undefined' ? defaultMuteRole : null : null
+  }
+
+  getPlayingStatuses (guild) {
+    // check if there are any statuses stored in memory
+    let playingStatuses = guild.settings.get('playingStatuses', null)
+    if (playingStatuses) {
+      return playingStatuses
+    } else {
+      const selectStatuses = this.database.prepare(`
+        SELECT id, status_type, status_string
+        FROM playing_status
+        WHERE guild = ?
+      `).run(guild.id)
+      console.debug(selectStatuses)
+    }
   }
 }
 module.exports = AdminService

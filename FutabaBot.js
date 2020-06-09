@@ -23,7 +23,7 @@ client.setProvider(new Commando.SyncSQLiteProvider(sql)).catch(console.error)
 client
   .on('error', console.error)
   .on('warn', console.warn)
-  .on('ready', () => {
+  .on('ready', async () => {
     winston.info(`Client ready; logged in as ${client.user.tag}! (${client.user.id})`)
     client.user.setActivity('with Commando')
   })
