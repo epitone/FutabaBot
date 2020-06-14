@@ -1,4 +1,5 @@
 const winston = require('winston')
+const BotStatus = require('../../../modules/admin/botstatus')
 
 class AdminService {
   constructor (database, client) {
@@ -7,7 +8,7 @@ class AdminService {
     this.client = client
     this.database = database
     winston.info('Admin service Initialized')
-    this.playingStatuses = {}
+    this.playingStatuses = []
   }
 
   getAutoAssignRole (guild) {
@@ -32,17 +33,25 @@ class AdminService {
 
   getPlayingStatuses (guild) {
     // check if there are any statuses stored in memory
-    let playingStatuses = guild.settings.get('playingStatuses', null)
-    if (playingStatuses) {
-      return playingStatuses
-    } else {
-      const selectStatuses = this.database.prepare(`
+    if (this.playingStatuses.length !== 0) {
+      return this.playingStatuses
+    }
+    const selectStatuses = this.database.prepare(`
         SELECT id, status_type, status_string
         FROM playing_status
         WHERE guild = ?
       `).run(guild.id)
-      console.debug(selectStatuses)
-    }
+    console.debug(selectStatuses)
+  }
+
+  addPlayingStatus (guild, playingStatus, status) {
+    const newPlayingStatus = new BotStatus(guild.id, playingStatus, status)
+    this.playingStatuses.push(newPlayingStatus)
+    const result = this.database.prepare(`
+      INSERT INTO playing_status(guild, status_type, status_string)
+      VALUES(?, ?, ?)
+    `).run(guild.id, playingStatus, status)
+    return result.changes
   }
 }
 module.exports = AdminService

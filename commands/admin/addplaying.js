@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando')
-
+const discordUtils = require('../../utils/discord-utils')
 module.exports = class AddPlayingCommand extends Command {
   constructor (client) {
     super(client, {
@@ -12,9 +12,9 @@ module.exports = class AddPlayingCommand extends Command {
       args: [
         {
           key: 'playing_type',
-          prompt: 'What type of playing status is it? (options: Playing, Watching or Listening)',
+          prompt: 'What type of playing status is it? (must be one of: Playing, Watching or Listening)',
           type: 'string',
-          oneOf: ['Playing', 'Watching', 'Listening']
+          oneOf: ['playing', 'watching', 'listening']
         },
         {
           key: 'playing_status',
@@ -26,5 +26,20 @@ module.exports = class AddPlayingCommand extends Command {
   }
 
   run (message, { playing_type: playingType, playing_status: playingStatus }) {
+    // TODO: add winston logs
+    const adminService = require('../../FutabaBot').getAdminService()
+    const result = adminService.addPlayingStatus(message.guild, playingType, playingStatus)
+    if (result === 1) {
+      discordUtils.embedResponse(message, {
+        color: 'ORANGE',
+        description: `**${message.author.tag}** I successfully added the string.`
+      })
+    } else {
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: 'Oops! Something went wrong!'
+      })
+    }
+
   }
 }
