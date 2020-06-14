@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, User } = require('discord.js')
 
 exports.embedResponse = (message, embedOptions, textChannel = null) => {
   const embed = new MessageEmbed()
@@ -34,4 +34,8 @@ exports.inVoiceChannel = (voiceState, message, response = null) => {
     return false
   }
   return true
+}
+
+exports.isAdminOrHasPerms = (user, permissionRole) => {
+  return user.hasPermisssion('ADMINISTRATOR') || user.hasPermission(permissionRole)
 }
