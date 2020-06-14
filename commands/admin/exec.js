@@ -21,7 +21,7 @@ module.exports = class TemplateCommand extends Command {
   }
 
   run (message, { command }) {
-    exec('ls -la | head -n 35', (error, stdout, stderr) => {
+    exec(command, (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`)
         return
@@ -30,9 +30,7 @@ module.exports = class TemplateCommand extends Command {
         console.log(`stderr: ${stderr}`)
         return
       }
-      const response = `\`\`\`
-      ${stdout}
-      \`\`\``
+      const response = `\`\`\`${stdout}\`\`\``
       message.channel.send(response)
       console.log(`stdout: ${stdout}`)
     })
