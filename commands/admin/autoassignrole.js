@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando')
+const { Permissions } = require('discord.js')
 const discordUtils = require('./../../utils/discord-utils')
 const winston = require('winston')
 
@@ -23,8 +24,8 @@ module.exports = class AutoAssignRoleCommand extends Command {
 
   run (message, { role }) {
     const bot = message.guild.me
-    if (!bot.hasPermission('ADMINISTRATOR') || !bot.hasPermission('MANAGE_ROLES')) {
-      winston.warn(`${this.client.user.tag} does not have the MANAGE_ROLES permission`)
+    if (!discordUtils.isAdminOrHasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
+      winston.warn(`${this.client.user.tag} does not have the ${Permissions.FLAGS.MANAGE_ROLES} permission`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: `**${message.author.tag}** I don't have the proper permissions for this command!`
