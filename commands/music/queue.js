@@ -4,7 +4,6 @@ require('dotenv').config()
 const stringUtils = require('../../utils/string-utils')
 const discordUtils = require('../../utils/discord-utils')
 const winston = require('winston')
-
 const SongInfo = require('./../../modules/music/songinfo')
 
 module.exports = class QueueCommand extends Command {
@@ -27,7 +26,9 @@ module.exports = class QueueCommand extends Command {
 
   async run (message, { query_string: queryString }) {
     const { voice: voiceState } = message.member
-    if (!discordUtils.inVoiceChannel(voiceState, message, 'You need to be in a voice channel on this server to run this command.')) {
+    const constants = require('./../../FutabaBot').getConstants()
+    winston.info(constants.getLang())
+    if (!discordUtils.inVoiceChannel(voiceState, message, constants.get('NOT_IN_VOICE_CHANNEL'))) {
       return
     }
 
@@ -52,7 +53,7 @@ module.exports = class QueueCommand extends Command {
       winston.error(`error fetching youtube stream object: ${err}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
-        description: `**${message.author.tag}** I couldn't get data for that song! Try another link maybe?`
+        description: `**${message.author.tag}** ${constants.get('ERR_SONG_NOT_FOUND')}`
       })
       return
     }
@@ -73,7 +74,7 @@ module.exports = class QueueCommand extends Command {
           const prefix = this.client.commandPrefix
           discordUtils.embedResponse(message, {
             color: 'RED',
-            description: `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`
+            description: constants.get('SONG_ADDED_NO_PLAYBACK', prefix)
           })
         } else {
           if (!message.guild.voice) {
