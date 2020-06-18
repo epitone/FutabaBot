@@ -4,6 +4,8 @@ const Database = require('better-sqlite3'); // eslint-disable-line
 console.log('Creating database')
 const sql = new Database(path.join(__dirname, 'database.sqlite3'))
 
+sql.prepare('CREATE TABLE IF NOT EXISTS settings (guild INTEGER PRIMARY KEY, settings TEXT)').run()
+
 sql.prepare(`
 CREATE TABLE IF NOT EXISTS "playlists" (
   "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
