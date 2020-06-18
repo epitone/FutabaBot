@@ -11,6 +11,7 @@ require('dotenv').config()
 
 let musicService
 let adminService
+let constants
 
 const client = new Commando.Client({
   commandPrefix: '.',
@@ -70,6 +71,12 @@ function getAdminService () {
   return adminService
 }
 
+function getConstants () {
+  winston.info(process.env.lang)
+  if (!constants) constants = new(require(`./languages/${process.env.lang}`)) // eslint-disable-line
+  return constants
+}
+
 client.registry
   .registerDefaults()
   .registerGroups([
@@ -82,4 +89,4 @@ client.login(process.env.TOKEN)
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
 
-module.exports = { getMusicService, getAdminService }
+module.exports = { getMusicService, getAdminService, getConstants }
