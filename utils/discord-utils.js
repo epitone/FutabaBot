@@ -38,6 +38,6 @@ module.exports = {
   },
 
   isAdminOrHasPerms (user, permissionRole) {
-    return user.hasPermisssion(Permissions.FLAGS.ADMINISTRATOR) || user.hasPermission(permissionRole)
+    return user.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || user.hasPermission(permissionRole)
   }
 }
