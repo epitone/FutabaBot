@@ -1,6 +1,8 @@
 const { Command } = require('discord.js-commando')
+const { Permissions } = require('discord.js')
 const discordUtils = require('../../utils/discord-utils')
 const winston = require('winston')
+
 module.exports = class AutoAssignRoleCommand extends Command {
   constructor (client) {
     super(client, {
@@ -25,6 +27,15 @@ module.exports = class AutoAssignRoleCommand extends Command {
   }
 
   async run (message, { member, role }) {
+    const constants = require('./../../FutabaBot').getConstants()
+
+    if (!discordUtils.isAdminOrHasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MANAGE_ROLES')
+      })
+      return
+    }
     const user = member.user
     if (member.roles.cache.has(role.id)) { // check if user already has the role
       winston.error(`${member.author.tag} already has the role: ${role.name}`)

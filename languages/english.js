@@ -13,7 +13,7 @@ module.exports = class {
       },
       NOT_IN_VOICE_CHANNEL: 'You need to be in a voice channel on this server to run this command.',
       EMPTY_SONG_QUEUE: 'It doesn\'t look like there are any songs in the queue.',
-      ERR_MISSING_BOT_PERMS: (user, perms) => `**${user}** I don't have the proper permissions for this command. Please give me the following permissions: ${perms}`
+      ERR_MISSING_BOT_PERMS: (user, perms) => `**${user}** I don't have the proper permissions for this command. Please give me the following permissions: \`${perms}\``
     }
   }
   /**
