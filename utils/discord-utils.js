@@ -37,7 +37,8 @@ module.exports = {
     return true
   },
 
-  isAdminOrHasPerms (user, permissionRole) {
-    return user.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || user.hasPermission(permissionRole)
+  hasPerms (user, permissionRole, adminOverride = true, ownerOverride = true) {
+    console.log(`${user.user.tag} has permission: ${permissionRole}: ${user.hasPermission(permissionRole)}`)
+    return user.hasPermission(permissionRole, { checkAdmin: adminOverride, checkOwner: ownerOverride })
   }
 }

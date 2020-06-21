@@ -24,7 +24,7 @@ module.exports = class AutoAssignRoleCommand extends Command {
 
   run (message, { role }) {
     const bot = message.guild.me
-    if (!discordUtils.isAdminOrHasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
+    if (!discordUtils.hasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
       winston.warn(`${this.client.user.tag} does not have the ${Permissions.FLAGS.MANAGE_ROLES} permission`)
       discordUtils.embedResponse(message, {
         color: 'RED',

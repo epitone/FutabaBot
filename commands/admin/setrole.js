@@ -29,7 +29,7 @@ module.exports = class AutoAssignRoleCommand extends Command {
   async run (message, { member, role }) {
     const constants = require('./../../FutabaBot').getConstants()
 
-    if (!discordUtils.isAdminOrHasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
+    if (!discordUtils.hasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MANAGE_ROLES')
