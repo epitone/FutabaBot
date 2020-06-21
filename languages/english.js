@@ -18,7 +18,8 @@ module.exports = class {
       ERR_SONG_NOT_FOUND: 'I couldn’t get data for that song! Try another link maybe?',
       MISSING_ROLE: (user) => `${user.tag} does not have that role!`,
       REMOVED_ROLE: (user, role) => `Successfully removed “${role.name}” from ${user.tag}`,
-      SONG_ADDED_NO_PLAYBACK: (prefix) => `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`
+      SONG_ADDED_NO_PLAYBACK: (prefix) => `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`,
+      ROLE_HOIST: (hoisted) => hoisted ? 'Role hoisted' : 'Role un-hoisted.'
     }
   }
   /**
