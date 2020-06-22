@@ -22,13 +22,22 @@ module.exports = class RoleHoistCommand extends Command {
 
   async run (message, { role }) {
     const constants = require('./../../FutabaBot').getConstants()
-    if (!discordUtils.hasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
+    const bot = message.guild.me
+    if (!discordUtils.hasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MANAGE_ROLES')
       })
       return
     }
+
+    if (bot.roles.highest.comparePositionTo(role) <= 0) {
+      discordUtils.embedResponse(message, {
+        color: 'ORANGE',
+        description: constants.get('ROLE_HIERARCHY_ERROR')
+      })
+    }
+
     const newRole = await role.setHoist(!role.hoist)
     if (newRole) {
       discordUtils.embedResponse(message, {
