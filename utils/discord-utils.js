@@ -1,4 +1,4 @@
-const { MessageEmbed, Permissions } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 
 module.exports = {
   embedResponse (message, embedOptions, textChannel = null) {
@@ -38,7 +38,6 @@ module.exports = {
   },
 
   hasPerms (user, permissionRole, adminOverride = true, ownerOverride = true) {
-    console.log(`${user.user.tag} has permission: ${permissionRole}: ${user.hasPermission(permissionRole)}`)
     return user.hasPermission(permissionRole, { checkAdmin: adminOverride, checkOwner: ownerOverride })
   }
 }
