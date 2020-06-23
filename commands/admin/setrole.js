@@ -29,6 +29,7 @@ module.exports = class AutoAssignRoleCommand extends Command {
   async run (message, { member, role }) {
     const constants = require('./../../FutabaBot').getConstants()
 
+    // TODO: make sure the role we're adding is not above the bot's role - if so we need to return an error message
     if (!discordUtils.hasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
       discordUtils.embedResponse(message, {
         color: 'RED',
