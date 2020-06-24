@@ -28,15 +28,23 @@ module.exports = class AutoAssignRoleCommand extends Command {
 
   async run (message, { member, role }) {
     const constants = require('./../../FutabaBot').getConstants()
+    const bot = message.guild.me
 
-    // TODO: make sure the role we're adding is not above the bot's role - if so we need to return an error message
-    if (!discordUtils.hasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
+    if (!discordUtils.hasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MANAGE_ROLES')
       })
       return
     }
+    if (bot.highest.comparePositionTo(role) <= 0) {
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('ROLE_HIERARCHY_ERROR')
+      })
+      return
+    }
+
     const user = member.user
     if (member.roles.cache.has(role.id)) { // check if user already has the role
       winston.error(`${member.author.tag} already has the role: ${role.name}`)

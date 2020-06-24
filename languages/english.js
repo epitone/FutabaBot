@@ -20,7 +20,7 @@ module.exports = class {
       REMOVED_ROLE: (user, role) => `Successfully removed “${role.name}” from ${user.tag}`,
       SONG_ADDED_NO_PLAYBACK: (prefix) => `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`,
       ROLE_HOIST: (hoisted) => hoisted ? 'Role hoisted' : 'Role un-hoisted.',
-      ROLE_HIERARCHY_ERROR: 'That role is higher than mine - you\'ll need someone to adjust my role for me to do this!',
+      ROLE_HIERARCHY_ERROR: 'That role is higher than mine - you\'ll need someone to adjust my role position for me to do this!',
       REMOVE_ROLES_SUCCESS: (user) => `Successfully removed all roles from ${user.tag}`
     }
   }
