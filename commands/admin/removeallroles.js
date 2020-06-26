@@ -36,7 +36,6 @@ module.exports = class RemoveAllRolesCommand extends Command {
         color: 'ORANGE',
         description: constants.get('REMOVE_ROLES_SUCCESS', member.user)
       })
-      return
     }
   }
 }
