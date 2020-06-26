@@ -1,5 +1,7 @@
 const { Command } = require('discord.js-commando')
 const discordUtils = require('../../utils/discord-utils')
+const winston = require('winston')
+
 module.exports = class AddPlayingCommand extends Command {
   constructor (client) {
     super(client, {
@@ -30,6 +32,7 @@ module.exports = class AddPlayingCommand extends Command {
     const adminService = require('../../FutabaBot').getAdminService()
     const result = adminService.addPlayingStatus(message.guild, playingType, playingStatus)
     if (result === 1) {
+      winston.info('Successfully added playing string to the database')
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: `**${message.author.tag}** I successfully added the string.`
@@ -40,6 +43,5 @@ module.exports = class AddPlayingCommand extends Command {
         description: 'Oops! Something went wrong!'
       })
     }
-
   }
 }
