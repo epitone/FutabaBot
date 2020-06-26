@@ -59,6 +59,5 @@ module.exports = class RemoveRoleCommand extends Command {
         description: constants.get('ERR_GENERIC')
       })
     }
-
   }
 }
