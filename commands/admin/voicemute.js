@@ -4,7 +4,7 @@ const discordUtils = require('./../../utils/discord-utils')
 const winston = require('winston')
 
 // TODO: check edge cases for this command
-
+// TODO: replace .then calls with await
 module.exports = class VoiceMute extends Command {
   constructor (client) {
     super(client, {
@@ -23,6 +23,15 @@ module.exports = class VoiceMute extends Command {
   }
 
   async run (message, { user }) {
+    const constants = require('./../../FutabaBot').getConstants()
+    if (!discordUtils.hasPerms(message.member, 'MUTE_MEMBERS')) {
+      winston.warn(`${message.member} tried to execute ${this.name} command without proper authority`)
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('INSUFFICIENT_PERMISSIONS', message.author)
+      })
+      return
+    }
     let muteRole = message.guild.roles.find('name', 'voice muted')
     if (!muteRole) {
       const voiceMutedPermissions = new Permissions(67492928) // see https://discordapi.com/permissions.html#67492928
