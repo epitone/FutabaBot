@@ -23,6 +23,15 @@ module.exports = class MentionRoleCommand extends Command {
   async run (message, { role }) {
     const bot = message.guild.me
     const constants = require('./../../FutabaBot').getConstants()
+    if (!discordUtils.hasPerms(message.member, 'MENTION_EVERYONE')) {
+      winston.warn(`${message.member} tried to execute ${this.name} command without proper authority`)
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('INSUFFICIENT_PERMISSIONS', message.author)
+      })
+      return
+    }
+
     if (!discordUtils.hasPerms(bot, 'MENTION_EVERYONE')) {
       discordUtils.embedResponse(message, {
         description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MENTION_EVERYONE')
