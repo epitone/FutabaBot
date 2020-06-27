@@ -32,7 +32,7 @@ client
   .on('reconnecting', () => { console.warn('Reconnecting...') })
   .on('commandError', (cmd, err) => {
     if (err instanceof Commando.FriendlyError) return
-    winston.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err)
+    winston.error(`Error in command ${cmd.groupID}:${cmd.memberName} `, err)
   })
   .on('providerReady', () => {
   // setup music service
