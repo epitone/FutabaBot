@@ -16,6 +16,7 @@ module.exports = class {
       ERR_MISSING_BOT_PERMS: (user, perms) => `**${user}** I don't have the proper permissions for this command. Please give me the following permissions: \`${perms}\``,
       ERR_GENERIC: 'Oops! Something went wrong!',
       ERR_SONG_NOT_FOUND: 'I couldn’t get data for that song! Try another link maybe?',
+      INSUFFICIENT_PERMISSIONS: (user) => `**${user.tag}** you don’t have permission to execute this command!`,
       MISSING_ROLE: (user) => `${user.tag} does not have that role!`,
       REMOVED_ROLE: (user, role) => `Successfully removed “${role.name}” from ${user.tag}`,
       SONG_ADDED_NO_PLAYBACK: (prefix) => `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`,
