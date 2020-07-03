@@ -41,6 +41,9 @@ client
     adminService = new AdminService(client.provider.conn, client)
     winston.info('Service setup complete')
   })
+  .on('guildCreate', async (guild) => {
+    winston.info(`Bot joined server ${guild}`)
+  })
   .on('guildMemberAdd', async (member) => {
     const guild = member.guild
     const adminService = getAdminService()
