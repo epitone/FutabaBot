@@ -24,11 +24,20 @@ module.exports = class AutoAssignRoleCommand extends Command {
 
   run (message, { role }) {
     const bot = message.guild.me
+    const constants = require('./../../FutabaBot').getConstants()
+    if (!discordUtils.hasPerms(message.member, 'MANAGE_ROLES')) {
+      winston.warn(`${message.member} tried to execute ${this.name} command without proper authority`)
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('INSUFFICIENT_PERMISSIONS', message.author)
+      })
+      return
+    }
     if (!discordUtils.hasPerms(bot, Permissions.FLAGS.MANAGE_ROLES)) {
       winston.warn(`${this.client.user.tag} does not have the ${Permissions.FLAGS.MANAGE_ROLES} permission`)
       discordUtils.embedResponse(message, {
         color: 'RED',
-        description: `**${message.author.tag}** I don't have the proper permissions for this command!`
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MANAGE_ROLES')
       })
       return
     }
@@ -37,7 +46,7 @@ module.exports = class AutoAssignRoleCommand extends Command {
     if (aarID !== role.id) {
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
-        description: `**${message.author.tag}** Successfully set the auto-assign role to ${role}. Everyone who joins the server will now have this role.`
+        description: constants.get('AAR_SUCCESS', message.author, role)
       })
     }
   }
