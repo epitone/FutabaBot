@@ -23,6 +23,15 @@ module.exports = class ChatMute extends Command {
   }
 
   async run (message, { user }) {
+    const constants = require('./../../FutabaBot').getConstants()
+    if (!discordUtils.hasPerms(message.member, 'MUTE_MEMBERS')) {
+      winston.warn(`${message.member} tried to execute ${this.name} command without proper authority`)
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('INSUFFICIENT_PERMISSIONS', message.author)
+      })
+      return
+    }
     const muteRole = message.guild.roles.find('name', 'chat muted')
     if (!muteRole) {
       const chatMutedPermissions = new Permissions(70321152) // only allows read message history, change nickname and view channels and connection to voice chat
