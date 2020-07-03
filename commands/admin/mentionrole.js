@@ -34,7 +34,7 @@ module.exports = class MentionRoleCommand extends Command {
 
     if (!discordUtils.hasPerms(bot, 'MENTION_EVERYONE')) {
       discordUtils.embedResponse(message, {
-        description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MENTION_EVERYONE')
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MENTION_EVERYONE')
       })
       return
     }
