@@ -37,6 +37,13 @@ module.exports = class RoleColorCommand extends Command {
       return
     }
 
+    if (!discordUtils.hasPerms(message.guild.me, 'MANAGE_ROLES')) {
+      discordUtils.embedResponse(message, {
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MANAGE_ROLES')
+      })
+      return
+    }
+
     if (color) {
       const botHighestRole = message.guild.me.roles.highest
       if (botHighestRole.comparePositionTo(role) <= 0) {
