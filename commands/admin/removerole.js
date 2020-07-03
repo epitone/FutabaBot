@@ -30,7 +30,7 @@ module.exports = class RemoveRoleCommand extends Command {
     if (!discordUtils.hasPerms(message.guild.me, Permissions.FLAGS.MANAGE_ROLES)) {
       discordUtils.embedResponse(message, {
         color: 'RED',
-        description: constants.get('ERR_MISSING_BOT_PERMS', message.author.tag, 'MANAGE_ROLES')
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MANAGE_ROLES')
       })
       return
     }
