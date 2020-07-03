@@ -53,5 +53,27 @@ class AdminService {
     `).run(guild.id, playingStatus, status)
     return result.changes
   }
+
+  leaveGuild (guild) {
+    const deletePlaylists = this.database.prepare(`
+      DELETE FROM playlists
+      WHERE guild = ?
+    `)
+
+    const deleteGuildSettings = this.database.prepare(`
+      DELETE FROM settings
+      WHERE guild = ?
+    `)
+    const deletePlayingStatuses = this.database.prepare(`
+      DELETE FROM playing_status
+      WHERE guild = ?
+    `)
+    const deleteMany = this.database.transaction((guild) => {
+      deletePlaylists.run(guild.id)
+      deleteGuildSettings.run(guild.id)
+      deletePlayingStatuses.run(guild.id)
+    })
+    deleteMany(guild)
+  }
 }
 module.exports = AdminService
