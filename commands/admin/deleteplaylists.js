@@ -7,7 +7,7 @@ module.exports = class DeletePlaylistsCommand extends Command {
       name: 'deleteplaylists',
       group: 'admin',
       memberName: 'deleteplaylists',
-      description: 'Automaticaly assigns a specified role to every user who joins the server. Provide no parameters to disable.',
+      description: 'Deletes all music playlists.',
       ownerOnly: true
     })
   }
