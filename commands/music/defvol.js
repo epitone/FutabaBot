@@ -25,7 +25,8 @@ module.exports = class DefVolCommand extends Command {
     const isVolumeSet = await musicService.SetDefaultVolume(message.guild, volumeLevel / 100)
 
     if (isVolumeSet) musicPlayer.setVolume(volumeLevel)
-    const response = isVolumeSet ? `**${message.author.tag}** I set the player's default volume to ${volumeLevel}%. This will persist through bot restarts as well!.` : 'Oops! Something went wrong!'
+    // TODO: move this string to constants file
+    const response = isVolumeSet ? `**${message.author.tag}** I set the player's default volume to ${volumeLevel}%. This will persist through bot restarts as well.` : 'Oops! Something went wrong!'
     DiscordUtils.embedResponse(message, {
       color: isVolumeSet ? 'ORANGE' : 'RED',
       description: response
