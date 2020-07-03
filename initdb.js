@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS "playlists" (
   "guild" INTEGER,
   "author" TEXT,
   "author_id" INTEGER,
-  "name" TEXT)`).run()
+  "name" TEXT,
+  FOREIGN KEY("guild") REFERENCES "settings"("guild") ON DELETE CASCADE
+)`).run()
 
 sql.prepare(`
 CREATE TABLE IF NOT EXISTS "playlist_song" (
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS "playing_status" (
   "guild" INTEGER NOT NULL,
  "status_type"  TEXT NOT NULL,
  "status_string" TEXT NOT NULL,
- FOREIGN KEY("guild") REFERENCES "settings"("guild")
+ FOREIGN KEY("guild") REFERENCES "settings"("guild") ON DELETE CASCADE
 )`).run()
 
 console.log('Tables created, closing database')
