@@ -12,7 +12,6 @@ module.exports = class UnsetMusicChannelCommand extends Command {
   }
 
   run (message) {
-    const textChannel = message.channel
     const musicService = require('./../../FutabaBot').getMusicService()
 
     let musicChannel = musicService.getMusicChannel()
@@ -21,21 +20,12 @@ module.exports = class UnsetMusicChannelCommand extends Command {
         color: 'RED',
         description: `**${message.author.tag}** there is no music channel set!`
       })
-      return
-    }
-
-    musicChannel = musicService.setMusicChannel(null)
-    if (!musicChannel) {
+    } else {
+      musicChannel = musicService.setMusicChannel(null)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: `**${message.author.tag}** I will output playing, finished, paused and removed songs to the channel where the song was first queued in.`
       })
-      return
     }
-
-    discordUtils.embedResponse(message, {
-      color: 'RED',
-      description: 'Oops! Something went wrong!'
-    })
   }
 }
