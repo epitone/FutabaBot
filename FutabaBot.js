@@ -61,7 +61,9 @@ client
       // TODO: when we create the greetmsg command, replace this code here
       const greetingChannel = guild.channels.cache.get(greetingChannelID)
       if (greetingChannel) {
-        await greetingChannel.send(`Welcome, ${member.user}!`)
+        const timeoutMilliseconds = adminService.getGreetingTimeout(guild)
+        const message = await greetingChannel.send(`Welcome, ${member.user}!`)
+        if (timeoutMilliseconds > 0) message.delete({ timeout: timeoutMilliseconds })
       } else {
         winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
       }
