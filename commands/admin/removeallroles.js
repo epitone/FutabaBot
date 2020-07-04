@@ -9,7 +9,7 @@ module.exports = class RemoveAllRolesCommand extends Command {
       aliases: ['rar'],
       group: 'admin', // the command group the command is a part of.
       memberName: 'removeallroles', // the name of the command within the group (this can be different from the name).
-      description: 'Removes all roles from a mentioned user.',
+      description: 'Removes all roles which are lower than your highest role in the role hierarchy from the user you specify.',
       args: [
         {
           key: 'user',
@@ -30,8 +30,12 @@ module.exports = class RemoveAllRolesCommand extends Command {
       })
       return
     }
-    const updatedMember = await member.roles.remove(member.roles.cache)
-    if (updatedMember.roles.cache.size === 1) { // note: all users have the @everyone role - so the default role cache size is 1
+    const botHighestRole = message.guild.me.roles.highest
+    const totalRolesCount = member.roles.cache.size
+
+    const rolesToRemove = member.roles.cache.filter(role => botHighestRole.comparePositionTo(role) > 0)
+    const updatedMember = await member.roles.remove(rolesToRemove)
+    if (updatedMember.roles.cache.size < totalRolesCount) { // note: all users have the @everyone role - so the default role cache size is 1
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: constants.get('REMOVE_ROLES_SUCCESS', member.user)
