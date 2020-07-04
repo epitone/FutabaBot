@@ -40,6 +40,11 @@ module.exports = class RemoveAllRolesCommand extends Command {
         color: 'ORANGE',
         description: constants.get('REMOVE_ROLES_SUCCESS', member.user)
       })
+    } else {
+      discordUtils.embedResponse(message, {
+        color: 'RED',
+        description: constants.get('ERR_GENERIC')
+      })
     }
   }
 }
