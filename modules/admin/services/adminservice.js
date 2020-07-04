@@ -75,5 +75,15 @@ class AdminService {
     })
     deleteMany(guild)
   }
+
+  setGreetingChannel (guild, channel) {
+    winston.info(`Setting greeting channel for ${guild.id}: ${channel !== null ? channel.name : null}`)
+    guild.settings.set('greetingChannel', channel ? channel.id : null)
+  }
+
+  getGreetingChannel (guild) {
+    winston.info(`Retrieving greeting channel for ${guild.id}`)
+    return guild.settings.get('greetingChannel', null)
+  }
 }
 module.exports = AdminService

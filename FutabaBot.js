@@ -48,12 +48,22 @@ client
     const guild = member.guild
     const adminService = getAdminService()
     const aarID = await adminService.getAutoAssignRole(guild)
+    const greetingChannelID = await adminService.getGreetingChannel(guild)
     if (aarID !== null) {
       const role = member.guild.roles.cache.get(aarID)
       winston.info(`Auto assign role active, giving member ${member.id} the role “${role.name}”`)
       const memberWithRole = await member.roles.set([aarID])
       if (memberWithRole.roles.cache.has(aarID)) {
         winston.info(`Successfully assigned “${role.name}” to ${memberWithRole.user.tag}`)
+      }
+    }
+    if (greetingChannelID) {
+      // TODO: when we create the greetmsg command, replace this code here
+      const greetingChannel = guild.channels.cache.get(greetingChannelID)
+      if (greetingChannel) {
+        await greetingChannel.send(`Welcome, ${member.user}!`)
+      } else {
+        winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
       }
     }
   })
