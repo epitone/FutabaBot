@@ -24,6 +24,7 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^3.0.0",
     "standard": "^14.3.3",
+    "valid-url": "^1.0.9",
     "winston": "^3.2.1",
     "ytdl-core-discord": "^1.2.0"
   }
