@@ -12,7 +12,7 @@ module.exports = class {
         }
       },
       AAR_SUCCESS: (user, role) => `**${user.tag}** Successfully set the auto-assign role to ${role}. Everyone who joins the server will now have this role.`,
-      NOT_IN_VOICE_CHANNEL: 'You need to be in a voice channel on this server to run this command.',
+      BOT_STATUS_SUCCESS: (status) => `My status is now: **${status}**`,
       EMPTY_SONG_QUEUE: 'It doesn’t look like there are any songs in the queue.',
       ERR_MISSING_BOT_PERMS: (user, perms) => `**${user.tag}** I don't have the proper permissions for this command. Please give me the following permissions: \`${perms}\``,
       ERR_GENERIC: 'Oops! Something went wrong!',
@@ -21,6 +21,7 @@ module.exports = class {
       INVALID_COLOR: 'You entered an invalid color code.',
       INSUFFICIENT_PERMISSIONS: (user) => `**${user.tag}** you don’t have permission to execute this command!`,
       MISSING_ROLE: (user) => `${user.tag} does not have that role!`,
+      NOT_IN_VOICE_CHANNEL: 'You need to be in a voice channel on this server to run this command.',
       REMOVED_ROLE: (user, role) => `Successfully removed “${role.name}” from ${user.tag}`,
       ROLE_COLOR_UPDATE: 'Role color updated',
       ROLE_HOIST: (hoisted) => hoisted ? 'Role hoisted' : 'Role un-hoisted.',
