@@ -14,7 +14,7 @@ module.exports = class LocalCommand extends Command {
         {
           key: 'path',
           prompt: 'Please provide a full path to the file',
-          type: 'string',
+          type: 'string'
         }
       ],
       ownerOnly: true
