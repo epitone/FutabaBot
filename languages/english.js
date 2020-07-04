@@ -30,6 +30,8 @@ module.exports = class {
       ROLE_HIERARCHY_ERROR: 'That role is higher than mine - you’ll need someone to adjust my role position for me to do this!',
       ROLE_HOIST: (hoisted) => hoisted ? 'Role hoisted' : 'Role un-hoisted.',
       SONG_ADDED_NO_PLAYBACK: (prefix) => `A song has been queued but the player is stopped. To start playback use the \`${prefix}play\` command.`,
+      UPDATE_PLAYING_ERR: 'Those two statuses are the same!',
+      UPDATE_PLAYING_SUCCESS: (playingStatus) => `Successfully updated my status to: ${playingStatus}`,
       USER_ROLE_HIERARCHY_ERROR: (user) => `**${user.tag}** That role is higher than your highest role!`
     }
   }
