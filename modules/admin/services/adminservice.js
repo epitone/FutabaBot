@@ -85,5 +85,15 @@ class AdminService {
     winston.info(`Retrieving greeting channel for ${guild.id}`)
     return guild.settings.get('greetingChannel', null)
   }
+
+  setGreetingTimeout (guild, timeout) {
+    winston.info(`Setting greeting timeout for ${guild.id}: ${timeout} milliseconds`)
+    return guild.settings.get('greetingTimeout', timeout)
+  }
+
+  getGreetingTimeout (guild) {
+    winston.info(`Retrieving greeting timeout for ${guild.id}`)
+    return guild.settings.get('greetingTimeout', 0)
+  }
 }
 module.exports = AdminService

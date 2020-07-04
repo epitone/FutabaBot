@@ -19,6 +19,7 @@ module.exports = class {
       ERR_GENERIC: 'Oops! Something went wrong!',
       ERR_GUILD_NOT_FOUND: 'I couldn’t find a guild with that information.',
       ERR_SONG_NOT_FOUND: 'I couldn’t get data for that song! Try another link maybe?',
+      GREETING_TIMEOUT_MSG: (timeout) => `Greeting messages will ${timeout > 0 ? `be deleted after ${timeout} seconds.` : 'not be deleted.'}`,
       INSUFFICIENT_PERMISSIONS: (user) => `**${user.tag}** you don’t have permission to execute this command!`,
       INVALID_COLOR: 'You entered an invalid color code.',
       INVALID_PATH: 'You entered an invalid path or url - please try again.',
