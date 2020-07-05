@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js')
 
 module.exports = {
-  embedResponse (message, embedOptions, textChannel = null) {
+  async embedResponse (message, embedOptions, textChannel = null, timeoutMilliseconds = 0) {
     const embed = new MessageEmbed()
     if (embedOptions.color) embed.setColor(embedOptions.color)
     if (embedOptions.title) embed.setTitle(embedOptions.title)
@@ -19,10 +19,16 @@ module.exports = {
       }
     }
     if (textChannel) {
-      textChannel.send(embed)
-      return
+      const response = await textChannel.send(embed)
+      if (timeoutMilliseconds !== 0) {
+        response.delete({ timeout: timeoutMilliseconds })
+      }
+    } else {
+      message.embed(embed)
+      if (timeoutMilliseconds !== 0) {
+        message.delete({ timeout: timeoutMilliseconds })
+      }
     }
-    message.embed(embed)
   },
 
   inVoiceChannel (voiceState, message, response = null) {
