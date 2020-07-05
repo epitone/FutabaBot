@@ -77,23 +77,34 @@ class AdminService {
   }
 
   setGreetingChannel (guild, channel) {
-    winston.info(`Setting greeting channel for ${guild.id}: ${channel !== null ? channel.name : null}`)
+    winston.info(`Setting greeting channel for server ${guild.id}: ${channel !== null ? channel.name : null}`)
     guild.settings.set('greetingChannel', channel ? channel.id : null)
   }
 
   getGreetingChannel (guild) {
-    winston.info(`Retrieving greeting channel for ${guild.id}`)
+    winston.info(`Retrieving greeting channel for server ${guild.id}`)
     return guild.settings.get('greetingChannel', null)
   }
 
   setGreetingTimeout (guild, timeout) {
-    winston.info(`Setting greeting timeout for ${guild.id}: ${timeout} milliseconds`)
+    winston.info(`Setting greeting timeout for server ${guild.id}: ${timeout} milliseconds`)
     return guild.settings.get('greetingTimeout', timeout)
   }
 
   getGreetingTimeout (guild) {
-    winston.info(`Retrieving greeting timeout for ${guild.id}`)
+    winston.info(`Retrieving greeting timeout for server ${guild.id}`)
     return guild.settings.get('greetingTimeout', 0)
+  }
+
+  setGreetingMessage (guild, greeting, embed = false) {
+    winston.info(`Setting greeting message for server ${guild.id}: ${greeting} (embed enabled: ${embed})`)
+    guild.settings.set('greetingMessage', greeting)
+    guild.settings.set('greetingEmbed', embed)
+  }
+
+  getGreetingMessage (guild) {
+    winston.info(`Getting greeting message for server: ${guild.id}`)
+    return { greetingMsg: guild.settings.get('greetingMessage', null), embed: guild.settings.get('greetingEmbed', false) }
   }
 }
 module.exports = AdminService
