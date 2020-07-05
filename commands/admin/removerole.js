@@ -53,7 +53,7 @@ module.exports = class RemoveRoleCommand extends Command {
         description: `**${message.author.tag}** ${constants.get('REMOVED_ROLE', user, role)}`
       })
     } else {
-      winston.error('Something went wrong with the setrole command')
+      winston.error(`Something went wrong while executing ${this.name}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_GENERIC')

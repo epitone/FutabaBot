@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando')
 const { Permissions } = require('discord.js')
 const discordUtils = require('../../utils/discord-utils')
-
+const winston = require('winston')
 module.exports = class RoleHoistCommand extends Command {
   constructor (client) {
     super(client, {
@@ -45,6 +45,7 @@ module.exports = class RoleHoistCommand extends Command {
         description: constants.get('ROLE_HOIST', newRole.hoist)
       })
     } else {
+      winston.error(`Something went wrong while executing ${this.name}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_GENERIC')

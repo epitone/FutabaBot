@@ -46,7 +46,7 @@ module.exports = class SetPlayingStatusCommand extends Command {
         description: constants.get('UPDATE_PLAYING_SUCCESS', updatedPresence.activities[0].type.toLowerCase() + ' ' + updatedPresence.activities[0].name)
       })
     } else {
-      winston.error('Something went wrong')
+      winston.error(`Something went wrong while executing ${this.name}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_GENERIC')

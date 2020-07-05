@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando')
 const { Permissions } = require('discord.js')
 const discordUtils = require('../../utils/discord-utils')
-
+const winston = require('winston')
 module.exports = class RemoveAllRolesCommand extends Command {
   constructor (client) {
     super(client, {
@@ -41,6 +41,7 @@ module.exports = class RemoveAllRolesCommand extends Command {
         description: constants.get('REMOVE_ROLES_SUCCESS', member.user)
       })
     } else {
+      winston.error(`Something went wrong while executing ${this.name}`)
       discordUtils.embedResponse(message, {
         color: 'RED',
         description: constants.get('ERR_GENERIC')
