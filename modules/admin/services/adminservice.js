@@ -88,7 +88,7 @@ class AdminService {
 
   setGreetingTimeout (guild, timeout) {
     winston.info(`Setting greeting timeout for server ${guild.id}: ${timeout} milliseconds`)
-    return guild.settings.get('greetingTimeout', timeout)
+    guild.settings.set('greetingTimeout', timeout)
   }
 
   getGreetingTimeout (guild) {
