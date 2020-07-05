@@ -6,6 +6,7 @@ const MusicService = require('./modules/music/services/musicservice')
 const AdminService = require('./modules/admin/services/adminservice')
 const winston = require('winston')
 const logger = require('./logger') // eslint-disable-line
+const discordUtils = require('./utils/discord-utils')
 
 require('dotenv').config()
 
@@ -62,8 +63,20 @@ client
       const greetingChannel = guild.channels.cache.get(greetingChannelID)
       if (greetingChannel) {
         const timeoutMilliseconds = adminService.getGreetingTimeout(guild)
-        const message = await greetingChannel.send(`Welcome, ${member.user}!`)
-        if (timeoutMilliseconds > 0) message.delete({ timeout: timeoutMilliseconds })
+        const { greetingMsg, embed } = adminService.getGreetingMessage(guild)
+        if (greetingMsg) {
+          if (embed) {
+            discordUtils.embedResponse(null, {
+              color: 'ORANGE',
+              description: greetingMsg.replace(/\$user.mention\$/gi, member)
+            },
+            greetingChannel,
+            timeoutMilliseconds)
+          } else {
+            const message = await greetingChannel.send(`Welcome, ${member.user}!`)
+            if (timeoutMilliseconds > 0) message.delete({ timeout: timeoutMilliseconds })
+          }
+        }
       } else {
         winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
       }
