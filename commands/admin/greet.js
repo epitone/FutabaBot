@@ -14,7 +14,7 @@ module.exports = class GreetCommand extends Command {
 
   run (message) {
     const constants = require('./../../FutabaBot').getConstants()
-    if (!discordUtils.hasPerms(message.member, 'MANAGE_SERVER')) {
+    if (!discordUtils.hasPerms(message.member, 'MANAGE_GUILD')) {
       winston.warn(`${message.member} tried to execute ${this.name} command without proper authority`)
       discordUtils.embedResponse(message, {
         color: 'RED',
@@ -23,11 +23,11 @@ module.exports = class GreetCommand extends Command {
       return
     }
 
-    if (!discordUtils.hasPerms(message.guild.me, 'MANAGE_SERVER')) {
-      winston.warn(`${this.client.user.tag} does not have the \`MANAGE_SERVER\` permission`)
+    if (!discordUtils.hasPerms(message.guild.me, 'MANAGE_GUILD')) {
+      winston.warn(`${this.client.user.tag} does not have the \`MANAGE_GUILD\` permission`)
       discordUtils.embedResponse(message, {
         color: 'RED',
-        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MANAGE_SERVER')
+        description: constants.get('ERR_MISSING_BOT_PERMS', message.author, 'MANAGE_GUILD')
       })
       return
     }
