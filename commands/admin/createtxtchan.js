@@ -22,13 +22,16 @@ module.exports = class CreateTxtChanCommand extends Command {
   }
 
   run (message, { text_channel: textChannel }) {
-    /// do stuff here
+    // TODO make sure to check if a channel with the requested name doesn't already exist
     const server = message.guild
-    server.createChannel(textChannel, { type: 'text' })
+    server.channels.create(textChannel, { type: 'text' })
       .then(newChannel => {
-        const response = `Successfully created “#${newChannel.name}”`
+        const response = `Successfully created “${newChannel}”`
         winston.info(response)
-        discordUtils.embedResponse(message, response, false)
+        discordUtils.embedResponse(message, {
+          color: 'ORANGE',
+          description: response
+        })
       })
       .catch((error) => {
         winston.error(error)
