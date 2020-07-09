@@ -62,7 +62,7 @@ module.exports = class TemplateCommand extends Command {
       }
     } else {
       const { greetingMsg: oldGreetingMsg, embed: oldEmbedEnabled } = adminService.getGreetingMessage(message.guild)
-      if (oldGreetingMsg.toLocaleLowerCase().localeCompare(greetingMsg.toLocaleLowerCase()) === 0 && oldEmbedEnabled === embed) {
+      if (oldGreetingMsg && oldGreetingMsg.toLocaleLowerCase().localeCompare(greetingMsg.toLocaleLowerCase()) === 0 && oldEmbedEnabled === embed) {
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: constants.get('GREETING_MESSAGE_ERR')
@@ -78,7 +78,7 @@ module.exports = class TemplateCommand extends Command {
         } else {
           winston.error(`Something went wrong while executing ${this.name}`)
           discordUtils.embedResponse(message, {
-            color: 'ORANGE',
+            color: 'RED',
             description: constants.get('ERR_GENERIC')
           })
         }
