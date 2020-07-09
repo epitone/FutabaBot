@@ -1,6 +1,13 @@
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, Message, VoiceState, GuildMember, TextChannel } = require('discord.js') // eslint-disable-line
 
 module.exports = {
+  /**
+   * Sends an embed message
+   * @param {Message} message message to respond to
+   * @param {Object} embedOptions Object containing embed fields and values, see https://discord.js.org/#/docs/main/stable/class/MessageEmbed for properties
+   * @param {TextChannel} textChannel text channel to send response to
+   * @param {Number} timeoutMilliseconds how long until message is auto-deleted
+   */
   async embedResponse (message, embedOptions, textChannel = null, timeoutMilliseconds = 0) {
     const embed = new MessageEmbed()
     if (embedOptions.color) embed.setColor(embedOptions.color)
@@ -31,6 +38,12 @@ module.exports = {
     }
   },
 
+  /**
+   * Checks if user is in a voice channel currently
+   * @param {VoiceState} voiceState the VoiceState of the member
+   * @param {Message} message message that we're responding to
+   * @param {string} response response to send
+   */
   inVoiceChannel (voiceState, message, response = null) {
     if (!voiceState.channel) {
       this.embedResponse(message, {
@@ -43,6 +56,13 @@ module.exports = {
     return true
   },
 
+  /**
+   * Check whether member has permission
+   * @param {GuildMember} user server member to check permissions for
+   * @param {string} permissionRole role to checking
+   * @param {boolean} adminOverride whether to allow admin permission override
+   * @param {boolean} ownerOverride whether to allow guild ownership to override
+   */
   hasPerms (user, permissionRole, adminOverride = true, ownerOverride = true) {
     return user.hasPermission(permissionRole, { checkAdmin: adminOverride, checkOwner: ownerOverride })
   }
