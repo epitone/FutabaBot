@@ -106,5 +106,36 @@ class AdminService {
     winston.info(`Getting greeting message for server: ${guild.id}`)
     return { greetingMsg: guild.settings.get('greetingMessage', null), embed: guild.settings.get('greetingEmbed', false) }
   }
+
+  setLeavingChannel (guild, channel) {
+    winston.info(`Setting goodbye channel for server ${guild.id}: ${channel !== null ? channel.name : null}`)
+    guild.settings.set('leavingChannel', channel ? channel.id : null)
+  }
+
+  getLeavingChannel (guild) {
+    winston.info(`Retrieving goodbye channel for server ${guild.id}`)
+    return guild.settings.get('leavingChannel', null)
+  }
+
+  setLeavingMessage (guild, byeMsg, embed = false) {
+    winston.info(`Setting goodbye message for server ${guild.id}: ${byeMsg} (embed enabled: ${embed})`)
+    guild.settings.set('leaveMessage', byeMsg)
+    guild.settings.set('leaveEmbed', embed)
+  }
+
+  getLeavingMessage (guild) {
+    winston.info(`Getting goodbye message for server: ${guild.id}`)
+    return { byeMsg: guild.settings.get('leaveMessage', null), embed: guild.settings.get('leaveEmbed', false) }
+  }
+
+  setLeavingTimeout (guild, timeout) {
+    winston.info(`Setting goodbye message timeout for server ${guild.id}: ${timeout} milliseconds`)
+    guild.settings.set('leavingTimeout', timeout)
+  }
+
+  getLeavingTimeout (guild) {
+    winston.info(`Retrieving goodbye message timeout for server ${guild.id}`)
+    return guild.settings.get('leavingTimeout', 0)
+  }
 }
 module.exports = AdminService

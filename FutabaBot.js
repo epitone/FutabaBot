@@ -49,7 +49,7 @@ client
     const guild = member.guild
     const adminService = getAdminService()
     const aarID = await adminService.getAutoAssignRole(guild)
-    const greetingChannelID = await adminService.getGreetingChannel(guild)
+    const greetingChannelID = adminService.getGreetingChannel(guild)
     if (aarID !== null) {
       const role = member.guild.roles.cache.get(aarID)
       winston.info(`Auto assign role active, giving member ${member.id} the role “${role.name}”`)
@@ -73,12 +73,39 @@ client
             greetingChannel,
             timeoutMilliseconds)
           } else {
-            const message = await greetingChannel.send(`Welcome, ${member.user}!`)
+            const message = await greetingChannel.send(greetingMsg.replace(/\$user.mention\$/gi, member))
             if (timeoutMilliseconds > 0) message.delete({ timeout: timeoutMilliseconds })
           }
         }
       } else {
         winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
+      }
+    }
+  })
+  .on('guildMemberRemove', async (member) => {
+    const guild = member.guild
+    const adminService = getAdminService()
+    const leavingChannelID = adminService.getLeavingChannel(guild)
+    if (leavingChannelID) {
+      const leavingChannel = guild.channels.cache.get(leavingChannelID)
+      if (leavingChannel) {
+        const timeoutMilliseconds = adminService.getLeavingTimeout(guild)
+        const { byeMsg, embed } = adminService.getLeavingMessage(guild)
+        if (byeMsg) {
+          if (embed) {
+            discordUtils.embedResponse(null, {
+              color: 'ORANGE',
+              description: byeMsg.replace(/\$user.mention\$/gi, member)
+            },
+            leavingChannel,
+            timeoutMilliseconds)
+          } else {
+            const message = await leavingChannel.send(byeMsg.replace(/\$user.mention\$/gi, member))
+            if (timeoutMilliseconds > 0) message.delete({ timeout: timeoutMilliseconds })
+          }
+        }
+      } else {
+        winston.error(`Couldn't find channel with id: ${leavingChannelID}`)
       }
     }
   })
