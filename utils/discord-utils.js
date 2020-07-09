@@ -1,3 +1,10 @@
+/*
+Author: secondubly
+discord-utils.js (c) 2020
+Desc: Discord utilities used throughout the bot
+Created:  2020-07-09T16:06:31.420Z
+*/
+
 const { MessageEmbed, Message, VoiceState, GuildMember, TextChannel } = require('discord.js') // eslint-disable-line
 
 module.exports = {
