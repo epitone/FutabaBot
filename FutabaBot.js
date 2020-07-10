@@ -85,12 +85,12 @@ client
   .on('guildMemberRemove', async (member) => {
     const guild = member.guild
     const adminService = getAdminService()
-    const leavingChannelID = adminService.getLeavingChannel(guild)
+    const leavingChannelID = adminService.getGoodbyeChannel(guild)
     if (leavingChannelID) {
       const leavingChannel = guild.channels.cache.get(leavingChannelID)
       if (leavingChannel) {
-        const timeoutMilliseconds = adminService.getLeavingTimeout(guild)
-        const { byeMsg, embed } = adminService.getLeavingMessage(guild)
+        const timeoutMilliseconds = adminService.getGoodbyeTimeout(guild)
+        const { byeMsg, embed } = adminService.getGoodbyeMessage(guild)
         if (byeMsg) {
           if (embed) {
             discordUtils.embedResponse(null, {

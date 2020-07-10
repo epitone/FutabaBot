@@ -42,10 +42,10 @@ module.exports = class ByeCommand extends Command {
 
     const channel = message.channel
     const adminService = require('./../../FutabaBot').getAdminService()
-    if (adminService.getLeavingChannel(message.guild) !== null) {
-      adminService.setLeavingChannel(message.guild, null)
+    if (adminService.getGoodbyeChannel(message.guild) !== null) {
+      adminService.setGoodbyeChannel(message.guild, null)
     } else {
-      adminService.setLeavingChannel(message.guild, channel)
+      adminService.setGoodbyeChannel(message.guild, channel)
     }
     discordUtils.embedResponse(message, {
       color: 'ORANGE',

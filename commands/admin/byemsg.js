@@ -58,7 +58,7 @@ module.exports = class TemplateCommand extends Command {
 
     const adminService = require('./../../FutabaBot').getAdminService()
     if (!byeMsg) {
-      const { byeMsg: savedGoodbyeMsg, embed: embedEnabledSetting } = adminService.getLeavingMessage(message.guild)
+      const { byeMsg: savedGoodbyeMsg, embed: embedEnabledSetting } = adminService.getGoodbyeMessage(message.guild)
       if (savedGoodbyeMsg) {
         discordUtils.embedResponse(message, {
           color: 'ORANGE',
@@ -71,15 +71,15 @@ module.exports = class TemplateCommand extends Command {
         })
       }
     } else {
-      const { byeMsg: oldLeavingMsg, embed: oldEmbedEnabled } = adminService.getLeavingMessage(message.guild)
+      const { byeMsg: oldLeavingMsg, embed: oldEmbedEnabled } = adminService.getGoodbyeMessage(message.guild)
       if (oldLeavingMsg && oldLeavingMsg.toLocaleLowerCase().localeCompare(byeMsg.toLocaleLowerCase()) === 0 && oldEmbedEnabled === embedEnabled) {
         discordUtils.embedResponse(message, {
           color: 'RED',
           description: constants.get('LEAVING_MESSAGE_ERR')
         })
       } else {
-        adminService.setLeavingMessage(message.guild, byeMsg, embedEnabled)
-        const { byeMsg: newLeavingMsg, embed: newEmbedEnabled } = adminService.getLeavingMessage(message.guild)
+        adminService.setGoodbyeMessage(message.guild, byeMsg, embedEnabled)
+        const { byeMsg: newLeavingMsg, embed: newEmbedEnabled } = adminService.getGoodbyeMessage(message.guild)
         if (byeMsg.toLocaleLowerCase().localeCompare(newLeavingMsg.toLocaleLowerCase()) === 0 && newEmbedEnabled === embedEnabled) {
           discordUtils.embedResponse(message, {
             color: 'ORANGE',
