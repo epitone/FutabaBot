@@ -9,7 +9,7 @@ const { MessageEmbed, Message, VoiceState, GuildMember, TextChannel } = require(
 
 module.exports = {
   /**
-   * Sends an embed message
+   * Sends an embed message to a channel in a server. You can use either a message object or text channel to determine where to send  the message.
    * @param {Message} message message to respond to
    * @param {Object} embedOptions Object containing embed fields and values, see https://discord.js.org/#/docs/main/stable/class/MessageEmbed for properties
    * @param {TextChannel} textChannel text channel to send response to
