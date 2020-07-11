@@ -9,13 +9,13 @@ const { MessageEmbed, Message, VoiceState, GuildMember, TextChannel } = require(
 
 module.exports = {
   /**
-   * Sends an embed message to a channel in a server. You can use either a message object or text channel to determine where to send  the message.
+   * Sends an embed message to a channel in a server. You can use either a message object or text channel to determine where to send the message.
    * @param {Message} message message to respond to
    * @param {Object} embedOptions Object containing embed fields and values, see https://discord.js.org/#/docs/main/stable/class/MessageEmbed for properties
    * @param {TextChannel} textChannel text channel to send response to
    * @param {Number} timeoutMilliseconds how long until message is auto-deleted
    */
-  async embedResponse (message, embedOptions, textChannel = null, timeoutMilliseconds = 0) {
+  async embedResponse (message = null, embedOptions, textChannel = null, timeoutMilliseconds = 0) {
     const embed = new MessageEmbed()
     if (embedOptions.color) embed.setColor(embedOptions.color)
     if (embedOptions.title) embed.setTitle(embedOptions.title)
