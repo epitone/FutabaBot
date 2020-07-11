@@ -31,7 +31,7 @@ module.exports = class QueueNextCommand extends Command {
       return
     }
 
-    const youtube = new YouTube(process.env.yt_api)
+    const youtube = new YouTube(process.env.YT_API)
     let streamObject = null
     const userVoiceChannel = voiceState.channel
     const musicService = require('./../../FutabaBot').getMusicService()
