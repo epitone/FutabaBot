@@ -132,7 +132,6 @@ function getAdminService () {
 }
 
 function getConstants () {
-  winston.info(process.env.lang)
   if (!constants) constants = new(require(`./languages/${process.env.lang}`)) // eslint-disable-line
   return constants
 }
