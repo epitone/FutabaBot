@@ -110,7 +110,12 @@ client
     }
   })
 
-if (process.env.NODE_ENV !== 'production') client.on('debug', console.log)
+if (process.env.NODE_ENV !== 'production') {
+  client.on('debug', info => {
+    console.log(info)
+    winston.info(info)
+  })
+}
 
 function getMusicService () {
   if (!musicService) {
