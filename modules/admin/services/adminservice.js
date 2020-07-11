@@ -137,5 +137,15 @@ class AdminService {
     winston.info(`Retrieving goodbye message timeout for server ${guild.id}`)
     return guild.settings.get('leavingTimeout', 0)
   }
+
+  setLogChannel (guild, channel) {
+    winston.info(`Setting server log channel for server ${guild.id}`)
+    guild.settings.set('logServer', channel ? channel.id : null)
+  }
+
+  getLogChannel (guild) {
+    winston.info(`Getting server log channel for server ${guild.id}`)
+    guild.settings.get('logServer', null)
+  }
 }
 module.exports = AdminService

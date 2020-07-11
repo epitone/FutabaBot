@@ -30,6 +30,7 @@ module.exports = class {
       LEAVING_MESSAGE_ERR: 'Those two goodbye messages are the same!',
       LEAVING_MESSAGE_NOT_FOUND: 'This server has no goodbye message',
       LEAVING_MESSAGE_RESPONSE: (message, embedEnabled) => `Server goodbye message: “${message}” (embed enabled: ${embedEnabled})`,
+      LOG_SERVER_SET: 'Successfully enabled log server.',
       MISSING_ROLE: (user) => `${user.tag} does not have that role!`,
       NOT_IN_VOICE_CHANNEL: 'You need to be in a voice channel on this server to run this command.',
       REMOVE_ROLES_SUCCESS: (user) => `Successfully removed all roles from ${user.tag}`,
