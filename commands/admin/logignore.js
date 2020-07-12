@@ -3,7 +3,7 @@ Author: epitone
 logignore.js (c) 2020
 Desc: Toggles whether the logserver command ignores this channel.
 Created:  2020-07-11T16:08:27.739Z
-Modified: 2020-07-11T16:42:46.062Z
+Modified: 2020-07-12T03:37:36.906Z
 */
 
 const { Command } = require('discord.js-commando')
@@ -16,7 +16,8 @@ module.exports = class LogIgnoreCommand extends Command {
       name: 'logignore',
       group: 'admin', // the command group the command is a part of.
       memberName: 'logignore', // the name of the command within the group (this can be different from the name).
-      description: 'Toggles whether the logserver command ignores this channel.'
+      description: 'Toggles whether the logserver command ignores this channel.',
+      ownerOnly: true
     })
   }
 
