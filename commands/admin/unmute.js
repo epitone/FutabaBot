@@ -22,7 +22,7 @@ module.exports = class UnmuteCommand extends Command {
   async run (message, { user }) {
     const muteRole = message.guild.roles.find('name', 'muted')
     if (!muteRole) {
-      const response = 'Looks like the mute role hasn\'t been created yet! Have you muted anyone?'
+      const response = 'Looks like the mute role hasn’t been created yet! Have you muted anyone?'
       winston.info(response)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',

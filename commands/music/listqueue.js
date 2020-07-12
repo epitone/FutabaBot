@@ -30,7 +30,7 @@ module.exports = class ListQueue extends Command {
     if (typeof queueArray === 'undefined' || queueArray.length === 0) {
       discordUtils.embedResponse(message, {
         // TODO make a string constants file so I'm not repeating all these messages
-        author: 'It doesn\'t look like there are any songs in the queue.',
+        author: 'It doesn’t look like there are any songs in the queue.',
         color: 'ORANGE'
       })
       return

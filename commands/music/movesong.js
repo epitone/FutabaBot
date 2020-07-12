@@ -12,7 +12,7 @@ module.exports = class MoveSongCommand extends Command {
       args: [
         {
           key: 'position1',
-          prompt: 'What is the position of the item you\'d like to move?',
+          prompt: 'What is the position of the item you’d like to move?',
           type: 'integer'
           // validate: position1 => {
           //   position1 = parseInt(position1)

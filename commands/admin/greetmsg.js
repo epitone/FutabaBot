@@ -7,7 +7,7 @@ module.exports = class TemplateCommand extends Command {
       name: 'greetmsg',
       group: 'admin', // the command group the command is a part of.
       memberName: 'greetmsg', // the name of the command within the group (this can be different from the name).
-      description: 'Sets a new join announcement message which will be shown in the server\'s channel. Use `$user.mention$` in the message if you want to mention the new member. Using this with no arguments will show the current greeting message. To use an embed you can optionally add “true” as a second parameter to the command.',
+      description: 'Sets a new join announcement message which will be shown in the server’s channel. Use `$user.mention$` in the message if you want to mention the new member. Using this with no arguments will show the current greeting message. To use an embed you can optionally add “true” as a second parameter to the command.',
       args: [
         {
           key: 'greeting_msg',

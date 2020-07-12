@@ -75,7 +75,7 @@ module.exports = class QueueNextCommand extends Command {
         }
       }
     } else {
-      discordUtils.embedResponse(message, 'I couldn\'t find that song!', true)
+      discordUtils.embedResponse(message, 'I couldn’t find that song!', true)
     }
   }
 }

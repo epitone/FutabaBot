@@ -14,7 +14,7 @@ module.exports = class DeleteVoiceChan extends Command {
       args: [
         {
           key: 'voice_channel',
-          prompt: 'What is the name of the voice channel you\'d like to delete?',
+          prompt: 'What is the name of the voice channel you’d like to delete?',
           type: 'voice-channel'
         }
       ]
@@ -42,7 +42,7 @@ module.exports = class DeleteVoiceChan extends Command {
           })
         })
     } else {
-      const response = 'Sorry I couldn\'t find that channel, or the channel cannot be deleted!'
+      const response = 'Sorry I couldn’t find that channel, or the channel cannot be deleted!'
       winston.info(response)
       discordUtils.embedResponse(message, {
         color: 'ORANGE',

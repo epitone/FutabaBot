@@ -12,7 +12,7 @@ module.exports = class DeleteCommand extends Command {
       args: [
         {
           key: 'playlist_id',
-          prompt: 'What is the ID of the playlist you\'d like to delete?',
+          prompt: 'What is the ID of the playlist you’d like to delete?',
           type: 'integer',
           validate: playlistID => { return playlistID >= 1 }
         }

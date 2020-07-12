@@ -38,7 +38,7 @@ module.exports = class PlayCommand extends Command {
     if (!playArgument) {
       if (musicplayer.queueCount() === 0) {
         discordUtils.embedResponse(message, {
-          author: 'It doesn\'t look like there are any songs in the queue.',
+          author: 'It doesn’t look like there are any songs in the queue.',
           color: 'ORANGE'
         })
       } else {
@@ -98,7 +98,7 @@ module.exports = class PlayCommand extends Command {
       } else {
         discordUtils.embedResponse(message, {
           color: 'RED',
-          description: 'I couldn\'t find that song!'
+          description: 'I couldn’t find that song!'
         })
       }
     }

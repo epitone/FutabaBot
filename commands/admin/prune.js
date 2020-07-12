@@ -8,9 +8,9 @@ module.exports = class PruneCommand extends Command {
       name: 'prune',
       group: 'admin',
       memberName: 'prune',
-      description: 'Removes all of the bot\'s messages within the last 100 messages of the current channel. ' +
+      description: 'Removes all of the bot’s messages within the last 100 messages of the current channel. ' +
                 '.prune x removes the last “x” number of messages (max 100). `.prune @username` removes their last 100 messages. ' +
-                '`.prune false` only removes that aren\'t pinned. A full command may look like: `!prune 200 @username false`',
+                `\`.prune false\` only removes messages that aren’t pinned. A full command may look like: \`${client.prefix}prune 200 @username false\``,
       args: [
         {
           key: 'messagesAmount',

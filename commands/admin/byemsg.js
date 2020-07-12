@@ -16,7 +16,7 @@ module.exports = class TemplateCommand extends Command {
       name: 'byemsg',
       group: 'admin', // the command group the command is a part of.
       memberName: 'byemsg', // the name of the command within the group (this can be different from the name).
-      description: 'Sets a new leaving announcement message which will be shown in the server\'s channel. Use `$user.mention$` in the message if you want to mention the leaving member. Using this with no arguments will show the current leaving message. To use an embed you can optionally add “true” as a second parameter to the command.',
+      description: 'Sets a new leaving announcement message which will be shown in the server’s channel. Use `$user.mention$` in the message if you want to mention the leaving member. Using this with no arguments will show the current leaving message. To use an embed you can optionally add “true” as a second parameter to the command.',
       args: [
         {
           key: 'bye_msg',

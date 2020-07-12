@@ -13,7 +13,7 @@ module.exports = class PlaylistSongsCommand extends Command {
       args: [
         {
           key: 'playlist_id',
-          prompt: 'What is the ID of the playlist you\'d like  to view?',
+          prompt: 'What is the ID of the playlist you’d like  to view?',
           type: 'integer'
         }
       ],

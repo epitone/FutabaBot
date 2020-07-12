@@ -14,8 +14,8 @@ module.exports = class DeleteRole extends Command {
       args: [
         {
           key: 'role',
-          prompt: 'What is the name of the role you\'d like to delete?',
-          type: 'string'
+          prompt: 'What is the name of the role you’d like to delete?',
+          type: 'string' // TODO change this to a role type
         }
       ]
     })
@@ -44,7 +44,7 @@ module.exports = class DeleteRole extends Command {
           })
         })
     } else {
-      const response = 'I couldn\'t find a role with that name.'
+      const response = 'I couldn’t find a role with that name.'
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
         description: response

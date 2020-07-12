@@ -81,7 +81,7 @@ class MusicPlayer {
           if (this.repeatCurrentSong) {
             this.play(connection, message)
           } else if (!this.shuffle && this.queue.IsLast() && this.repeatPlaylist) { // if we're at the end of the queue and repeat playlist enabled
-            winston.info('Repeatplaylist is enabled. We\'re at the end of the queue, starting from the beginning...')
+            winston.info('Repeatplaylist is enabled. We’re at the end of the queue, starting from the beginning...')
             this.queue.currentIndex = 0
             this.play(connection, message)
           }

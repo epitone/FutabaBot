@@ -14,7 +14,7 @@ module.exports = class CreateRole extends Command {
       args: [
         {
           key: 'role',
-          prompt: 'What is the name of the role you\'d like to create?',
+          prompt: 'What is the name of the role you’d like to create?',
           type: 'string'
         }
       ]

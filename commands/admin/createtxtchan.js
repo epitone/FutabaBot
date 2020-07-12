@@ -14,7 +14,7 @@ module.exports = class CreateTxtChanCommand extends Command {
       args: [
         {
           key: 'text_channel',
-          prompt: 'What is the name of the text channel you\'d like to create?',
+          prompt: 'What is the name of the text channel you’d like to create?',
           type: 'string'
         }
       ]

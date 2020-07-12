@@ -17,7 +17,7 @@ module.exports = class LoadPlaylistCommand extends Command {
       args: [
         {
           key: 'playlist_id',
-          prompt: 'What is the ID of the playlist you\'d like to load?',
+          prompt: 'What is the ID of the playlist you’d like to load?',
           type: 'integer'
           // TODO: should we validate and make sure the playlist is in range?
         }

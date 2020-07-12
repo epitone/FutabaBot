@@ -13,7 +13,7 @@ module.exports = class CreateVoiceChan extends Command {
       args: [
         {
           key: 'voice_channel',
-          prompt: 'What is the name of the voice channel you\'d like to create?',
+          prompt: 'What is the name of the voice channel you’d like to create?',
           type: 'string'
         }
       ]

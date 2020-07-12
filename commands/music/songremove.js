@@ -9,7 +9,7 @@ module.exports = class SongRemoveCommand extends Command {
       args: [
         {
           key: 'songIndex',
-          prompt: 'Please provide the position of the song you\'d like to remove. (“all” will remove all songs from the queue)',
+          prompt: 'Please provide the position of the song you’d like to remove. (“all” will remove all songs from the queue)',
           type: 'string',
           validate: songIndex => !isNaN(songIndex) || songIndex.toLowerCase() === 'all'
         }
