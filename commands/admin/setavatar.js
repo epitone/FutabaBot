@@ -54,7 +54,7 @@ module.exports = class TemplateCommand extends Command {
     if (updatedBot.avatar !== oldAvatar) {
       discordUtils.embedResponse(message, {
         color: 'ORANGE',
-        description: constants.get('AVATAR_SET_SUCCES')
+        description: constants.get('AVATAR_SET_SUCCESS')
       })
     } else {
       winston.error(`Something went wrong while executing ${this.name}`)
