@@ -12,7 +12,7 @@ module.exports = class {
         }
       },
       AAR_SUCCESS: (user, role) => `**${user.tag}** Successfully set the auto-assign role to ${role}. Everyone who joins the server will now have this role.`,
-      AVATAR_SET_SUCCES: 'Successfully updated avatar.',
+      AVATAR_SET_SUCCESS: 'Successfully updated avatar.',
       BOT_STATUS_SUCCESS: (status) => `My status is now: **${status}**`,
       EMPTY_SONG_QUEUE: 'It doesn’t look like there are any songs in the queue.',
       ERR_MISSING_BOT_PERMS: (user, perms) => `**${user.tag}** I don't have the proper permissions for this command. Please give me the following permissions: \`${perms}\``,
@@ -32,6 +32,7 @@ module.exports = class {
       LEAVING_MESSAGE_RESPONSE: (message, embedEnabled) => `Server goodbye message: “${message}” (embed enabled: ${embedEnabled})`,
       LOG_CHANNEL_ADDED: (channel) => `Added ${channel} to logignore list`,
       LOG_CHANNEL_REMOVED: (channel) => `Removed ${channel} from logignore list`,
+      LOG_EVENT_SET: (logEvent) => `Started logging **${logEvent}** in this channel.`,
       LOG_SERVER_SET: 'Successfully enabled log server.',
       MISSING_ROLE: (user) => `${user.tag} does not have that role!`,
       NOT_IN_VOICE_CHANNEL: 'You need to be in a voice channel on this server to run this command.',

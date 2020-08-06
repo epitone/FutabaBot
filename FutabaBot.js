@@ -4,6 +4,7 @@ const path = require('path')
 const Database = require('better-sqlite3')
 const MusicService = require('./modules/music/services/musicservice')
 const AdminService = require('./modules/admin/services/adminservice')
+const { LogService } = require('./modules/admin/services/logservice')
 const winston = require('winston')
 const logger = require('./logger') // eslint-disable-line
 const discordUtils = require('./utils/discord-utils')
@@ -12,6 +13,7 @@ require('dotenv').config()
 
 let musicService
 let adminService
+let logService
 let constants
 
 const client = new Commando.Client({
@@ -41,6 +43,25 @@ client
     musicService = new MusicService(client.provider.conn, client)
     adminService = new AdminService(client.provider.conn, client)
     winston.info('Service setup complete')
+  })
+  .on('channelCreate', async (channel) => {
+    // TODO: add timestamps to logging outputs
+    const guild = channel.guild
+    logService = getLogService()
+    // automated id: 730853412958371840
+    const channelID = logService.getLogEventChannel(guild, 'channel_created')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => {
+      winston.info(`Channel: ${channel.name} (${channel.id})`)
+      return parseInt(channel.id) === channelID
+    })
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🆕 Text channel created',
+      description: `${channel} | ${channel.id}`
+    },
+    logChannel)
   })
   .on('guildCreate', async (guild) => {
     winston.info(`Bot joined server ${guild}`)
@@ -131,6 +152,13 @@ function getAdminService () {
   return adminService
 }
 
+function getLogService () {
+  if (!logService) {
+    logService = new LogService(client.provider.conn)
+  }
+  return logService
+}
+
 function getConstants () {
   if (!constants) constants = new(require(`./languages/${process.env.lang}`)) // eslint-disable-line
   return constants
@@ -148,4 +176,4 @@ client.login(process.env.TOKEN)
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error))
 
-module.exports = { getMusicService, getAdminService, getConstants }
+module.exports = { getMusicService, getAdminService, getConstants, getLogService }
