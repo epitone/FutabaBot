@@ -138,54 +138,5 @@ class AdminService {
     winston.info(`Retrieving goodbye message timeout for server ${guild.id}`)
     return guild.settings.get('leavingTimeout', 0)
   }
-
-  setLogChannel (guild, channel) {
-    winston.info(`Setting server log channel for server ${guild.id}`)
-    guild.settings.set('logServer', channel ? channel.id : null)
-  }
-
-  getLogChannel (guild) {
-    winston.info(`Getting server log channel for server ${guild.id}`)
-    return guild.settings.get('logServer', null)
-  }
-
-  /**
-   * Adds a channel to the logignore list for the server
-   * @param {Guild} guild
-   * @param {TextChannel} channel
-   */
-  addToLogIgnoreList (guild, channel) {
-    winston.info(`Adding ${channel} to logignore list for server: ${guild.id}`)
-    const ignoreList = guild.settings.get('logIgnoreList', [])
-    ignoreList.push(channel.id)
-    guild.settings.set('logIgnoreList', ignoreList)
-  }
-
-  /**
-   * Removes the specified channel from the list of ignored channels for server logging
-   * @param {Guild} guild
-   * @param {TextChannel} channel
-   */
-  removeFromLogIgnoreList (guild, channel) {
-    winston.info(`Removing ${channel} from logignore list for server: ${guild.id}`)
-    const logIgnoreList = guild.settings.get('logIgnoreList', [])
-    if (logIgnoreList.length === 0) {
-      // empty array so we shouldn't be removing anything, something's wrong here
-      winston.warn(`Something went wrong when removing ${channel.id} from ${guild.id} logignore list`)
-      return null
-    }
-    const index = logIgnoreList.indexOf(channel.id)
-    let removedValue; // eslint-disable-line
-    if (index > -1) {
-      removedValue = logIgnoreList.splice(index, 1)
-    }
-    guild.settings.set('logIgnoreList', logIgnoreList)
-    return removedValue // return removed item
-  }
-
-  getLogIgnoreList (guild) {
-    winston.info(`Getting logignore list for server: ${guild.id}`)
-    return guild.settings.get('logIgnoreList', [])
-  }
 }
 module.exports = AdminService
