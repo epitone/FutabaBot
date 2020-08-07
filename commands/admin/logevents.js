@@ -3,7 +3,7 @@ Author: Hello (World)
 logevents.js (c) 2020
 Desc: Shows a list of all log events you can subscribe to with the log command.
 Created:  2020-07-12T03:39:04.844Z
-Modified: 2020-07-12T04:26:49.018Z
+Modified: 2020-08-06T21:38:48.453Z
 */
 
 const { Command } = require('discord.js-commando')

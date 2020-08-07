@@ -48,18 +48,44 @@ client
     // TODO: add timestamps to logging outputs
     const guild = channel.guild
     logService = getLogService()
-    // automated id: 730853412958371840
     const channelID = logService.getLogEventChannel(guild, 'channel_created')
     if (!channelID) { return }
-    const logChannel = guild.channels.cache.find(channel => {
-      winston.info(`Channel: ${channel.name} (${channel.id})`)
-      return parseInt(channel.id) === channelID
-    })
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
     if (!logChannel) { return }
     discordUtils.embedResponse(null, {
       color: 'ORANGE',
       title: '🆕 Text channel created',
       description: `${channel} | ${channel.id}`
+    },
+    logChannel)
+  })
+  .on('channelDelete', async (channel) => {
+    // TODO: add timestamps to logging outputs
+    const guild = channel.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'channel_deleted')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🗑 Text channel deleted',
+      description: `${channel} | ${channel.id}`
+    },
+    logChannel)
+  })
+  .on('channelUpdate', async (oldChannel, newChannel) => {
+    // TODO: add timestamps to logging outputs
+    const guild = newChannel.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'channel_deleted')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🆕 Channel Updated',
+      description: `${oldChannel} updated, see ${newChannel} | ${newChannel.id}`
     },
     logChannel)
   })
@@ -80,7 +106,6 @@ client
       }
     }
     if (greetingChannelID) {
-      // TODO: when we create the greetmsg command, replace this code here
       const greetingChannel = guild.channels.cache.get(greetingChannelID)
       if (greetingChannel) {
         const timeoutMilliseconds = adminService.getGreetingTimeout(guild)
@@ -129,6 +154,153 @@ client
         winston.error(`Couldn't find channel with id: ${leavingChannelID}`)
       }
     }
+  })
+  .on('messageDelete', async (message) => {
+    if (!message.guild) return
+    const guild = message.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'message_deleted')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🗑 Message deleted',
+      description: `Message deleted. (Message text: ${message.content})`
+    },
+    logChannel)
+  })
+  .on('messageUpdate', async (oldMessage, newMessage) => {
+    if (!oldMessage.guild) return
+    const guild = newMessage.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'message_updated')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🆕 Message updated ',
+      description: `Message updated. (Old Message ID: ${oldMessage.id} | New Message ID: ${newMessage.id})`
+    },
+    logChannel)
+  })
+  .on('guildBanAdd', async (guild, user) => {
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_banned')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🚫 User Banned',
+      description: `${user} banned.`
+    },
+    logChannel)
+  })
+  .on('guildBanRemove', async (guild, user) => {
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_unbanned')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '✅ User Unbanned',
+      description: `${user} unbanned.`
+    },
+    logChannel)
+  })
+  .on('guildMemberAdd', async (member) => {
+    const guild = member.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_unbanned')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '👋🏾 User joined',
+      description: `${member} joined.`
+    },
+    logChannel)
+  })
+  .on('guildMemberRemove', async (member) => {
+    const guild = member.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_left')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    const fetchedLogs = await guild.fetchAuditLogs({
+      type: 'MEMBER_KICK',
+      limit: 1
+    })
+    const kickLog = fetchedLogs.entries.first()
+    if (kickLog) { return } // the user didn't leave on their own but was kicked
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '👋🏾 User left',
+      description: `${member} left.`
+    },
+    logChannel)
+  })
+  .on('voiceStateUpdate', async (oldState, newState) => {
+    if (!newState.muted) { return }
+    const guild = newState.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_muted')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🔇 User muted',
+      description: `${newState.member} muted.`
+    },
+    logChannel)
+  })
+  .on('presenceUpdate', async (oldPresence, newPresence) => {
+    const guild = newPresence.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_presence')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    if (!oldPresence) {
+      discordUtils.embedResponse(null, {
+        color: 'ORANGE',
+        title: '❗ User presence changed',
+        description: `${newPresence.member} status or activity changed.`
+      })
+    } else {
+      if (oldPresence.status !== newPresence.status) {
+        discordUtils.embedResponse(null, {
+          color: 'ORANGE',
+          title: '❗ User presence changed',
+          description: `${newPresence.member} status changed.`
+        })
+      } else {
+        discordUtils.embedResponse(null, {
+          color: 'ORANGE',
+          title: '❗ User presence changed',
+          description: `${newPresence.member} activity changed.`
+        })
+      }
+    }
+  })
+  .on('guildMemberUpdate', async (oldMember, newMember) => {
+    const guild = newMember.guild
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_updated')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '🎭 User updated',
+      description: `${newMember} information updated`
+    })
   })
 
 if (process.env.NODE_ENV !== 'production') {
