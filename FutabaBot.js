@@ -127,6 +127,17 @@ client
         winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
       }
     }
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_joined')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '👋🏾 User joined',
+      description: `${member} joined.`
+    },
+    logChannel)
   })
   .on('guildMemberRemove', async (member) => {
     const guild = member.guild
@@ -154,6 +165,23 @@ client
         winston.error(`Couldn't find channel with id: ${leavingChannelID}`)
       }
     }
+    logService = getLogService()
+    const channelID = logService.getLogEventChannel(guild, 'user_left')
+    if (!channelID) { return }
+    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
+    if (!logChannel) { return }
+    const fetchedLogs = await guild.fetchAuditLogs({
+      type: 'MEMBER_KICK',
+      limit: 1
+    })
+    const kickLog = fetchedLogs.entries.first()
+    if (kickLog) { return } // the user didn't leave on their own but was kicked
+    discordUtils.embedResponse(null, {
+      color: 'ORANGE',
+      title: '👋🏾 User left',
+      description: `${member} left.`
+    },
+    logChannel)
   })
   .on('messageDelete', async (message) => {
     if (!message.guild) return
@@ -171,6 +199,7 @@ client
     logChannel)
   })
   .on('messageUpdate', async (oldMessage, newMessage) => {
+    if (oldMessage.author.id === client.user.id) { return } // ignore any bot messages
     if (!oldMessage.guild) return
     const guild = newMessage.guild
     logService = getLogService()
@@ -211,40 +240,6 @@ client
     },
     logChannel)
   })
-  .on('guildMemberAdd', async (member) => {
-    const guild = member.guild
-    logService = getLogService()
-    const channelID = logService.getLogEventChannel(guild, 'user_unbanned')
-    if (!channelID) { return }
-    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
-    if (!logChannel) { return }
-    discordUtils.embedResponse(null, {
-      color: 'ORANGE',
-      title: '👋🏾 User joined',
-      description: `${member} joined.`
-    },
-    logChannel)
-  })
-  .on('guildMemberRemove', async (member) => {
-    const guild = member.guild
-    logService = getLogService()
-    const channelID = logService.getLogEventChannel(guild, 'user_left')
-    if (!channelID) { return }
-    const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
-    if (!logChannel) { return }
-    const fetchedLogs = await guild.fetchAuditLogs({
-      type: 'MEMBER_KICK',
-      limit: 1
-    })
-    const kickLog = fetchedLogs.entries.first()
-    if (kickLog) { return } // the user didn't leave on their own but was kicked
-    discordUtils.embedResponse(null, {
-      color: 'ORANGE',
-      title: '👋🏾 User left',
-      description: `${member} left.`
-    },
-    logChannel)
-  })
   .on('voiceStateUpdate', async (oldState, newState) => {
     if (!newState.muted) { return }
     const guild = newState.guild
@@ -272,20 +267,23 @@ client
         color: 'ORANGE',
         title: '❗ User presence changed',
         description: `${newPresence.member} status or activity changed.`
-      })
+      },
+      logChannel)
     } else {
       if (oldPresence.status !== newPresence.status) {
         discordUtils.embedResponse(null, {
           color: 'ORANGE',
           title: '❗ User presence changed',
           description: `${newPresence.member} status changed.`
-        })
+        },
+        logChannel)
       } else {
         discordUtils.embedResponse(null, {
           color: 'ORANGE',
           title: '❗ User presence changed',
           description: `${newPresence.member} activity changed.`
-        })
+        },
+        logChannel)
       }
     }
   })
@@ -300,7 +298,8 @@ client
       color: 'ORANGE',
       title: '🎭 User updated',
       description: `${newMember} information updated`
-    })
+    },
+    logChannel)
   })
 
 if (process.env.NODE_ENV !== 'production') {
