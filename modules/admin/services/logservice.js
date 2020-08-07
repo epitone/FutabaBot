@@ -53,6 +53,45 @@ class LogService {
     }
     return logEventChannel
   }
+
+  setLogServerChannel (guild, channel) {
+    const allEvents = Object.values(this.logEvents.events)
+    let insertClause = '(guild, '
+    let insertValues = `(${guild.id}, `
+    let iterations = allEvents.length
+
+    for (const event of allEvents) {
+      this.logSettings.set(event.description, `${channel ? channel.id : null}`)
+      if (!--iterations) {
+        insertClause += `${event.description})`
+        insertValues += `${channel ? channel.id : null})`
+      } else {
+        insertClause += `${event.description}, `
+        insertValues += `${channel ? channel.id : null}, `
+      }
+    }
+
+    const result = this.database.prepare(`
+      INSERT INTO log_settings ${insertClause}
+      VALUES ${insertValues}
+      ON CONFLICT(guild)
+      DO UPDATE SET
+      channel_created = excluded.channel_created,
+      channel_deleted = excluded.channel_deleted,
+      channel_updated = excluded.channel_updated,
+      message_deleted = excluded.message_deleted,
+      message_updated = excluded.message_updated,
+      user_banned = excluded.user_banned,
+      user_joined = excluded.user_joined,
+      user_left = excluded.user_left,
+      user_muted = excluded.user_muted,
+      user_presence = excluded.user_presence,
+      user_unbanned = excluded.user_unbanned,
+      user_updated = excluded.user_updated,
+      voice_presence = excluded.voice_presence
+    `).run()
+    return result
+  }
 }
 
 module.exports = { LogService, LogEvents }
