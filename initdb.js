@@ -16,13 +16,20 @@ CREATE TABLE IF NOT EXISTS "playlists" (
 )`).run()
 
 sql.prepare(`
-CREATE TABLE "log_settings" ( 
-  "id" INTEGER PRIMARY KEY AUTOINCREMENT, "guild" INTEGER NOT NULL UNIQUE, "channel_created" INTEGER,
+CREATE TABLE IF NOT EXISTS "log_settings" ( 
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT, "channel_created" INTEGER,
   "channel_deleted" INTEGER, "channel_updated" INTEGER, "message_deleted" INTEGER, "message_updated" INTEGER,
   "user_banned" INTEGER, "user_joined" INTEGER, "user_left" INTEGER,
   "user_muted" INTEGER, "user_presence" INTEGER, "user_unbanned" INTEGER,
   "user_updated" INTEGER, "voice_presence" INTEGER)
 `).run()
+
+sql.prepare(`
+CREATE TABLE IF NOT EXISTS "ignored_log_channels" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT, "channel_id" INTEGER NOT NULL,
+  "log_settings_id" INTEGER NULL, "date_added" TEXT NULL,
+  FOREIGN KEY ("log_settings_id") REFERENCES log_settings("id") ON DELETE RESTRICT
+)`).run()
 
 sql.prepare(`
 CREATE TABLE IF NOT EXISTS "playlist_song" (

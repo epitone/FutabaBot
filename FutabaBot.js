@@ -48,6 +48,7 @@ client
     // TODO: add timestamps to logging outputs
     const guild = channel.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'channel_created')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -63,6 +64,7 @@ client
     // TODO: add timestamps to logging outputs
     const guild = channel.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'channel_deleted')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -128,6 +130,7 @@ client
       }
     }
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_joined')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -166,6 +169,7 @@ client
       }
     }
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_left')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -187,6 +191,7 @@ client
     if (!message.guild) return
     const guild = message.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'message_deleted')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -203,6 +208,7 @@ client
     if (!oldMessage.guild) return
     const guild = newMessage.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'message_updated')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -216,6 +222,7 @@ client
   })
   .on('guildBanAdd', async (guild, user) => {
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_banned')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -229,6 +236,7 @@ client
   })
   .on('guildBanRemove', async (guild, user) => {
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_unbanned')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -244,6 +252,7 @@ client
     if (!newState.muted) { return }
     const guild = newState.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_muted')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -258,6 +267,7 @@ client
   .on('presenceUpdate', async (oldPresence, newPresence) => {
     const guild = newPresence.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_presence')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
@@ -290,6 +300,7 @@ client
   .on('guildMemberUpdate', async (oldMember, newMember) => {
     const guild = newMember.guild
     logService = getLogService()
+    if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_updated')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)

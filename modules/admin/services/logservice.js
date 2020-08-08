@@ -26,30 +26,43 @@ class LogService {
     winston.info('Setting up log service')
     this.database = database
     winston.info('Log service Initialized')
+    this.logSettingsId = -1
     this.logSettings = new Map() // TODO: grab data from db for map
     this.logEvents = Object.freeze(LogEvents)
   }
 
   setLogEvent (guild, channel, logEvent) {
+    this.logSettingsId = guild.settings.get('logSettingsId', -1)
+    let insertResult
+    if (this.logSettingsId === -1) {
+      // there are no log settings defined
+      const insertLogEvent = this.database.prepare(`
+        INSERT INTO log_settings (${logEvent})
+        VALUES(?)
+      `)
+      insertResult = insertLogEvent.run(channel.id)
+      if (insertResult.lastInsertRowid) { guild.settings.set('logSettingsId', insertResult.lastInsertRowid) }
+    } else {
+      const insertLogEvent = this.database.prepare(`
+        INSERT INTO log_settings (${logEvent})
+        VALUES(?)
+        WHERE id = ?
+      `)
+      insertResult = insertLogEvent.run(channel.id, this.logSettingsId)
+    }
     this.logSettings.set(`${logEvent.description}`, `${channel.id}`)
-    const insertLogEvent = this.database.prepare(`
-      INSERT INTO log_settings (guild, ${logEvent})
-      VALUES(?, ?)
-      ON CONFLICT(guild)
-      DO UPDATE SET ${logEvent}=?;
-    `)
-    const success = insertLogEvent.run(guild.id, channel.id, channel.id)
-    return success
+    return insertResult
   }
 
   getLogEventChannel (guild, logEvent) { // returns a channel for a log event, if it's enabled
     let logEventChannel = this.logSettings.get(logEvent, null)
-    if (!logEventChannel) {
+    this.logSettingsId = guild.settings.get('logSettingsId', -1)
+    if (!logEventChannel && this.logSettingsId !== -1) {
       logEventChannel = this.database.prepare(`
         SELECT ${logEvent}
         FROM log_settings
-        WHERE guild = ?
-      `).pluck().get(guild.id)
+        WHERE id = ?
+      `).pluck().get(this.logSettingsId)
     }
     return logEventChannel
   }
@@ -91,6 +104,13 @@ class LogService {
       voice_presence = excluded.voice_presence
     `).run()
     return result
+  }
+
+  LogIgnore(guild) {
+    let ignoreList = this.logSettings.get('ignoreList', null)
+    if (!ignoreList) {
+      const logSettingsID = guild.settings.get('logSettingId', null)
+    }
   }
 }
 

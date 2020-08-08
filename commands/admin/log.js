@@ -3,7 +3,7 @@ Author: Hello (World)
 log.js (c) 2020
 Desc: Toggles a logging event for the entire server. Disables it if it is active and enables it if it isn't active. Logs will output to the  channel this command is used in unless logserver has been enabled. Use logevents to see a list of subscribable events.
 Created:  2020-07-12T14:25:51.687Z
-Modified: 2020-08-05T23:13:08.003Z
+Modified: 2020-08-08T23:30:00.458Z
 */
 
 const { Command } = require('discord.js-commando')
