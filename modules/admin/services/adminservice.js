@@ -3,10 +3,9 @@ const BotStatus = require('../../../modules/admin/botstatus')
 const { Guild, TextChannel } = require('discord.js') // eslint-disable-line
 
 class AdminService {
-  constructor (database, client) {
+  constructor (database) {
     // console.info('Setting up music service')
     winston.info('Setting up admin service')
-    this.client = client
     this.database = database
     winston.info('Admin service Initialized')
     this.playingStatuses = []
