@@ -29,6 +29,7 @@ class LogService {
     this.logSettingsId = -1
     this.logSettings = new Map() // TODO: grab data from db for map
     this.logEvents = Object.freeze(LogEvents)
+    this.ignoredLogChannels = []
   }
 
   setLogEvent (guild, channel, logEvent) {
@@ -106,10 +107,47 @@ class LogService {
     return result
   }
 
-  LogIgnore(guild) {
-    let ignoreList = this.logSettings.get('ignoreList', null)
-    if (!ignoreList) {
-      const logSettingsID = guild.settings.get('logSettingId', null)
+  logIgnore (guild, channel) {
+    // check if the channel id exists in the table
+    const removeResult = this.database.prepare(`
+      SELECT * FROM ignored_log_channels
+      WHERE channel_id = ?
+    `).get(channel.id)
+
+    if (removeResult) { // if channel is in table, remove it
+      const deletedChannelResult = this.database.prepare(`
+        DELETE FROM ignored_log_channels
+        WHERE channel_id = ?
+      `).run(channel.id)
+      if (deletedChannelResult.changes) {
+        const removalIndex = this.ignoredLogChannels.indexOf(channel.id)
+        if (removalIndex > -1) {
+          return this.ignoredLogChannels.splice(removalIndex, 1) // return removed array item
+        }
+        return null // in the case of an error, return null
+      }
+    } else { // add it otherwise
+      this.logSettingsId = guild.settings.get('logSettingsId', -1)
+      if (this.logSettingsId === -1) { // there's no log settings row for this server, so we will make one
+        const logSettingsResult = this.database.prepare(`
+          INSERT INTO log_settings
+          DEFAULT VALUES
+        `).run()
+        if (logSettingsResult.lastInsertRowid) {
+          guild.settings.set('logSettingsId', logSettingsResult.lastInsertRowid) // update the log settings id to the newly created row id
+          this.logSettingsId = logSettingsResult.lastInsertRowid
+        } else { return } // something went wrong so break early
+      }
+      // insert channel into database
+      const insertResult = this.database.prepare(`
+        INSERT INTO ignored_log_channels (channel_id, log_settings_id)
+        VALUES(?, ?)
+      `).run(channel.id, this.logSettingsId)
+      if (insertResult.changes) {
+        this.ignoredLogChannels.push(channel.id)
+        return insertResult
+      }
+      return null // shouldn't reach here but just in case something goes wrong
     }
   }
 }
