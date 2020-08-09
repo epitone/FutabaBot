@@ -148,8 +148,8 @@ class LogService {
       }
       // insert channel into database
       const insertResult = this.database.prepare(`
-        INSERT INTO ignored_log_channels (channel_id, log_settings_id)
-        VALUES(?, ?)
+        INSERT INTO ignored_log_channels (channel_id, log_settings_id, date_added)
+        VALUES(?, ?, UTC_TIMESTAMP)
       `).run(channel.id, this.logSettingsId)
       if (insertResult.changes) {
         this.ignoredLogChannels.push(channel.id)
