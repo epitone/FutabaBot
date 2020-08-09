@@ -11,9 +11,9 @@ const discordUtils = require('./utils/discord-utils')
 
 require('dotenv').config()
 
-let musicService
-let adminService
-let logService
+let musicService = null
+let adminService = null
+let logService = null
 let constants
 
 const client = new Commando.Client({
@@ -47,7 +47,8 @@ client
   .on('channelCreate', async (channel) => {
     // TODO: add timestamps to logging outputs
     const guild = channel.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
+    if (logService.ignoredLogChannels.indexOf(channel.id) !== -1) { return }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'channel_created')
     if (!channelID) { return }
@@ -63,7 +64,8 @@ client
   .on('channelDelete', async (channel) => {
     // TODO: add timestamps to logging outputs
     const guild = channel.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
+    if (logService.ignoredLogChannels.indexOf(channel.id) !== -1) { return }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'channel_deleted')
     if (!channelID) { return }
@@ -79,8 +81,9 @@ client
   .on('channelUpdate', async (oldChannel, newChannel) => {
     // TODO: add timestamps to logging outputs
     const guild = newChannel.guild
-    logService = getLogService()
-    const channelID = logService.getLogEventChannel(guild, 'channel_deleted')
+    if (!logService) { logService = getLogService(guild) }
+    if (logService.ignoredLogChannels.indexOf(newChannel.id) !== -1) { return }
+    const channelID = logService.getLogEventChannel(guild, 'channel_updated')
     if (!channelID) { return }
     const logChannel = guild.channels.cache.find(channel => parseInt(channel.id) === channelID)
     if (!logChannel) { return }
@@ -129,7 +132,7 @@ client
         winston.error(`Couldn't find channel with id: ${greetingChannelID}`)
       }
     }
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_joined')
     if (!channelID) { return }
@@ -168,7 +171,7 @@ client
         winston.error(`Couldn't find channel with id: ${leavingChannelID}`)
       }
     }
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_left')
     if (!channelID) { return }
@@ -190,7 +193,7 @@ client
   .on('messageDelete', async (message) => {
     if (!message.guild) return
     const guild = message.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'message_deleted')
     if (!channelID) { return }
@@ -205,9 +208,10 @@ client
   })
   .on('messageUpdate', async (oldMessage, newMessage) => {
     if (oldMessage.author.id === client.user.id) { return } // ignore any bot messages
-    if (!oldMessage.guild) return
+    if (!oldMessage.guild) return // if it is a DM, return
+    if (logService.ignoredLogChannels.indexOf(newMessage.id) !== -1) { return }
     const guild = newMessage.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'message_updated')
     if (!channelID) { return }
@@ -221,7 +225,7 @@ client
     logChannel)
   })
   .on('guildBanAdd', async (guild, user) => {
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_banned')
     if (!channelID) { return }
@@ -235,7 +239,7 @@ client
     logChannel)
   })
   .on('guildBanRemove', async (guild, user) => {
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_unbanned')
     if (!channelID) { return }
@@ -251,7 +255,7 @@ client
   .on('voiceStateUpdate', async (oldState, newState) => {
     if (!newState.muted) { return }
     const guild = newState.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_muted')
     if (!channelID) { return }
@@ -266,7 +270,7 @@ client
   })
   .on('presenceUpdate', async (oldPresence, newPresence) => {
     const guild = newPresence.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_presence')
     if (!channelID) { return }
@@ -299,7 +303,7 @@ client
   })
   .on('guildMemberUpdate', async (oldMember, newMember) => {
     const guild = newMember.guild
-    logService = getLogService()
+    if (!logService) { logService = getLogService(guild) }
     if (guild.settings.get('logSettingsId', -1) === -1) { return }
     const channelID = logService.getLogEventChannel(guild, 'user_updated')
     if (!channelID) { return }
@@ -334,9 +338,9 @@ function getAdminService () {
   return adminService
 }
 
-function getLogService () {
+function getLogService (guild) {
   if (!logService) {
-    logService = new LogService(client.provider.conn)
+    logService = new LogService(client.provider.conn, guild)
   }
   return logService
 }

@@ -3,7 +3,7 @@ Author: epitone
 logserver.js (c) 2020
 Desc: Enables/disables all logging events for a server - when enabled, all log events will output to the channel the command was executed in.
 Created:  2020-07-11T15:41:34.002Z
-Modified: 2020-08-07T21:35:15.970Z
+Modified: 2020-08-09T01:51:19.339Z
 */
 
 const { Command } = require('discord.js-commando')
@@ -49,7 +49,7 @@ module.exports = class LogServerCommand extends Command {
       return
     }
 
-    const logService = require('./../../FutabaBot').getLogService()
+    const logService = require('./../../FutabaBot').getLogService(message.guild)
     if (toggle === 'enable') {
       const result = logService.setLogServerChannel(message.guild, message.channel)
       if (result.changes < 1) {

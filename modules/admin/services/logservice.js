@@ -22,14 +22,22 @@ const LogEvents = {
 }
 
 class LogService {
-  constructor (database) {
+  constructor (database, guild) {
     winston.info('Setting up log service')
     this.database = database
-    winston.info('Log service Initialized')
-    this.logSettingsId = -1
+    this.logSettingsId = guild.settings.get('logSettingsId', -1)
     this.logSettings = new Map() // TODO: grab data from db for map
     this.logEvents = Object.freeze(LogEvents)
-    this.ignoredLogChannels = []
+    if (this.logSettingsId !== -1) {
+      this.ignoredLogChannels = this.database.prepare(`
+        SELECT channel_id
+        FROM ignored_log_channels
+        WHERE log_settings_id = ?
+      `).pluck().all(this.logSettingsId)
+    } else {
+      this.logSettingsId = []
+    }
+    winston.info('Log service Initialized')
   }
 
   setLogEvent (guild, channel, logEvent) {
@@ -38,15 +46,15 @@ class LogService {
     if (this.logSettingsId === -1) {
       // there are no log settings defined
       const insertLogEvent = this.database.prepare(`
-        INSERT INTO log_settings (${logEvent})
+        INSERT INTO log_settings (?)
         VALUES(?)
       `)
-      insertResult = insertLogEvent.run(channel.id)
+      insertResult = insertLogEvent.run(logEvent, channel.id)
       if (insertResult.lastInsertRowid) { guild.settings.set('logSettingsId', insertResult.lastInsertRowid) }
     } else {
       const insertLogEvent = this.database.prepare(`
-        INSERT INTO log_settings (${logEvent})
-        VALUES(?)
+        UPDATE log_settings
+        SET ${logEvent} = ?
         WHERE id = ?
       `)
       insertResult = insertLogEvent.run(channel.id, this.logSettingsId)

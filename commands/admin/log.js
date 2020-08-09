@@ -3,7 +3,7 @@ Author: Hello (World)
 log.js (c) 2020
 Desc: Toggles a logging event for the entire server. Disables it if it is active and enables it if it isn't active. Logs will output to the  channel this command is used in unless logserver has been enabled. Use logevents to see a list of subscribable events.
 Created:  2020-07-12T14:25:51.687Z
-Modified: 2020-08-08T23:30:00.458Z
+Modified: 2020-08-09T01:51:08.391Z
 */
 
 const { Command } = require('discord.js-commando')
@@ -50,7 +50,7 @@ module.exports = class LogCommand extends Command {
     }
 
     // otherwise add current channel to log for database
-    const logService = require('./../../FutabaBot').getLogService()
+    const logService = require('./../../FutabaBot').getLogService(message.guild)
     const logSymbol = logService.logEvents.getEvent(logEvent)
 
     if (!logSymbol) {

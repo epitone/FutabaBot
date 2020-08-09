@@ -3,7 +3,7 @@ Author: epitone
 logignore.js (c) 2020
 Desc: Toggles whether the logserver command ignores this channel.
 Created:  2020-07-11T16:08:27.739Z
-Modified: 2020-08-09T01:00:32.690Z
+Modified: 2020-08-09T01:51:13.641Z
 */
 
 const { Command } = require('discord.js-commando')
@@ -41,7 +41,7 @@ module.exports = class LogIgnoreCommand extends Command {
       return
     }
 
-    const logService = require('./../../FutabaBot').getLogService()
+    const logService = require('./../../FutabaBot').getLogService(message.guild)
     const result = logService.logIgnore(message.guild, message.channel)
     if (result) {
       if (Array.isArray(result)) { // row was deleted
