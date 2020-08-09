@@ -8,7 +8,7 @@ sql.prepare('CREATE TABLE IF NOT EXISTS settings (guild INTEGER PRIMARY KEY, set
 
 sql.prepare(`
 CREATE TABLE IF NOT EXISTS "playlists" (
-  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+  "id" INTEGER NOT NULL CONSTRAINT "PK_playlists" PRIMARY KEY AUTOINCREMENT,
   "guild" INTEGER,
   "author" TEXT,
   "author_id" INTEGER,
@@ -28,7 +28,8 @@ sql.prepare(`
 CREATE TABLE IF NOT EXISTS "ignored_log_channels" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT, "channel_id" INTEGER NOT NULL,
   "log_settings_id" INTEGER NULL, "date_added" TEXT NULL,
-  FOREIGN KEY ("log_settings_id") REFERENCES log_settings("id") ON DELETE RESTRICT
+  CONSTRAINT "FK_ignoredlogchannels_logsettings_logsettingsid" FOREIGN KEY ("log_settings_id") REFERENCES log_settings("id") ON DELETE RESTRICT
+  CREATE INDEX "IX_ignoredlogchannels_logsettingsid" ON "ignored_log_channels" ("log_settings_id");
 )`).run()
 
 sql.prepare(`
@@ -49,6 +50,22 @@ CREATE TABLE IF NOT EXISTS "playing_status" (
  "status_type"  TEXT NOT NULL,
  "status_string" TEXT NOT NULL
 )`).run()
+
+sql.prepare(`
+CREATE TABLE IF NOT EXISTS "warnings" (
+  "id" INTEGER NOT NULL CONSTRAINT "PK_Warnings" PRIMARY KEY AUTOINCREMENT,
+  "date_added" TEXT NULL,
+  "forgiven" INTEGER NOT NULL,
+  "forgiven_by" TEXT NULL,
+  "guild_id" INTEGER NOT NULL,
+  "moderator" TEXT NULL,
+  "reason" TEXT NULL,
+  "user_id" INTEGER NOT NULL
+);
+CREATE INDEX "IX_warnings_dateadded" ON "Warnings" ("date_added");
+CREATE INDEX "IX_warnings_guildid" ON "Warnings" ("guild_id");
+CREATE INDEX "IX_warnings_userid" ON "Warnings" ("user_id");
+`)
 
 console.log('Tables created, closing database')
 sql.close()
